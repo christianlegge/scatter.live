@@ -4,9 +4,25 @@ require('dotenv').config();
  * Module dependencies.
  */
  
+var fs = require('fs');
 var app = require('../app');
 var debug = require('debug')('scatter-live:server');
 var http = require('http');
+var https = require('https');
+
+var credentials;
+
+if (process.env.NODE_ENV == 'production') {
+	const privateKey = fs.readFileSync('/etc/letsencrypt/live/scatter.live/privkey.pem', 'utf8');
+	const certificate = fs.readFileSync('/etc/letsencrypt/live/scatter.live/cert.pem', 'utf8');
+	const ca = fs.readFileSync('/etc/letsencrypt/live/scatter.live/chain.pem', 'utf8');
+
+	credentials = {
+		key: privateKey,
+		cert: certificate,
+		ca: ca
+	};
+}
 
 /**
  * Get port from environment and store in Express.
@@ -19,15 +35,29 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server;
+
+if (process.env.NODE_ENV == 'production')
+{
+	server = http.createServer(function(req, res) {
+		res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+		res.end();
+	});
+	var httpsServer = https.createServer(credentials, app);
+	httpsServer.listen(443);
+}
+
+else {
+	server = http.createServer(app);
+}
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+//server.on('error', onError);
+//server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.

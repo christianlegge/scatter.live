@@ -1,0 +1,71 @@
+include head
+
+doctype html
+html
+  head
+    +meta(meta)
+    +ga
+    link(rel="apple-touch-icon",sizes="57x57",href="/favicon/spurts/apple-icon-57x57.png")
+    link(rel="apple-touch-icon",sizes="60x60",href="/favicon/spurts/apple-icon-60x60.png")
+    link(rel="apple-touch-icon",sizes="72x72",href="/favicon/spurts/apple-icon-72x72.png")
+    link(rel="apple-touch-icon",sizes="76x76",href="/favicon/spurts/apple-icon-76x76.png")
+    link(rel="apple-touch-icon",sizes="114x114",href="/favicon/spurts/apple-icon-114x114.png")
+    link(rel="apple-touch-icon",sizes="120x120",href="/favicon/spurts/apple-icon-120x120.png")
+    link(rel="apple-touch-icon",sizes="144x144",href="/favicon/spurts/apple-icon-144x144.png")
+    link(rel="apple-touch-icon",sizes="152x152",href="/favicon/spurts/apple-icon-152x152.png")
+    link(rel="apple-touch-icon",sizes="180x180",href="/favicon/spurts/apple-icon-180x180.png")
+    link(rel="icon",type="image/png",sizes="192x192",href="/favicon/spurts/android-icon-192x192.png")
+    link(rel="icon",type="image/png",sizes="32x32",href="/favicon/spurts/favicon-32x32.png")
+    link(rel="icon",type="image/png",sizes="96x96",href="/favicon/spurts/favicon-96x96.png")
+    link(rel="icon",type="image/png",sizes="16x16",href="/favicon/spurts/favicon-16x16.png")
+    link(rel="manifest",href="/favicon/spurts/manifest.json")
+    meta(name="msapplication-TileColor",content="#ffffff")
+    meta(name="msapplication-TileImage",content="/favicon/spurts/ms-icon-144x144.png")
+    meta(name="theme-color",content="#ffffff")
+    title Spurts Tracker
+    link(rel="stylesheet",type="text/css",href="stylesheets/spurts.css")
+    link(rel="shortcut icon",href="favicon/spurts/favicon.ico", type="image/x-icon")
+    link(rel="icon",href="favicon/spurts/favicon.ico", type="image/x-icon")
+    +jquery
+    +localforage
+    +angular
+    script(type="text/javascript",src="javascripts/spurts.js")
+    
+body(ng-app="spurts",ng-controller="spurtsController",ng-click="shownkeyselector = ''")
+  .title
+    h1 Spurts Tracker by scatter
+  .maincontainer
+    .konggrid
+      each kong in kongs
+        .gridchild(id=kong,style="background-image:url('images/spurts/"+kong+".png')",ng-click=(kong == 'donkey' ? '' : "select('"+kong+"')"),class="{{selected['"+kong+"'] ? 'selected' : ''}} " + (kong == 'donkey' ? '' : "clickable"))
+        each upgrade in kongupgrades
+          .gridchild.clickable(id=kong+upgrade,style="background-image:url('images/spurts/"+(upgrade == 'unique' || upgrade == 'gun' || upgrade == 'instrument' ? kong : '')+upgrade+".png')",ng-click="select('"+kong+upgrade+"')",class="{{selected['"+kong+upgrade+"'] ? 'selected' : ''}}")
+    .extraupgrades
+      each upgrade in extraupgrades
+        .gridchild.clickable(id=upgrade,style="background-image:url('images/spurts/{{"+upgrade+"}}.png')",ng-click="click"+upgrade+"()",class="{{selected['"+upgrade+"'] ? 'selected' : ''}}")
+    .coins
+      .gridchild.clickable(id='n64coin',ng-click="clickn64coin()",style="background-image:url('images/spurts/n64coin.png')",class="{{selected['n64coin'] ? 'selected' : ''}}")
+      .gridchild.clickable(id='rarecoin',ng-click="clickrarecoin()",style="background-image:url('images/spurts/rarecoin.png')",class="{{selected['rarecoin'] ? 'selected' : ''}}")
+    .worlds
+      each world in worlds
+        .world
+          img.noselect(src="/images/spurts/"+world+".png")
+          br
+          - var n = (world == 'isles' ? 4 : 2)
+          - var i = 0
+          while i < n
+            .fairy.clickable(ng-click="select('"+world+'fairy'+i+"')", class="{{selected['"+world+'fairy'+i+"'] ? 'selected' : ''}} ")
+            - i++
+          - var n = (world == 'isles' ? 2 : 1)
+          - var i = 0
+          while i < n
+            .crown.clickable(ng-click="select('"+world+'crown'+i+"')", class="{{selected['"+world+'crown'+i+"'] ? 'selected' : ''}} ")
+            - i++
+          if world != 'isles'
+            .key.clickable(ng-click="select('"+world+'key'+"')",ng-right-click="shownkeyselector = '"+world+"'",class="{{selected['"+world+'key'+"'] ? 'selected' : ''}} ",style="{{getKeyStyle('"+world+"key"+"')}}")
+            .keyselector(ng-show="shownkeyselector == '"+world+"'")
+              - var i = 1
+              while i <= 8
+                img.keyselectorbutton(src="images/spurts/"+i+".png",ng-click="keynums['"+world+"key'] = "+i+"; updateForage()")
+                - i++
+    .reset(ng-click="reset()") Reset

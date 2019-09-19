@@ -1,0 +1,18 @@
+include head
+
+doctype html
+html
+  head
+    title democracy
+    +jquery
+    +localforage
+    +angular
+    +chart
+    script(type="text/javascript",src="javascripts/irc-message.js")
+    script(type="text/javascript",src="javascripts/punycode.min.js")
+    script(type="text/javascript",src="javascripts/reconnecting-websocket.min.js")
+    link(rel="stylesheet",type="text/css",href="stylesheets/democracy.css")
+    script(type="text/javascript",src="javascripts/democracy.js")
+    
+body(ng-app="democracy",ng-controller="democracyController")
+  h1 Hello

@@ -1,0 +1,28 @@
+body {
+  font-family: sans-serif;
+}
+
+.maingrid {
+  display: inline-grid;
+  grid-gap:1px;
+  background-color: black;
+  border:1px solid black;
+}
+
+.cell {
+  background-color: white;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.painted {
+  background-color: black !important;
+}
+
+#activecell {
+  background-color: yellow;
+}
+
+.activeline {
+  background-color: lightblue;
+}

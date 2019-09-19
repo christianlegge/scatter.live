@@ -1,0 +1,17 @@
+include head
+
+doctype html
+html
+  head
+    +ga
+    +p5
+    +jquery
+    +localforage
+    meta(name="viewport",width="device-width",initial-scale="1.0",maximum-scale="1.0",user-scalable="0")
+    link(rel="stylesheet",type="text/css",href="/stylesheets/assetcreator.css")
+    script(src="/javascripts/p5/assetcreator.js")
+  body
+    input(type="range",min="1",max="50",value="1").slider.color#size
+    input(type="range",min="0",max="255",value="0").slider.color#red
+    input(type="range",min="0",max="255",value="0").slider.color#green
+    input(type="range",min="0",max="255",value="0").slider.color#blue

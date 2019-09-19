@@ -1,0 +1,15 @@
+.grid-container {
+  display: grid;
+  grid-template: 40px 40px 40px / 40px 40px 40px;
+  
+}
+
+.grid-item {
+  border: 1px solid black;
+  color:#ddd;
+}
+
+.prime {
+  background: black;
+  color:#000;
+}

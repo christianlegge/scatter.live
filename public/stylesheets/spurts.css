@@ -1,0 +1,155 @@
+body {
+  background-color: #222;
+  color:white;
+  font-size: 1.2em;
+  font-family: sans-serif;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.maincontainer {
+  -webkit-filter: drop-shadow( 1px 1px 1px #000 );
+    filter: drop-shadow( 1px 1px 1px #000 );
+}
+
+.maincontainer > div {
+  -webkit-filter: drop-shadow( 1px 1px 1px #000 );
+    filter: drop-shadow( 1px 1px 1px #000 );
+}
+
+.title {
+  background-image: url('/images/spurts/spurts.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 70px;
+}
+
+.maincontainer {
+  display:inline-grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto;
+  width:100%;
+  justify-items: center;
+}
+
+.konggrid {
+  display: inline-grid;
+  
+  grid-template-columns: auto auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
+  grid-column-gap: 0px;
+}
+
+.coins {
+  display: flex;
+  justify-content: center;
+}
+
+.worlds {
+  display:flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width:400px;
+}
+
+.world {
+  text-align: center;
+  margin: 10px;
+}
+
+.gridchild {
+  width: 64px;
+  height: 64px;
+  margin:2px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.extraupgrades {
+  display: flex;
+  justify-content: space-around;
+}
+
+.extra {
+    width: 64px;
+    height: 64px;
+}
+
+.clickable {
+  cursor: pointer;
+  opacity: 0.35;
+}
+
+.fairy {
+  background-image: url('/images/spurts/fairy.png');
+  width:24px;
+  height:32px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.key {
+  background-size: auto, contain;
+  background-repeat: no-repeat;
+  width:24px;
+  height:32px;
+  opacity:1 !important;
+  display: inline-block;
+}
+
+.crown {
+  background-image: url('/images/spurts/crown.png');
+  width:24px;
+  height:32px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.selected {
+  opacity:1 !important;
+}
+
+.keyselector {
+  display: flex;
+  position: absolute;
+  background-color: #111;
+  border: 2px solid #999;
+  border-radius: 2px;
+  width:180px;
+  justify-content: center;
+}
+
+.keyselectorbutton {
+  cursor: pointer;
+  margin:4px;
+}
+
+.reset {
+  margin-top: 20px;
+  background-color: red;
+  border-radius: 5px;
+  border: 2px solid white;
+  cursor: pointer;
+  width: 100px;
+  text-align: center;
+  padding: 10px;
+}
+
+.reset:hover {
+  background-color: #dd0000;
+  border-color: #dddddd;
+}
+

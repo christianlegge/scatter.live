@@ -1,0 +1,62 @@
+mixin meta(tags)
+  meta(property="og:title",content=tags.title)
+  meta(property="og:description",content=tags.description)
+  meta(property="og:url",content=tags.url)
+  meta(property="og:image",content=tags.image)
+  meta(property="og:type",content=tags.type)
+  meta(name="twitter:card",content=tags.card)
+  meta(name="twitter:title",content=tags.title)
+  meta(name="twitter:description",content=tags.description)
+  meta(name="twitter:image",content=tags.image)
+  meta(property="og:site_name",content=(tags.site_name || "scatter.live"))
+  meta(name="twitter:site",content="@scattertv")
+  
+mixin ga
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  script(async,src="https://www.googletagmanager.com/gtag/js?id=UA-101751986-2")
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    
+    gtag('config', 'UA-101751986-2');
+    
+mixin favicon
+  link(rel="apple-touch-icon",sizes="57x57",href="/favicon/apple-icon-57x57.png")
+  link(rel="apple-touch-icon",sizes="60x60",href="/favicon/apple-icon-60x60.png")
+  link(rel="apple-touch-icon",sizes="72x72",href="/favicon/apple-icon-72x72.png")
+  link(rel="apple-touch-icon",sizes="76x76",href="/favicon/apple-icon-76x76.png")
+  link(rel="apple-touch-icon",sizes="114x114",href="/favicon/apple-icon-114x114.png")
+  link(rel="apple-touch-icon",sizes="120x120",href="/favicon/apple-icon-120x120.png")
+  link(rel="apple-touch-icon",sizes="144x144",href="/favicon/apple-icon-144x144.png")
+  link(rel="apple-touch-icon",sizes="152x152",href="/favicon/apple-icon-152x152.png")
+  link(rel="apple-touch-icon",sizes="180x180",href="/favicon/apple-icon-180x180.png")
+  link(rel="icon",type="image/png",sizes="192x192",href="/favicon/android-icon-192x192.png")
+  link(rel="icon",type="image/png",sizes="32x32",href="/favicon/favicon-32x32.png")
+  link(rel="icon",type="image/png",sizes="96x96",href="/favicon/favicon-96x96.png")
+  link(rel="icon",type="image/png",sizes="16x16",href="/favicon/favicon-16x16.png")
+  link(rel="manifest",href="/favicon/manifest.json")
+  meta(name="msapplication-TileColor",content="#ffffff")
+  meta(name="msapplication-TileImage",content="/favicon/ms-icon-144x144.png")
+  meta(name="theme-color",content="#ffffff")
+  
+mixin p5
+  script(src="/javascripts/p5/p5.min.js")
+  script(src="/javascripts/p5/addons/p5.dom.min.js")
+  script(src="/javascripts/p5/addons/p5.sound.min.js")
+  
+mixin jquery
+  script(src="/javascripts/jquery-3.3.1.js")
+  
+mixin localforage
+  script(src="/javascripts/localforage.min.js")
+  
+mixin filesaver
+  script(type="text/javascript",src="javascripts/FileSaver.min.js")
+  
+mixin angular
+  script(type="text/javascript",src="javascripts/vendor/angular/angular.js")
+
+mixin chart
+  script(type="text/javascript",src="javascripts/Chart.js")
+  script(type="text/javascript",src="javascripts/chartjs-plugin-labels.min.js")

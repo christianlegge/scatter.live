@@ -1,0 +1,24 @@
+include head
+
+doctype html
+html
+  head
+    title Crossword helper
+    +jquery
+    +localforage
+    +angular
+    link(rel="stylesheet",type="text/css",href="stylesheets/crossword.css")
+    script(type="text/javascript",src="javascripts/crossword.js")
+    
+body(ng-app="crossword",ng-controller="crosswordController",ng-keypress="keyPress($event)",ng-keydown="keyDown($event)")
+  | Rows 
+  input(type="number",value="{{rows}}",ng-model="rows") 
+  br
+  | Columns 
+  input(type="number",value="{{cols}}",ng-model="cols") 
+  br
+  label Paint
+    input(type="checkbox",name="paint",value="paint",ng-model="paint")
+  br
+  .maingrid(style="grid-template-columns:{{cellsize.repeat(cols)}};grid-template-rows:{{cellsize.repeat(rows)}}")
+    .cell(style="line-height:{{cellsize}}",ng-repeat="i in cols*rows | range",ng-click="cellClicked(i)",id="{{activecell == i ? 'activecell' : ''}}",class="{{(isActiveLine(i) ? 'activeline' : '') + ' ' + (paintedCells[i] ? 'painted' : '')}}")

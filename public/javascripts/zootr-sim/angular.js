@@ -129,10 +129,10 @@ app.controller('simController', function($scope, $http) {
   
   $scope.settingsPresets = {
     'Settings Presets': '',
-    'Default Settings': 'AJAGGGEAZ6FAAVGAAAAAEBNJLAA',
-    'Beginner\'s Mode': 'AJYGC2FLHAAAATCAJELEYEAFAAASFB9JLAA',
-    'Hell Mode (minus Entrance Shuffle)': 'AJBLEGAAZ692T2RDCAEAGAJAAA8HANAEHDC',
-    'Accessible Weekly (2019-04-27)': 'AJWGC2FAHJAAATCAAFAAC2AF6SF8AEVAAMGQUWAA',
+    'Default / Beginner': 'AJCYTK2AB2FMAA2WCAAAAAK2DUCA',
+    'Easy Mode': 'AJYYTKAHT4BAAAJWAACTCTFBJBAAANK2HUCA',
+    'Hell Mode (minus Entrance Shuffle)': 'AJB4TT2AA2F9HQG85SAABSBACAAS9BADA33S',
+    'Accessible Weekly (2019-04-27)': 'AJWYTKAHB2BCAAJWAAJBASAGJBHNTHA3EA2UTVEFAA',
   };
   
   $scope.itemgrid = [
@@ -799,7 +799,7 @@ $scope.hasBossKey = function(dungeon) {
     }).then(function successCallback(response) {
       $scope.generating = false;
       console.log(response.data);
-      if (response.data[':version'] == ('5.0.0 Release')) {
+      if (response.data[':version'] == ('5.1.0 Release')) {
         $scope.currentSpoilerLog = response.data;
         $scope.parseLog(response.data);
       }

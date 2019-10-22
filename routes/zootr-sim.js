@@ -18,7 +18,8 @@ router.get('/', function(req, res, next) {
 
 router.get('/getspoiler', function(req, res, next) {
   if (req.query.valid) {
-    request('https://www.ootrandomizer.com/api/seed/create?key='+process.env.ZOOTRAPIKEY+'&version=5&settingsString='+req.query.settings+'&seed='+req.query.seed, function (error, response, body) {
+    request('https://www.ootrandomizer.com/api/seed/create?key='+process.env.ZOOTRAPIKEY+'&version=5.1.0&settingsString='+req.query.settings+'&seed='+req.query.seed, function (error, response, body) {
+      console.log(body);
       res.send(body);
     });
   }

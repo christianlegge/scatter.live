@@ -798,7 +798,6 @@ $scope.hasBossKey = function(dungeon) {
       url: url
     }).then(function successCallback(response) {
       $scope.generating = false;
-      console.log(response.data);
       if (response.data[':version'] == ('5.1.0 Release')) {
         $scope.currentSpoilerLog = response.data;
         $scope.parseLog(response.data);
@@ -892,7 +891,6 @@ $scope.hasBossKey = function(dungeon) {
       $scope.totalChecks = results.length;
       for (var loc in results) {
         item = typeof results[loc] == 'object' ? results[loc]['item'] : results[loc];
-        console.log(item);
         var shop = getShop(loc);
         if (shop != '') {
           var cost = results[loc]['price'];

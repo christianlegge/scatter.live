@@ -926,6 +926,7 @@ $scope.hasBossKey = function(dungeon) {
         region = hint.split('(')[0].trim();
         if (region == 'Zoras River') region = 'Zora River';
         if (region == 'Graveyard') region = 'Above Graveyard';
+        if (region == 'Kakariko') region = 'Kakariko Village';
         stone = hint.split('(')[1].split(')')[0].trim();
         if (!(region in $scope.gossipHints)) {
           $scope.gossipHints[region] = {};

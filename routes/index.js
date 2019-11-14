@@ -26,7 +26,7 @@ var icons = [
   { link: "https://twitch.tv/scatter", image: "iconmonstr-twitch-1-240.png" },
     { link: "https://www.youtube.com/channel/UCZ8iLdNnq61GtOW4k_v5twg", image: "iconmonstr-youtube-6-240.png" },
     { link: "https://twitter.com/scattertv", image: "iconmonstr-twitter-1-240.png" },
-    { link: "https://discord.gg/b9qJYj3 ", image: "iconmonstr-discord-1-240.png" },
+    { link: "https://discord.gg/NdSKEzC ", image: "iconmonstr-discord-1-240.png" },
     { link: "https://github.com/scatter-dev ", image: "iconmonstr-github-1-240.png" },
 ];
 
@@ -39,7 +39,7 @@ streams = [
   { title: "Randomizers", games: [
     { title: "Donkey Kong 64", status: "In progress"},
     { title: "La-Mulana", status: "Not started"},
-    { title: "Ocarina of Time", status: "Complete"},
+    { title: "Ocarina of Time", status: "In progress"},
   ]},
   { title: "Puzz Gang", games: [
     { title: "Myst 3: Exile", status: "In progress", image: "Myst 3"},

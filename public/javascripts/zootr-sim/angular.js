@@ -204,6 +204,7 @@ app.controller('simController', function($scope, $http) {
       $scope.itemCounts['Gold Skulltula Token']++;
       $scope.checkedLocations.push(loc);
     }
+
     else {
       $scope.numChecksMade++;
       

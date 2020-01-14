@@ -40,6 +40,8 @@ app.controller('simController', function($scope, $http) {
     $scope.checkedHints = [];
     
     $scope.knownHints = {};
+
+    $scope.peekedLocations = [];
     
     $scope.allLocations = {};
     
@@ -202,6 +204,7 @@ app.controller('simController', function($scope, $http) {
       $scope.itemCounts['Gold Skulltula Token']++;
       $scope.checkedLocations.push(loc);
     }
+
     else {
       $scope.numChecksMade++;
       
@@ -244,6 +247,24 @@ app.controller('simController', function($scope, $http) {
     'Gerudo Training Grounds':0,
     'Ganons Castle':0
   };
+};
+
+$scope.peekAt = function(loc) {
+  var hintItem = $scope.allLocations[loc];
+  if (!(loc in $scope.knownHints)) {
+    $scope.knownHints[loc] = [hintItem];
+  }
+  else {
+    $scope.knownHints[loc].push(hintItem);
+  }
+  $scope.peekedLocations.push(loc);
+  $scope.lastchecked = loc + ": " + hintItem;
+  $scope.actions.push("Peek:" + loc);
+  $scope.updateForage();
+};
+
+$scope.hasPeeked = function(loc) {
+  return $scope.peekedLocations.includes(loc);
 };
 
 $scope.undoCheck = function() {
@@ -345,6 +366,14 @@ $scope.undoCheck = function() {
     }
     $scope.currentItemsAll.pop();
     $scope.itemCounts[item]--;
+  }
+
+  else if (mostRecent.split(':')[0] == 'Peek') {
+    $scope.peekedLocations.pop();
+    $scope.knownHints[mostRecent.split(':')[1]].pop();
+    if ($scope.knownHints[mostRecent.split(':')[1]].length == 0) {
+      delete $scope.knownHints[mostRecent.split(':')[1]];
+    }
   }
   
   $scope.updateForage();
@@ -1027,7 +1056,7 @@ $scope.hasBossKey = function(dungeon) {
     $scope.updateForage();
   };
   
-  var forageItems = ['currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
+  var forageItems = ['peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
   
   $scope.updateForage = function() {
     forageItems.forEach(function(item) {

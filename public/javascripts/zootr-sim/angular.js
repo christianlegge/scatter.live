@@ -50,6 +50,10 @@ app.controller('simController', function($scope, $http) {
     $scope.checkedLocations = [];
     
     $scope.currentItemsAll = [];
+
+    $scope.windRegionChild = "";
+
+    $scope.windRegionAdult = "";
     
     $scope.medallions = {};
     
@@ -654,6 +658,28 @@ $scope.hasBossKey = function(dungeon) {
   $scope.countItem = function(item) {
     return 0;
   };
+
+  $scope.setWind = function() {
+    if ($scope.currentAge == "Child") {
+      $scope.windRegionChild = $scope.currentRegion;
+    }
+    else {
+      $scope.windRegionAdult = $scope.currentRegion;
+    }
+    $scope.updateForage();
+  };
+
+  $scope.recallWind = function() {
+    if ($scope.currentAge == "Child") {
+      $scope.currentRegion = $scope.windRegionChild;
+      $scope.windRegionChild = "";
+    }
+    else {
+      $scope.currentRegion = $scope.windRegionAdult;
+      $scope.windRegionAdult = "";
+    }
+    $scope.updateForage();
+  };
   
   $scope.downloadSpoilerLog = function() {
     var blob = new Blob([JSON.stringify($scope.currentSpoilerLog, null, '\t')], {type: "application/json"});
@@ -1056,7 +1082,7 @@ $scope.hasBossKey = function(dungeon) {
     $scope.updateForage();
   };
   
-  var forageItems = ['peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
+  var forageItems = ['windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
   
   $scope.updateForage = function() {
     forageItems.forEach(function(item) {

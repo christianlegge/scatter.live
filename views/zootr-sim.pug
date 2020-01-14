@@ -87,6 +87,10 @@ html
           br
           span(ng-if="countChus() - usedChus > 0") Bombchus: {{countChus() - usedChus}} 
           a(ng-if="countChus() - usedChus > 0",ng-click="useChu()").useChu Use Bombchu
+          br
+          br
+          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild == '') || (currentAge == 'Adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
+          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild != '') || (currentAge == 'Adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{currentAge == 'Child' ? windRegionChild : windRegionAdult}})
         .main.current
           .currentinner
             p Current Region: {{currentRegion}} [{{currentAge}}]

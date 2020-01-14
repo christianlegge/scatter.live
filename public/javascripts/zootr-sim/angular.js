@@ -883,8 +883,8 @@ $scope.hasBossKey = function(dungeon) {
     
     $scope.actions.push('Hint:' + stone + ':' + hintLoc);
     
-    if (hintLoc == "Fire Temple MQ West Tower Top Chest/Fire Temple Megaton Hammer Chest") {
-      hintLoc = "Fire Temple MQ West Tower Top Chest" in $scope.allLocations ? "Fire Temple MQ West Tower Top Chest" : "Fire Temple Megaton Hammer Chest";
+    if (hintLoc.includes("/")) {
+      hintLoc = hintLoc.split("/")[0] in $scope.allLocations ? hintLoc.split("/")[0] : hintLoc.split("/")[1];
     }
     
     if (hintLoc != '' && hintItem != '') {

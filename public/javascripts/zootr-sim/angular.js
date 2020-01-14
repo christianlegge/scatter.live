@@ -246,6 +246,17 @@ app.controller('simController', function($scope, $http) {
   };
 };
 
+$scope.peekAt = function(loc) {
+  var hintItem = $scope.allLocations[loc];
+  if (!(loc in $scope.knownHints)) {
+    $scope.knownHints[loc] = [hintItem];
+  }
+  else {
+    $scope.knownHints[loc].push(hintItem);
+  }
+  $scope.updateForage();
+}
+
 $scope.undoCheck = function() {
   var mostRecent = $scope.actions.pop();
   if (mostRecent.split(':')[0] == 'Location') {

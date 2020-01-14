@@ -90,7 +90,7 @@ html
         .main.current
           .currentinner
             p Current Region: {{currentRegion}} [{{currentAge}}]
-            img(ng-repeat-start="loc in getAvailableLocations()", ng-if="loc.includes('Freestanding')", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png")
+            img(ng-repeat-start="loc in getAvailableLocations()", ng-if="loc.includes('Freestanding') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
             a(ng-if="!checkedLocations.includes(loc) && shouldAppearInLocations(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
               br
             span(ng-repeat-end,ng-if="checkedLocations.includes(loc)", class="checked") {{ loc }}

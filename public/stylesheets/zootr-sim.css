@@ -491,6 +491,13 @@ a#undo {
   background-color: #0061ff;
 }
 
+.peekicon {
+  height: 0.8em;
+  vertical-align: middle;
+  filter: invert(50%);
+  cursor: pointer;
+}
+
 .main a {
   text-decoration: none;
   font-weight: bold;

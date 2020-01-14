@@ -615,6 +615,7 @@ var hintLocationsMeanings = {
   'Lake Hylia': 'Lake Hylia',
   'Zora\'s River': 'Zora\'s River',
   'Zora\'s Domain': 'Zora\'s Domain',
+  'Zora\'s Fountain': 'Zora\'s Fountain',
   'Hyrule Castle': 'Hyrule Castle',
   'Hyrule Field': 'Hyrule Field',
 };

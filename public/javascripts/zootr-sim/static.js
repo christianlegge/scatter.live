@@ -497,6 +497,7 @@ var hintItemsMeanings = {
 };
 
 var hintLocationsMeanings = {
+  "the Skull Kid grants": "Skull Kid",
   "collecting cuccos rewards": "Anjus Chickens",
   "Big Poes leads to": "10 Big Poes",
   "ghost hunters will be rewarded with": "10 Big Poes",

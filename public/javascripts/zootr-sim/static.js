@@ -497,6 +497,7 @@ var hintItemsMeanings = {
 };
 
 var hintLocationsMeanings = {
+  "collecting cuccos rewards": "Anjus Chickens",
   "Big Poes leads to": "10 Big Poes",
   "ghost hunters will be rewarded with": "10 Big Poes",
   "the Skull Mask yields": "Deku Theater Skull Mask",
@@ -604,7 +605,7 @@ var hintLocationsMeanings = {
   'Desert Colossus': 'Desert Colossus',
   'Lon Lon Ranch': 'Lon Lon Ranch',
   'Sacred Forest Meadow': 'Sacred Forest Meadow',
-  'Gerudo Fortress': 'Gerudo Fortress',
+  'Gerudo\'s Fortress': 'Gerudo Fortress',
   'Kakariko Village': 'Kakariko Village',
   'Market': 'Market',
   'Gerudo Valley': 'Gerudo Valley',

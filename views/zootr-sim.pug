@@ -87,10 +87,15 @@ html
           br
           span(ng-if="countChus() - usedChus > 0") Bombchus: {{countChus() - usedChus}} 
           a(ng-if="countChus() - usedChus > 0",ng-click="useChu()").useChu Use Bombchu
+          br
+          br
+          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild == '') || (currentAge == 'Adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
+          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild != '') || (currentAge == 'Adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{currentAge == 'Child' ? windRegionChild : windRegionAdult}})
         .main.current
           .currentinner
             p Current Region: {{currentRegion}} [{{currentAge}}]
-            a(ng-repeat-start="loc in getAvailableLocations()",ng-if="!checkedLocations.includes(loc) && shouldAppearInLocations(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
+            img(ng-repeat-start="loc in getAvailableLocations()", ng-if="loc.includes('Freestanding') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
+            a(ng-if="!checkedLocations.includes(loc) && shouldAppearInLocations(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
               br
             span(ng-repeat-end,ng-if="checkedLocations.includes(loc)", class="checked") {{ loc }}
               br

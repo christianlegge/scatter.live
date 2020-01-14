@@ -40,6 +40,8 @@ app.controller('simController', function($scope, $http) {
     $scope.checkedHints = [];
     
     $scope.knownHints = {};
+
+    $scope.peekedLocations = [];
     
     $scope.allLocations = {};
     
@@ -48,6 +50,10 @@ app.controller('simController', function($scope, $http) {
     $scope.checkedLocations = [];
     
     $scope.currentItemsAll = [];
+
+    $scope.windRegionChild = "";
+
+    $scope.windRegionAdult = "";
     
     $scope.medallions = {};
     
@@ -132,7 +138,10 @@ app.controller('simController', function($scope, $http) {
     'Default / Beginner': 'AJCYTK2AB2FMAA2WCAAAAAK2DUCA',
     'Easy Mode': 'AJYYTKAHT4BAAAJWAACTCTFBJBAAANK2HUCA',
     'Hell Mode (minus Entrance Shuffle)': 'AJB4TT2AA2F9HQG85SAABSBACAAS9BADA33S',
-    'Accessible Weekly (2019-04-27)': 'AJWYTKAHB2BCAAJWAAJBASAGJBHNTHA3EA2UTVEFAA',
+    'Standard Weekly (2020-01-04)': 'AJWGAJARB2BCAAJWAAJBASAGJBHNTHA3EA2UTVAFAA',
+    'Accessible Weekly (old) (2019-04-27)': 'AJWYTKAHB2BCAAJWAAJBASAGJBHNTHA3EA2UTVEFAA',
+    'S3 Tournament': 'AJWGAJARB2BCAAJWAAJBASAGJBHNTHA3EA2UTVAFAA',
+    'Scrub Tournament': 'AJWGAJARB2BCAAJWAACTCTFBJBASAGJBHNTHA3EAEVSVAFAA',
   };
   
   $scope.itemgrid = [
@@ -199,6 +208,7 @@ app.controller('simController', function($scope, $http) {
       $scope.itemCounts['Gold Skulltula Token']++;
       $scope.checkedLocations.push(loc);
     }
+
     else {
       $scope.numChecksMade++;
       
@@ -241,6 +251,24 @@ app.controller('simController', function($scope, $http) {
     'Gerudo Training Grounds':0,
     'Ganons Castle':0
   };
+};
+
+$scope.peekAt = function(loc) {
+  var hintItem = $scope.allLocations[loc];
+  if (!(loc in $scope.knownHints)) {
+    $scope.knownHints[loc] = [hintItem];
+  }
+  else {
+    $scope.knownHints[loc].push(hintItem);
+  }
+  $scope.peekedLocations.push(loc);
+  $scope.lastchecked = loc + ": " + hintItem;
+  $scope.actions.push("Peek:" + loc);
+  $scope.updateForage();
+};
+
+$scope.hasPeeked = function(loc) {
+  return $scope.peekedLocations.includes(loc);
 };
 
 $scope.undoCheck = function() {
@@ -342,6 +370,14 @@ $scope.undoCheck = function() {
     }
     $scope.currentItemsAll.pop();
     $scope.itemCounts[item]--;
+  }
+
+  else if (mostRecent.split(':')[0] == 'Peek') {
+    $scope.peekedLocations.pop();
+    $scope.knownHints[mostRecent.split(':')[1]].pop();
+    if ($scope.knownHints[mostRecent.split(':')[1]].length == 0) {
+      delete $scope.knownHints[mostRecent.split(':')[1]];
+    }
   }
   
   $scope.updateForage();
@@ -622,6 +658,28 @@ $scope.hasBossKey = function(dungeon) {
   $scope.countItem = function(item) {
     return 0;
   };
+
+  $scope.setWind = function() {
+    if ($scope.currentAge == "Child") {
+      $scope.windRegionChild = $scope.currentRegion;
+    }
+    else {
+      $scope.windRegionAdult = $scope.currentRegion;
+    }
+    $scope.updateForage();
+  };
+
+  $scope.recallWind = function() {
+    if ($scope.currentAge == "Child") {
+      $scope.currentRegion = $scope.windRegionChild;
+      $scope.windRegionChild = "";
+    }
+    else {
+      $scope.currentRegion = $scope.windRegionAdult;
+      $scope.windRegionAdult = "";
+    }
+    $scope.updateForage();
+  };
   
   $scope.downloadSpoilerLog = function() {
     var blob = new Blob([JSON.stringify($scope.currentSpoilerLog, null, '\t')], {type: "application/json"});
@@ -851,8 +909,8 @@ $scope.hasBossKey = function(dungeon) {
     
     $scope.actions.push('Hint:' + stone + ':' + hintLoc);
     
-    if (hintLoc == "Fire Temple MQ West Tower Top Chest/Fire Temple Megaton Hammer Chest") {
-      hintLoc = "Fire Temple MQ West Tower Top Chest" in $scope.allLocations ? "Fire Temple MQ West Tower Top Chest" : "Fire Temple Megaton Hammer Chest";
+    if (hintLoc.includes("/")) {
+      hintLoc = hintLoc.split("/")[0] in $scope.allLocations ? hintLoc.split("/")[0] : hintLoc.split("/")[1];
     }
     
     if (hintLoc != '' && hintItem != '') {
@@ -1024,7 +1082,7 @@ $scope.hasBossKey = function(dungeon) {
     $scope.updateForage();
   };
   
-  var forageItems = ['currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
+  var forageItems = ['windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
   
   $scope.updateForage = function() {
     forageItems.forEach(function(item) {

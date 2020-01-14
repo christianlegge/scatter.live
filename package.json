@@ -13,10 +13,10 @@
     "express-slash": "^2.0.1",
     "http-errors": "~1.6.2",
     "localforage": "^1.7.3",
-    "mongoose": "^5.4.16",
+    "mongoose": "^5.8.7",
     "morgan": "~1.9.0",
     "node": "^12.10.0",
-    "npm": "^6.11.3",
+    "npm": "^6.13.6",
     "pug": "^2.0.3",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0"

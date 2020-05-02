@@ -9,12 +9,6 @@ html
     link(rel="stylesheet",type="text/css",href="stylesheets/zootr-sim.css")
     link(rel="shortcut icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
     link(rel="icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
-    +jquery
-    +localforage
-    +filesaver
-    +angular
-    script(type="text/javascript",src="javascripts/zootr-sim/static.js")
-    script(type="text/javascript",src="javascripts/zootr-sim/angular.js")
     
   body(ng-app="zootrSim",ng-controller="simController",class="{{darkModeOn ? 'dark-mode' : ''}}")
     .headerbar.noselect
@@ -181,3 +175,9 @@ html
       a(href="..") Back to scatter.live
       |  | 
       a(href="https://github.com/scatter-dev/scatter.live/issues/new?title=[zootr-sim]") Report an Issue
+    +jquery
+    +localforage
+    +filesaver
+    +angular
+    script(type="text/javascript",src="javascripts/zootr-sim/static.js")
+    script(type="text/javascript",src="javascripts/zootr-sim/angular.js")

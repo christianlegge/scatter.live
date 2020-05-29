@@ -22,8 +22,8 @@ html
     a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
     a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
     .mainbody
-      //-h1.navihey Hey!
-      //-p OoT Randomizer v5.0 is out! Unfortunately the sim isn't updated to work with it quite yet. It still works fine with v4.0 in the meantime (including the Generate option).
+      h1.navihey(ng-show="!playing") Hey!
+      p(ng-show="!playing") The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
       
       .praise(ng-show="!playing") PRAISE FOR ZOOTR SIM
       br(ng-show="!playing")

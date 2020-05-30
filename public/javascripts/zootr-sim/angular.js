@@ -1124,11 +1124,13 @@ $scope.hasBossKey = function(dungeon) {
     has: x => $scope.currentItemsAll.includes(x),
     has_explosives: () => logicEvaluation.has("Bomb Bag") || $scope.countChus() - $scope.usedChus > 0,
     has_bombchus: () => logicEvaluation.has_explosives(),
+    has_all_stones: () => logicEvaluation.has("Kokiri Emerald") && logicEvaluation.has("Goron Ruby") && logicEvaluation.has("Zora Sapphire"),
     Sticks: () => true,
     Bombs: () => logicEvaluation.has("Bomb Bag"),
     Hammer: () => logicEvaluation.has("Hammer"),
     Bow: () => logicEvaluation.has("Progressive Bow"),
     Mirror_Shield: () => logicEvaluation.has("Mirror Shield"),
+    Slingshot: () => logicEvaluation.has("Slingshot"),
     Iron_Boots: () => logicEvaluation.has("Iron Boots"),
     Hover_Boots: () => logicEvaluation.has("Hover Boots"),
     Progressive_Wallet: () => logicEvaluation.has("Progressive Wallet"),
@@ -1136,10 +1138,20 @@ $scope.hasBossKey = function(dungeon) {
     Progressive_Hookshot: () => logicEvaluation.has("Progressive Hookshot"),
     Progressive_Strength_Upgrade: () => logicEvaluation.has("Progressive Strength Upgrade"),
     Blue_Fire: () => logicEvaluation.has_bottle(),
-    can_play: x => (logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time")) && $scope.currentItemsAll.includes(x[0]),
+    Bonooru: () => true,
+    can_play: x => (logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time")) && $scope.currentItemsAll.includes(x),
     Boomerang: () => $scope.currentItemsAll.includes("Boomerang"),
     Kokiri_Sword: () => true,
+    Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time"),
+    "Skull Mask": () => true,
+    "Mask of Truth": () => logicEvaluation.has_all_stones(),
+    Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
+    Eyedrops: () => logicEvaluation.has("Eyedrops"),
+    Claim_Check: () => logicEvaluation.has("Claim Check"),
+    "Water Temple Clear": () => logicEvaluation.has("Water Medallion"),
     Forest_Medallion: () => logicEvaluation.has("Forest Medallion"),
+    Big_Poe: () => logicEvaluation.has("Big Poe"),
+    Bottle_with_Letter: () => logicEvaluation.has("Bottle with Letter"),
     can_child_attack: () => true,
     has_bottle: () => $scope.currentItemsAll.filter(x => x.includes("Bottle")).length > 0,
     is_adult: () => $scope.currentAge == "Adult",
@@ -1159,10 +1171,19 @@ $scope.hasBossKey = function(dungeon) {
     can_plant_bugs: () => logicEvaluation.is_child() && logicEvaluation.has_bottle(),
     can_plant_bean: () => logicEvaluation.is_child(),
     can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
+    can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
     found_bombchus: () => logicEvaluation.has("Bombchus") || logicEvaluation.has("Bomb Bag"),
     at_night: () => true,
     damage_multiplier: () => true,
     at: () => true,
+    shuffle_dungeon_entrances: () => false,
+    can_trigger_lacs: () => logicEvaluation.has("Shadow Medallion") && logicEvaluation.has("Spirit Medallion"),
+    at_day: () => true,
+    at_dampe_time: () => true,
+    guarantee_trade_path: () => true,
+    "Eyedrops Access": () => true,
+    "Goron City Child Fire": () => logicEvaluation.is_child() && logicEvaluation.can_use("Dins Fire"),
+    bombchus_in_logic: () => true,
   }
 
   function parseLogicRule(rule) {
@@ -1179,7 +1200,7 @@ $scope.hasBossKey = function(dungeon) {
       if (!(term in logicEvaluation)) {
         throw "Unrecognized term: " + term;
       }
-      return logicEvaluation[term](params);
+      return logicEvaluation[term](params.length == 1 ? params[0] : params);
     }
 
     function peekChar(n = 1) {

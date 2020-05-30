@@ -1240,13 +1240,13 @@ $scope.hasBossKey = function(dungeon) {
         while (!/^'[^']*'$/.test(peekChar(n + 1)) && it + n < rule.length) {
           n++;
         }
-        return peekChar(n - 1);
+        return peekChar(n + 1).substring(1, n + 1);
       }
       else {
         while (/^[A-Za-z_]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
           n++;
         }
-        return peekChar(n+1).substring(1, n+1);
+        return peekChar(n);
       }
     }
 
@@ -1272,6 +1272,7 @@ $scope.hasBossKey = function(dungeon) {
     function expression() {
       whitespace();
       var num = term();
+      whitespace();
       while (peekToken() == 'and' || peekToken() == 'or') {
         whitespace();
         var op = getToken();

@@ -342,8 +342,8 @@ var logic = {
 		"Kokiri Shop Item 6": "True",
 		"Kokiri Shop Item 7": "True",
 		"Kokiri Shop Item 8": "True",
-		"Kokiri Forest Storms Grotto Chest": "True",
-		"Kokiri Forest Storms Grotto Gossip Stone": "True",
+		"Kokiri Forest Storms Grotto Chest": "can_play(Song_of_Storms)",
+		"Kokiri Forest Storms Grotto Gossip Stone": "can_play(Song_of_Storms)",
 		"Butterfly Fairy": "can_use(Sticks) and has_bottle",
 		"Bug Shrub": "can_cut_shrubs and has_bottle",
 		"Lone Fish": "has_bottle"
@@ -364,8 +364,8 @@ var logic = {
 		"GS Lost Woods Bean Patch Near Stage": "can_plant_bugs and (can_child_attack)",
 		"Butterfly Fairy": "can_use(Sticks) and has_bottle",
 		"Gift from Saria": "True",
-		"Lost Woods Generic Grotto Chest": "True",
-		"Lost Woods Generic Grotto Gossip Stone": "True",
+		"Lost Woods Generic Grotto Chest": "can_blast_or_smash",
+		"Lost Woods Generic Grotto Gossip Stone": "can_blast_or_smash",
 		"Lone Fish": "has_bottle",
 		"Deku Theater Skull Mask": "is_child and 'Skull Mask'",
 		"Deku Theater Mask of Truth": "is_child and 'Mask of Truth'",
@@ -383,30 +383,30 @@ var logic = {
 		"Free Fairies": "has_bottle",
 		"SFM Grotto Deku Scrub Red Potion": "can_stun_deku",
 		"SFM Grotto Deku Scrub Green Potion": "can_stun_deku",
-		"Wolfos Grotto Chest": "is_adult or Slingshot or Sticks or Kokiri_Sword or can_use(Dins_Fire)"
+		"Wolfos Grotto Chest": "can_open_bomb_grotto and (is_adult or Slingshot or Sticks or Kokiri_Sword or can_use(Dins_Fire))"
 	},
 	"Hyrule Field": {
 		"Ocarina of Time": "is_child and has_all_stones",
 		"Song from Ocarina of Time": "is_child and has_all_stones",
 		"Big Poe Kill": "can_use(Bow) and can_ride_epona and has_bottle",
-		"Remote Southern Grotto Chest": "True",
-		"Remote Southern Grotto Gossip Stone": "True",
+		"Remote Southern Grotto Chest": "can_blast_or_smash",
+		"Remote Southern Grotto Gossip Stone": "can_blast_or_smash",
 		"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle",
 		"Butterfly Fairy": "can_use(Sticks) and has_bottle",
 		"Bug Shrub": "can_cut_shrubs and has_bottle",
 		"Lone Fish": "has_bottle",
 		"Field Near Lake Outside Fence Grotto Chest": "True",
 		"Field Near Lake Outside Fence Grotto Gossip Stone": "True",
-		"HF Grotto Deku Scrub Piece of Heart": "can_stun_deku",
+		"HF Grotto Deku Scrub Piece of Heart": "can_open_bomb_grotto and can_stun_deku",
 		"GS Hyrule Field Near Gerudo Valley": "has_fire_source and (can_use(Hookshot) or can_use(Boomerang))",
 		"HF Grotto Cow": "has_fire_source and can_play(Eponas_Song)",
 		"Field Valley Grotto Gossip Stone": "has_fire_source",
 		"Nut Pot": "has_fire_source",
-		"Field West Castle Town Grotto Chest": "True",
-		"Field West Castle Town Grotto Gossip Stone": "True",
+		"Field West Castle Town Grotto Chest": "can_blast_or_smash",
+		"Field West Castle Town Grotto Gossip Stone": "can_blast_or_smash",
 		"Free Fairies": "has_bottle",
 		"GS Hyrule Field near Kakariko": "can_use(Boomerang) or can_use(Hookshot)",
-		"Tektite Grotto Freestanding PoH": "(Progressive_Scale, 2) or can_use(Iron_Boots)"
+		"Tektite Grotto Freestanding PoH": "can_open_bomb_grotto and ((Progressive_Scale, 2) or can_use(Iron_Boots))"
 	},
 	"Lake Hylia": {
 		"Pierre": "is_adult and Bonooru and not free_scarecrow",
@@ -478,7 +478,7 @@ var logic = {
 		"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle",
 		"Fairy Pond": "can_play(Song_of_Storms) and has_bottle",
 		"Bug Rock": "has_bottle",
-		"Desert Colossus Fairy Reward": "can_play(Zeldas_Lullaby)",
+		"Desert Colossus Fairy Reward": "has_explosives and can_play(Zeldas_Lullaby)",
 		"Desert Grotto Deku Scrub Red Potion": "can_stun_deku",
 		"Desert Grotto Deku Scrub Green Potion": "can_stun_deku"
 	},
@@ -536,15 +536,15 @@ var logic = {
 		"Bug Rock": "has_bottle",
 		"Zeldas Letter": "True",
 		"Impa at Castle": "True",
-		"Hyrule Castle Fairy Reward": "can_play(Zeldas_Lullaby)",
+		"Hyrule Castle Fairy Reward": "has_explosives and can_play(Zeldas_Lullaby)",
 		"GS Hyrule Castle Grotto": "can_blast_or_smash and (can_use(Boomerang) or can_use(Hookshot))",
-		"Castle Storms Grotto Gossip Stone": "can_blast_or_smash",
+		"Castle Storms Grotto Gossip Stone": "can_blast_or_smash and can_play(Song_of_Storms)",
 		"Wandering Bugs": "can_blast_or_smash and has_bottle",
 		"Nut Pot": "can_blast_or_smash"
 	},
 	"Outside Ganons Castle": {
 		"GS Outside Ganon's Castle": "True",
-		"Ganons Castle Fairy Reward": "can_play(Zeldas_Lullaby)"
+		"Ganons Castle Fairy Reward": "can_use(Golden_Gauntlets) and can_play(Zeldas_Lullaby)"
 	},
 	"Kakariko Village": {
 		"Sheik in Kakariko": "is_adult and Forest_Medallion and Fire_Medallion and Water_Medallion",
@@ -603,8 +603,8 @@ var logic = {
 		"Shield Grave Chest": "True",
 		"Free Fairies": "can_blast_or_smash and has_bottle",
 		"Heart Piece Grave Chest": "can_play(Suns_Song)",
-		"Composer Grave Chest": "has_fire_source",
-		"Song from Composer Grave": "is_adult or (Slingshot or Boomerang or Sticks or has_explosives or Kokiri_Sword)",
+		"Composer Grave Chest": "can_play(Zeldas_Lullaby) and has_fire_source",
+		"Song from Composer Grave": "can_play(Zeldas_Lullaby) and (is_adult or (Slingshot or Boomerang or Sticks or has_explosives or Kokiri_Sword))",
 		"Hookshot Chest": "True",
 		"Dampe Race Freestanding PoH": "is_adult or logic_child_dampe_race_poh",
 		"Nut Pot": "True",
@@ -623,10 +623,10 @@ var logic = {
 		"Death Mountain Trail Gossip Stone": "True",
 		"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle",
 		"Bug Rock": "is_child and has_bottle",
-		"Mountain Summit Fairy Reward": "can_play(Zeldas_Lullaby)",
+		"Mountain Summit Fairy Reward": "can_blast_or_smash and can_play(Zeldas_Lullaby)",
 		"DMT Grotto Cow": "can_play(Eponas_Song)",
-		"Mountain Storms Grotto Chest": "True",
-		"Mountain Storms Grotto Gossip Stone": "True",
+		"Mountain Storms Grotto Chest": "can_play(Song_of_Storms)",
+		"Mountain Storms Grotto Gossip Stone": "can_play(Song_of_Storms)",
 		"Butterfly Fairy": "can_use(Sticks) and has_bottle",
 		"Bug Shrub": "can_cut_shrubs and has_bottle",
 		"Lone Fish": "has_bottle"
@@ -732,7 +732,7 @@ var logic = {
 		"Zoras Fountain Jabu Gossip Stone": "True",
 		"Gossip Stone Fairy": "can_summon_gossip_fairy_without_suns and has_bottle",
 		"Butterfly Fairy": "can_use(Sticks) and at_day and has_bottle",
-		"Zoras Fountain Fairy Reward": "can_play(Zeldas_Lullaby)"
+		"Zoras Fountain Fairy Reward": "has_explosives and can_play(Zeldas_Lullaby)"
 	},
 	"Lon Lon Ranch": {
 		"Song from Malon": "is_child and Zeldas_Letter and Ocarina and at_day",
@@ -746,9 +746,9 @@ var logic = {
 		"Lon Lon Tower Freestanding PoH": "is_child",
 		"LLR Tower Left Cow": "can_play(Eponas_Song)",
 		"LLR Tower Right Cow": "can_play(Eponas_Song)",
-		"LLR Grotto Deku Scrub Deku Nuts": "can_stun_deku",
-		"LLR Grotto Deku Scrub Bombs": "can_stun_deku",
-		"LLR Grotto Deku Scrub Arrows": "can_stun_deku"
+		"LLR Grotto Deku Scrub Deku Nuts": "is_child and can_stun_deku",
+		"LLR Grotto Deku Scrub Bombs": "is_child and can_stun_deku",
+		"LLR Grotto Deku Scrub Arrows": "is_child and can_stun_deku"
 	},
 	"Shadow Temple": {
 		"Shadow Temple Map Chest": "True",

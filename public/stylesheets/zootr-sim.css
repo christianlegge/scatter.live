@@ -504,6 +504,11 @@ a#undo {
   text-decoration: none;
   font-weight: bold;
   color: black;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 .dark-mode .main a {

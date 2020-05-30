@@ -158,7 +158,7 @@ app.controller('simController', function($scope, $http) {
   };
   
   $scope.checkLocation = function(loc) {
-    if (!parseLogicRule(logic[$scope.currentRegion][loc])) {
+    if (loc in logic[$scope.currentRegion] && !parseLogicRule(logic[$scope.currentRegion][loc])) {
       if (loc != "Treasure Chest Game" || Math.floor(Math.random() * 32) > 0) {
         $scope.lastchecked = logic[$scope.currentRegion][loc];
         var el = document.getElementById(loc);

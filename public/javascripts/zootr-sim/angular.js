@@ -158,6 +158,17 @@ app.controller('simController', function($scope, $http) {
   };
   
   $scope.checkLocation = function(loc) {
+    if (!parseLogicRule(logic[$scope.currentRegion][loc])) {
+      if (loc != "Treasure Chest Game" || Math.floor(Math.random() * 32) > 0) {
+        $scope.lastchecked = logic[$scope.currentRegion][loc];
+        var el = document.getElementById(loc);
+        el.classList.add('logicfailed-anim');
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = null;
+        return;
+      }
+    }
     $scope.actions.push('Location:' + loc);
     if (loc.startsWith('Check Pedestal')) {
       $scope.checkedLocations.push(loc);

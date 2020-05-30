@@ -804,6 +804,14 @@ a.useChu {
   animation: copieddark 1.2s forwards;
 }
 
+.logicfailed-anim {
+  animation: logicfailed 1.2s forwards;
+}
+
+.dark-mode .logicfailed-anim {
+  animation: logicfaileddark 1.2s forwards;
+}
+
 @keyframes copied {
   0% {
     color:black;
@@ -820,6 +828,16 @@ a.useChu {
   100% {
     color: #222222;
   }
+}
+
+@keyframes logicfailed {
+  from { color: red; }
+  to { color: black; }
+}
+
+@keyframes logicfaileddark {
+  from { color: red; }
+  to { color: #d2d2d2; }
 }
 
 .footer {

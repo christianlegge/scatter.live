@@ -1139,10 +1139,10 @@ $scope.hasBossKey = function(dungeon) {
     Progressive_Strength_Upgrade: () => logicEvaluation.has("Progressive Strength Upgrade"),
     Blue_Fire: () => logicEvaluation.has_bottle(),
     Bonooru: () => true,
-    can_play: x => (logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time")) && $scope.currentItemsAll.includes(x),
+    can_play: x => (logicEvaluation.Ocarina()) && $scope.currentItemsAll.includes(x),
     Boomerang: () => $scope.currentItemsAll.includes("Boomerang"),
     Kokiri_Sword: () => true,
-    Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time"),
+    Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
     "Skull Mask": () => true,
     "Mask of Truth": () => logicEvaluation.has_all_stones(),
     Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
@@ -1184,6 +1184,8 @@ $scope.hasBossKey = function(dungeon) {
     "Eyedrops Access": () => true,
     "Goron City Child Fire": () => logicEvaluation.is_child() && logicEvaluation.can_use("Dins Fire"),
     bombchus_in_logic: () => true,
+    can_open_bomb_grotto: () => logicEvaluation.can_blast_or_smash(),
+    can_open_storms_grotto: () => logicEvaluation.can_play("Song of Storms"),
   }
 
   function parseLogicRule(rule) {

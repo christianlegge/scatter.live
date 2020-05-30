@@ -1103,9 +1103,254 @@ $scope.hasBossKey = function(dungeon) {
     }
     $scope.$apply();
   });
-  
-});
 
+  var logicEvaluation = {
+    True: () => true,
+    False: () => false,
+    can_use: x => (logicEvaluation.is_magic_item(x) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
+                  (logicEvaluation.is_adult_item(x) && $scope.currentAge == "Adult" && logicEvaluation.has(x)) ||
+                  (logicEvaluation.is_magic_arrow(x) && $scope.currentAge == "Adult" && logicEvaluation.has("Progressive Bow") && logicEvaluation.has(x)) ||
+                  (logicEvaluation.is_child_item(x) && $scope.currentAge == "Child" && logicEvaluation.has(x)),
+    is_magic_item:x => x == "Dins Fire" || x == "Farores Wind" || x == "Nayrus Love" || x == "Lens of Truth",
+    is_magic_arrow:x => x == "Fire Arrows" || x == "Light Arrows",
+    is_adult_item: x => x == "Progressive Bow" || x == "Hammer" || x == "Iron Boots" || x == "Hover Boots" || x == "Progressive Hookshot" || x == "Progressive Strength Upgrade" || x == "Scarecrow" || x == "Distant_Scarecrow",
+    is_child_item: x => x == "Slingshot" || x == "Boomerang" || x == "Kokiri Sword" || x == "Deku Shield",
+    can_see_with_lens: () => true,
+    has_projectile: x => logicEvaluation.has_explosives() ||
+                         (x == "child" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang())) ||
+                         (x == "adult" && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
+                         (x == "both" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang()) && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
+                         (x == "either" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang() || logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))),
+    has: x => $scope.currentItemsAll.includes(x),
+    has_explosives: () => logicEvaluation.has("Bomb Bag") || $scope.countChus() - $scope.usedChus > 0,
+    has_bombchus: () => logicEvaluation.has_explosives(),
+    Sticks: () => true,
+    Bombs: () => logicEvaluation.has("Bomb Bag"),
+    Hammer: () => logicEvaluation.has("Hammer"),
+    Bow: () => logicEvaluation.has("Progressive Bow"),
+    Mirror_Shield: () => logicEvaluation.has("Mirror Shield"),
+    Iron_Boots: () => logicEvaluation.has("Iron Boots"),
+    Hover_Boots: () => logicEvaluation.has("Hover Boots"),
+    Progressive_Wallet: () => logicEvaluation.has("Progressive Wallet"),
+    Gerudo_Membership_Card: () => logicEvaluation.has("Gerudo Card"),
+    Progressive_Hookshot: () => logicEvaluation.has("Progressive Hookshot"),
+    Progressive_Strength_Upgrade: () => logicEvaluation.has("Progressive Strength Upgrade"),
+    Blue_Fire: () => logicEvaluation.has_bottle(),
+    can_play: x => (logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time")) && $scope.currentItemsAll.includes(x[0]),
+    Boomerang: () => $scope.currentItemsAll.includes("Boomerang"),
+    Kokiri_Sword: () => true,
+    Forest_Medallion: () => logicEvaluation.has("Forest Medallion"),
+    can_child_attack: () => true,
+    has_bottle: () => $scope.currentItemsAll.filter(x => x.includes("Bottle")).length > 0,
+    is_adult: () => $scope.currentAge == "Adult",
+    can_use_projectile: () => logicEvaluation.has_explosives() || ($scope.currentAge == "Adult" && (logicEvaluation.has("Progressive Bow") || logicEvaluation.has("Progressive Hookshot"))) || ($scope.currentAge == "Child" && (logicEvaluation.has("Progressive Slingshot") || logicEvaluation.has("Boomerang"))),
+    here: () => true,
+    has_fire_source: () => logicEvaluation.can_use("Dins Fire") || logicEvaluation.can_use("Fire Arrows"),
+    has_fire_source_with_torch: () => logicEvaluation.has_fire_source() || $scope.currentAge == "Child",
+    can_stun_deku: () => true,
+    can_summon_gossip_fairy: () => true,
+    can_summon_gossip_fairy_without_suns: () => true,
+    can_finish_GerudoFortress: () => true,
+    can_blast_or_smash: () => logicEvaluation.has_explosives() || logicEvaluation.can_use("Hammer"),
+    can_dive: () => logicEvaluation.has("Progressive Scale"),
+    logic_fewer_tunic_requirements: () => true,
+    is_child: () => $scope.currentAge == "Child",
+    is_adult: () => $scope.currentAge == "Adult",
+    can_plant_bugs: () => logicEvaluation.is_child() && logicEvaluation.has_bottle(),
+    can_plant_bean: () => logicEvaluation.is_child(),
+    can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
+    found_bombchus: () => logicEvaluation.has("Bombchus") || logicEvaluation.has("Bomb Bag"),
+    at_night: () => true,
+    damage_multiplier: () => true,
+    at: () => true,
+  }
+
+  function parseLogicRule(rule) {
+    rule = rule.trim();
+    var stack = [];
+    var it = 0;
+    var curChar = ' ';
+    var curWord = '';
+
+    function evaluate(term, params = []) {
+      if (term.includes("Small_Key") || term.includes("Boss_Key") || term.startsWith("logic_")) {
+        return true;
+      }
+      if (!(term in logicEvaluation)) {
+        throw "Unrecognized term: " + term;
+      }
+      return logicEvaluation[term](params);
+    }
+
+    function peekChar(n = 1) {
+      return rule.substring(it, it + n);
+    }
+
+    function getChar(n = 1) {
+      //console.log(rule.substring(0, it) + '[' + rule.substring(it, it+n) + ']' + rule.substring(it+n, rule.length));
+      it += n;
+      return rule.substring(it - n, it);
+    }
+
+    function getNum() {
+      var n = 0;
+      while (/^[0-9]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
+        n++;
+      }
+      return getChar(n);
+    }
+
+    function commaFollowsToken() {
+      var n = 1;
+      if (peekChar() == "'") {
+        while (it + n < rule.length) {
+          if (/^'[^']*' *,$/.test(peekChar(n))) {
+            return true;
+          }
+          else if (/^'[^']*' *[^,]$/.test(peekChar(n))) {
+            return false;
+          }
+          n++;
+        }
+        return false;
+      }
+      else {
+        while (it + n < rule.length) {
+          if (/^[A-Za-z_]+ *,$/.test(peekChar(n))) {
+            return true;
+          }
+          else if (/^[A-Za-z_]+ +[^,]$/.test(peekChar(n)) || /^[A-Za-z_]+ *[^,A-Za-z_]$/.test(peekChar(n))) {
+            return false;
+          }
+          n++;
+        }
+        return false;
+      }
+    }
+
+    function whitespace() {
+      while (peekChar() == ' ') {
+        getChar();
+      }
+    }
+
+    function peekToken() {
+      var n = 0;
+      if (peekChar() == "'") {
+        while (!/^'[^']*'$/.test(peekChar(n + 1)) && it + n < rule.length) {
+          n++;
+        }
+        return peekChar(n - 1);
+      }
+      else {
+        while (/^[A-Za-z_]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
+          n++;
+        }
+        return peekChar(n+1).substring(1, n+1);
+      }
+    }
+
+    function getToken() {
+      var n = 0;
+      if (peekChar() == "'") {
+        while (!/^'[^']*'$/.test(peekChar(n + 1)) && it + n < rule.length) {
+          n++;
+        }
+        getChar();
+        var tok = getChar(n - 1);
+        getChar();
+        return tok;
+      }
+      else {
+        while (/^[A-Za-z_]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
+          n++;
+        }
+        return getChar(n);
+      }
+    }
+
+    function expression() {
+      whitespace();
+      var num = term();
+      while (peekToken() == 'and' || peekToken() == 'or') {
+        whitespace();
+        var op = getToken();
+        whitespace();
+        if (op == 'and') {
+          num = term() && num;
+        }
+        if (op == 'or') {
+          num = term() || num;
+        }
+      }
+      return num;
+    }
+
+    function params() {
+      var retval = [];
+      retval.push(getToken());
+      whitespace();
+      while (peekChar() == ',') {
+        getChar();
+        whitespace();
+        retval.push(getToken());
+      }
+      return retval;
+    }
+
+    function tuple() {
+      var item = getToken();
+      whitespace();
+      var comma = getChar();
+      whitespace();
+      var num = parseInt(getNum());
+      return $scope.currentItemsAll.filter(x => x == item).length >= num;
+    }
+
+    function term() {
+      var negate = false;
+      if (peekToken() == 'not') {
+        negate = true;
+        getToken();
+        whitespace();
+      }
+      if (peekChar() == '(') {
+        getChar();
+        whitespace();
+        if (commaFollowsToken()) {
+          var expr = tuple();
+          whitespace();
+          getChar();
+          return negate ? !expr : expr;
+        }
+        else {
+          var e = expression();
+          whitespace();
+          getChar();
+          return negate ? !e : e;
+        }
+      }
+      else {
+        var token = getToken();
+        if (peekChar() == '(') {
+          getChar();
+          whitespace();
+          var parameters = params();
+          whitespace();
+          getChar();
+          var expr = evaluate(token, parameters);
+          return negate ? !expr : expr;
+        }
+        else {
+          var expr = evaluate(token);
+          return negate ? !expr : expr;
+        }
+      }
+    }
+
+    return expression();
+  }
+});
 
 function parseHint(hint) {
   var hintLoc = [];

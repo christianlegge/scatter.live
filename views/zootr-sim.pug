@@ -106,7 +106,7 @@ html
           span AVAILABLE HINTS
           br
           br
-          a(ng-repeat-start="(k,v) in gossipHints[currentRegion]",ng-if="!checkedHints.includes(currentRegion + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
+          a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(currentRegion + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
             br
           span(ng-repeat-end,ng-if="checkedHints.includes(currentRegion + ' ' + k)").hint.checked {{k}}
             br

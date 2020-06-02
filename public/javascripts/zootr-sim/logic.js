@@ -3174,3 +3174,29 @@ var logic = {
 		}
 	}
 };
+
+var subregions = {
+	'Kokiri Forest': ['Root', 'Root Exits', 'Kokiri Forest', 'Outside Deku Tree', 'Links House', 'Mido House', 'Saria House', 'House of Twins', 'Know It All House', 'Kokiri Shop', 'Kokiri Forest Storms Grotto'],
+	'Lost Woods': ['Lost Woods Forest Exit', 'Lost Woods', 'Lost Woods Beyond Mido', 'Lost Woods Bridge From Forest', 'Lost Woods Bridge', 'Lost Woods Generic Grotto', 'Deku Theater', 'Lost Woods Sales Grotto'],
+	'Sacred Forest Meadow': ['Sacred Forest Meadow Entryway', 'Sacred Forest Meadow', 'Meadow Fairy Grotto', 'Meadow Storms Grotto', 'Front of Meadow Grotto'],
+	'Hyrule Field': ['Hyrule Field', 'Remote Southern Grotto', 'Field Near Lake Outside Fence Grotto', 'Field Near Lake Inside Fence Grotto', 'Field Valley Grotto', 'Field West Castle Town Grotto', 'Field Far West Castle Town Grotto', 'Field Kakariko Grotto', 'Field North Lon Lon Grotto'],
+	'Lon Lon Ranch': ['Lon Lon Ranch', 'Talon House', 'Ingo Barn', 'Lon Lon Corner Tower', 'Lon Lon Grotto'],
+	'Lake Hylia': ['Lake Hylia', 'Lake Hylia Owl Flight', 'Lake Hylia Lab', 'Fishing Hole', 'Lake Hylia Grotto'],
+	'Gerudo Valley': ['Gerudo Valley', 'Gerudo Valley Stream', 'Gerudo Valley Crate Ledge', 'Gerudo Valley Far Side', 'Carpenter Tent', 'Gerudo Valley Octorok Grotto', 'Gerudo Valley Storms Grotto'],
+	'Gerudo Fortress': ['Gerudo Fortress', 'Gerudo Fortress Outside Gate', 'Gerudo Fortress Storms Grotto'],
+	'Haunted Wasteland': ['Haunted Wasteland Near Fortress', 'Haunted Wasteland', 'Haunted Wasteland Near Colossus'],
+	'Desert Colossus': ['Desert Colossus', 'Colossus Fairy', 'Desert Colossus Grotto'],
+	'Market': ['Castle Town Entrance', 'Castle Town', 'Castle Town Rupee Room', 'Castle Town Bazaar', 'Castle Town Mask Shop', 'Castle Town Shooting Gallery', 'Castle Town Bombchu Bowling', 'Castle Town Potion Shop', 'Castle Town Treasure Chest Game', 'Castle Town Bombchu Shop', 'Castle Town Dog Lady', 'Castle Town Man in Green House'],
+	'Temple of Time': ['Temple of Time Exterior', 'Temple of Time', 'Beyond Door of Time'],
+	'Hyrule Castle': ['Castle Grounds', 'Hyrule Castle Grounds', 'Hyrule Castle Garden', 'Hyrule Castle Fairy', 'Castle Storms Grotto'],
+	'Outside Ganons Castle': ['Ganons Castle Grounds', 'Ganons Castle Fairy'],
+	'Kakariko Village': ['Kakariko Village', 'Kakariko Impa Ledge', 'Kakariko Rooftop', 'Kakariko Village Backyard', 'Carpenter Boss House', 'House of Skulltula', 'Impas House', 'Impas House Back', 'Impas House Near Cow', 'Windmill', 'Kakariko Bazaar', 'Kakariko Shooting Gallery', 'Kakariko Potion Shop Front', 'Kakariko Potion Shop Back', 'Odd Medicine Building', 'Kakariko Village Behind Gate', 'Kakariko Bombable Grotto', 'Kakariko Back Grotto'],
+	'Graveyard': ['Graveyard', 'Shield Grave', 'Heart Piece Grave', 'Composer Grave', 'Dampes Grave', 'Dampes House', 'Shadow Temple Warp Region'],
+	'Death Mountain Trail': ['Death Mountain', 'Death Mountain Summit', 'Death Mountain Summit Owl Flight', 'Dodongos Cavern Entryway', 'Mountain Summit Fairy', 'Mountain Bombable Grotto', 'Mountain Storms Grotto'],
+	'Goron City': ['Goron City', 'Goron City Woods Warp', 'Darunias Chamber', 'Goron Shop', 'Goron City Grotto'],
+	'Death Mountain Crater': ['Death Mountain Crater Upper Nearby', 'Death Mountain Crater Upper Local', 'Death Mountain Crater Ladder Area Nearby', 'Death Mountain Crater Lower Nearby', 'Death Mountain Crater Lower Local', 'Death Mountain Crater Central Nearby', 'Death Mountain Crater Central Local', 'Fire Temple Entrance', 'Crater Fairy', 'Top of Crater Grotto', 'DMC Hammer Grotto'],
+	'Zora River': ['Zora River Front', 'Zora River', 'Zora River Behind Waterfall', 'Zora River Plateau Open Grotto', 'Zora River Plateau Bombable Grotto', 'Zora River Storms Grotto'],
+	'Zoras Domain': ['Zoras Domain', 'Zoras Domain Behind King Zora', 'Zora Shop', 'Zoras Domain Storms Grotto'],
+	'Zoras Fountain': ['Zoras Fountain', 'Zoras Fountain Fairy'],
+	'Ganons Castle': ['Ganons Castle Tower'],
+};

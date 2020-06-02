@@ -57,7 +57,7 @@ app.controller('simController', function($scope, $http) {
     
     $scope.medallions = {};
     
-    $scope.currentRegion = 'Kokiri Forest';
+    $scope.currentRegion = 'Root';
     $scope.currentAge = 'Child';
     
     $scope.knownMedallions = {
@@ -106,22 +106,53 @@ app.controller('simController', function($scope, $http) {
   $scope.init();
   
   $scope.getAvailableLocations = function() {
-    return $scope.currentAge == 'Child' ? locationsByRegionChild[$scope.currentRegion] : locationsByRegionAdult[$scope.currentRegion];
-  }
-  
-  $scope.getAvailableSkulltulas = function() {
-    if ($scope.currentRegion in masterQuestSkulls) {
-      if ($scope.currentSpoilerLog['dungeons'][$scope.currentRegion] == 'mq') {
-        return masterQuestSkulls[$scope.currentRegion];
+    var allLocsInRegion = [];
+    for (region in logic[$scope.currentRegion]) {
+      if ("locations" in logic[$scope.currentRegion][region]) {
+        allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.currentRegion][region]["locations"]));
       }
     }
-    return $scope.currentAge == 'Child' ? skulltulasByRegionChild[$scope.currentRegion] : skulltulasByRegionAdult[$scope.currentRegion];
+    return Object.keys($scope.currentSpoilerLog['locations']).filter(x => allLocsInRegion.includes(x) && (!x.includes("GS ") && (!x.includes("Shop Item") && (!x.includes("Bazaar Item")))));
+    console.log(logic);
+    for (area in logic) {
+      if ($scope.currentRegion in logic[area]) {
+        var locs = logic[area][$scope.currentRegion]["locations"];
+        console.log(locs);
+        return Object.keys(locs);
+      }
+    }
   }
+  
+  $scope.getAvailableSkulltulas = function () {
+    var allLocsInRegion = [];
+    for (region in logic[$scope.currentRegion]) {
+      if ("locations" in logic[$scope.currentRegion][region]) {
+        allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.currentRegion][region]["locations"]));
+      }
+    }
+    return allLocsInRegion.filter(x => x.includes("GS "));
+  };
   
   $scope.getAvailableEntrances = function() {
     return $scope.currentAge == 'Child' ? entrancesByRegionChild[$scope.currentRegion] : entrancesByRegionAdult[$scope.currentRegion];
-  }
+    var allExitsInRegion = [];
+    subregions[$scope.currentRegion].forEach(function(subregion) {
+      console.log("ASDFdf");
+      allExitsInRegion.concat(Object.keys(logic[$scope.currentRegion][subregion]["exits"]));
+    });
+    console.log(allExitsInRegion);
+    return allExitsInRegion;
+  };
   
+  $scope.getAvailableHints = function () {
+    var allLocsInRegion = [];
+    for (region in logic[$scope.currentRegion]) {
+      if ("locations" in logic[$scope.currentRegion][region]) {
+        allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.currentRegion][region]["locations"]));
+      }
+    }
+    return [...new Set(allLocsInRegion.filter(x => x.includes("Gossip Stone")))];
+  };
   
   $scope.countChus = function() {
     var ownedChus = $scope.currentItemsAll.filter(item => item.includes('Bombchu'));
@@ -230,7 +261,8 @@ app.controller('simController', function($scope, $http) {
       }
       $scope.currentItemsAll.push(item);
       $scope.route += loc + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
-      $scope.lastchecked = loc + ': ' + item;
+      //$scope.lastchecked = loc + ': ' + item;
+      $scope.lastchecked = logic[$scope.currentRegion][loc];
       $scope.itemCounts[item]++;
       
       if (loc in bosses) {
@@ -957,6 +989,14 @@ $scope.hasBossKey = function(dungeon) {
       var results = logfile['locations'];
       $scope.fsHash = logfile['file_hash'];
       $scope.isShopsanity = logfile['settings']['shopsanity'] != 'off';
+      if (logfile['settings']['starting_age'] == 'adult' || (logfile['settings']['starting_age'] == 'random' && logfile['randomized_settings']['starting_age'] == 'adult')) {
+        $scope.currentAge = "Adult";
+        $scope.currentRegion = "Temple of Time";
+      }
+      else {
+        $scope.currentAge = "Child";
+        $scope.currentRegion = "Kokiri Forest";
+      }
       $scope.totalChecks = results.length;
       for (var loc in results) {
         item = typeof results[loc] == 'object' ? results[loc]['item'] : results[loc];

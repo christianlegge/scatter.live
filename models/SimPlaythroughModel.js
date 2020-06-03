@@ -2,11 +2,10 @@ var mongoose = require('mongoose');
 var db = require('./mongoose-connection');
 
 var SimPlaythroughSchema = new mongoose.Schema({
-	uuid: String,
 	locations: Map,
-	checkedLocations: Array,
-	currentItems: Array,
-	startTime: Number,
+	checked_locations: Array,
+	current_items: Array,
+	start_time: Number,
 	hints: Map,
 	entrances: Map,
 	hash: Array

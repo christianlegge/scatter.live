@@ -108,20 +108,22 @@ function parseLog(logfile) {
 	*/
 	var doc = new playthroughModel({
 		locations: logfile["locations"],
-		checkedLocations: [],
-		currentItems: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
-		startTime: Date.now(),
+		checked_locations: ["Links Pocket"],
+		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
+		start_time: Date.now(),
 		hash: logfile["file_hash"],
 		entrances: logfile["entrances"],
 		hints: logfile["gossip_stones"],
 	});
+	console.log(doc);
 	doc.save();
 	return {
 		id: doc._id,
 		hash: logfile["file_hash"],
 		locations: Object.keys(logfile["locations"]),
-		starting_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
+		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
 		starting_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
+		checked_locations: ["Links Pocket"],
 	};
 }
 
@@ -146,8 +148,9 @@ router.get('/resume', function(req, res, next) {
 			id: result._id,
 			hash: result.hash,
 			locations: Object.keys(result.locations),
-			starting_items: result.currentItems,
+			current_items: result.current_items,
 			starting_age: "Child",
+			checked_locations: result.checked_locations,
 		};
 		res.send(info);
 	});

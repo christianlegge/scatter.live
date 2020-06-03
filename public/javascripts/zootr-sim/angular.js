@@ -913,10 +913,11 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.generating = false;
 		$scope.locations = data["locations"];
 		console.log($scope.locations);
-		$scope.currentItemsAll = data["starting_items"];
+		$scope.currentItemsAll = data["current_items"];
 		$scope.fsHash = data["hash"];
 		$scope.playthroughId = data["id"];
 		$scope.playing = true;
+		$scope.checkedLocations = data["checked_locations"];
 		$scope.currentAge = data["starting_age"][0].toUpperCase() + data["starting_age"].slice(1);
 		$scope.currentRegion = $scope.currentAge == "Child" ? "Kokiri Forest" : "Temple of Time";
 		$scope.updateForage();

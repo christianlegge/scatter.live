@@ -32,14 +32,7 @@ function parseLog(logfile) {
 		var results = logfile['locations'];
 		$scope.fsHash = logfile['file_hash'];
 		$scope.isShopsanity = logfile['settings']['shopsanity'] != 'off';
-		if (logfile['settings']['starting_age'] == 'adult' || (logfile['settings']['starting_age'] == 'random' && logfile['randomized_settings']['starting_age'] == 'adult')) {
-			$scope.currentAge = "Adult";
-			$scope.currentRegion = "Temple of Time";
-		}
-		else {
-			$scope.currentAge = "Child";
-			$scope.currentRegion = "Kokiri Forest";
-		}
+
 		$scope.totalChecks = results.length;
 		for (var loc in results) {
 			item = typeof results[loc] == 'object' ? results[loc]['item'] : results[loc];
@@ -61,17 +54,6 @@ function parseLog(logfile) {
 			$scope.allLocations[loc] = item;
 			$scope.itemCounts[item] = 0;
 		}
-		if (!('Kokiri Sword Chest' in $scope.allLocations)) {
-			$scope.allLocations['Kokiri Sword Chest'] = 'Kokiri Sword';
-		}
-		if (logfile['settings']['start_with_deku_equipment']) {
-			$scope.itemCounts['Deku Shield'] = 1;
-		}
-		$scope.itemCounts['Ocarina'] = 0;
-		$scope.itemCounts['Bombchus'] = 0;
-		$scope.itemCounts['Gold Skulltula Token'] = 0;
-		$scope.itemCounts['Kokiri Sword'] = 0;
-		$scope.itemCounts['Nayrus Love'] = 0;
 		for (var hint in logfile['gossip_stones']) {
 			region = hint.split('(')[0].trim();
 			if (region == 'Zoras River') region = 'Zora River';

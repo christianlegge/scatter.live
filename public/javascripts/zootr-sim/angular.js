@@ -205,7 +205,7 @@ app.controller('simController', function($scope, $http) {
 		return;
 		if (loc in logic[$scope.current_region] && !parseLogicRule(logic[$scope.current_region][loc])) {
 			if (loc != "Treasure Chest Game" || Math.floor(Math.random() * 32) > 0) {
-				$scope.lastchecked = logic[$scope.current_region][loc];
+				$scope.headline = logic[$scope.current_region][loc];
 				var el = document.getElementById(loc);
 				el.classList.add('logicfailed-anim');
 				el.style.animation = 'none';
@@ -246,13 +246,13 @@ app.controller('simController', function($scope, $http) {
 			else {
 				$scope.knownHints[lighthint].push('Light Arrows');
 			}
-			$scope.lastchecked = 'Ha ha ha... You\'ll never beat me by reflecting my lightning bolts and unleashing the arrows from '+lighthint+'!';
+			$scope.headline = 'Ha ha ha... You\'ll never beat me by reflecting my lightning bolts and unleashing the arrows from '+lighthint+'!';
 			$scope.route += 'Light Arrows Hint ('+lighthint+')\n';
 		}
 		else if (loc == 'Ganon') {
 			if (false && !$scope.current_items.includes('Light Arrows')) {
 				$scope.actions.pop();
-				$scope.lastchecked = 'Not without Light Arrows!';
+				$scope.headline = 'Not without Light Arrows!';
 			}
 			else {
 				$scope.finished = true;
@@ -275,8 +275,8 @@ app.controller('simController', function($scope, $http) {
 			}
 			$scope.current_items.push(item);
 			$scope.route += loc + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
-			//$scope.lastchecked = loc + ': ' + item;
-			$scope.lastchecked = logic[$scope.current_region][loc];
+			//$scope.headline = loc + ': ' + item;
+			$scope.headline = logic[$scope.current_region][loc];
 			$scope.itemCounts[item]++;
 			
 			if (loc in bosses) {
@@ -319,7 +319,7 @@ $scope.peekAt = function(loc) {
 		$scope.knownHints[loc].push(hintItem);
 	}
 	$scope.peekedLocations.push(loc);
-	$scope.lastchecked = loc + ": " + hintItem;
+	$scope.headline = loc + ": " + hintItem;
 	$scope.actions.push("Peek:" + loc);
 	$scope.updateForage();
 };
@@ -542,7 +542,7 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.disableUndo = false;
 			}
 			$scope.route += 'Gift from Saria' + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
-			$scope.lastchecked = 'Gift from Saria: ' + item;
+			$scope.headline = 'Gift from Saria: ' + item;
 			$scope.current_region = entrance;
 		}
 		else {
@@ -1021,7 +1021,7 @@ $scope.hasBossKey = function(dungeon) {
 			}
 		}
 		
-		$scope.lastchecked = hint;
+		$scope.headline = hint;
 		$scope.updateForage();
 	};
 	
@@ -1092,7 +1092,7 @@ $scope.hasBossKey = function(dungeon) {
 			}
 		}
 		$scope.current_items.push(item);
-		$scope.lastchecked = $scope.currentShop() + ': ' + item;
+		$scope.headline = $scope.currentShop() + ': ' + item;
 		$scope.itemCounts[item]++;
 		$scope.updateForage();
 	};

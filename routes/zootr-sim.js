@@ -130,6 +130,23 @@ router.get('/', function(req, res, next) {
 	res.render('zootr-sim', {meta: meta});
 });
 
+router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (result.checkedLocations.includes(req.params["location"])) {
+			res.send(400);
+			return;
+		}
+		var item = result.locations.get(req.params["location"]);
+		if (typeof item == "object") {
+			item = item["item"];
+		}
+		result.currentItems.push(item);
+		result.checkedLocations.push(req.params["location"]);
+		result.save();
+		res.send(item);
+	});
+});
+
 router.get('/getspoiler', function(req, res, next) {
 	if (req.query.valid) {
 		request('https://www.ootrandomizer.com/api/seed/create?key='+process.env.ZOOTRAPIKEY+'&version=5.1.0&settingsString='+req.query.settings+'&seed='+req.query.seed, function (error, response, body) {
@@ -142,7 +159,6 @@ router.get('/getspoiler', function(req, res, next) {
 });
 
 router.post('/uploadlog', function(req, res, next) {
-	console.log(req);
 	res.send(parseLog(req["body"]));
 });
 

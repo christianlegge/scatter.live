@@ -139,6 +139,8 @@ app.controller('simController', function($scope, $http) {
 		console.log(allExitsInRegion);
 		return allExitsInRegion;
 	};
+
+	$scope.checkingLocation = false;
 	
 	$scope.getAvailableHints = function () {
 		var allLocsInRegion = [];
@@ -185,6 +187,20 @@ app.controller('simController', function($scope, $http) {
 	};
 	
 	$scope.checkLocation = function(loc) {
+		if (!$scope.checkingLocation) {
+			$scope.checkingLocation = true;
+			$http.get(`/zootr-sim/checklocation/${$scope.playthroughId}/${loc}`).then(function(response) {
+				console.log(response);
+				$scope.lastchecked = `${loc}: ${response.data}`;
+				$scope.checkedLocations.push(loc);
+				$scope.currentItemsAll.push(response.data);
+				$scope.checkingLocation = false;
+			}, function(error) {
+				$scope.checkingLocation = false;
+				console.log(error);
+			});
+		}
+		return;
 		if (loc in logic[$scope.currentRegion] && !parseLogicRule(logic[$scope.currentRegion][loc])) {
 			if (loc != "Treasure Chest Game" || Math.floor(Math.random() * 32) > 0) {
 				$scope.lastchecked = logic[$scope.currentRegion][loc];
@@ -890,6 +906,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.playing = true;
 		$scope.currentAge = data["starting_age"][0].toUpperCase() + data["starting_age"].slice(1);
 		$scope.currentRegion = $scope.currentAge == "Child" ? "Kokiri Forest" : "Temple of Time";
+		$scope.updateForage();
 	}
 	
 	$scope.fetchSeed = function() {
@@ -1051,7 +1068,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.updateForage();
 	};
 	
-	var forageItems = ['windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
+	var forageItems = ['playthroughId', 'locations', 'windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
 	
 	$scope.updateForage = function() {
 		forageItems.forEach(function(item) {

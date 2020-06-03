@@ -2,186 +2,187 @@ include head
 
 doctype html
 html
-  head
-    +meta(meta)
-    +ga
-    title ZOoTR Sim
-    link(rel="stylesheet",type="text/css",href="stylesheets/zootr-sim.css")
-    link(rel="shortcut icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
-    link(rel="icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
-    
-  body(ng-app="zootrSim",ng-controller="simController",class="{{darkModeOn ? 'dark-mode' : ''}}")
-    .headerbar.noselect
-      .title 
-        img(src="images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false")
-        span ZOoTR Sim
-      .hash
-        span.hash-label(ng-if="fsHash.length > 0") HASH
-        .hash-item(ng-repeat="x in fsHash track by $index",id="{{x}}",style="background-image: url('images/zootr-sim/{{hashImages[x]}}')")
-      span.credit made by scatter
-    a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
-    a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
-    .mainbody
-      h1.navihey(ng-show="!playing") Hey!
-      p(ng-show="!playing") The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
-      
-      .praise(ng-show="!playing") PRAISE FOR ZOOTR SIM
-      br(ng-show="!playing")
-      .quotecontainer(ng-show="!playing")
-        figure.quote
-          blockquote.curly-quotes only reason i made it to grands
-          figcaption.quote-by - Whatthehellshappened
-      .start(ng-show="!playing")
-        .startleft
-          span.header Generate a seed
-          br
-          span.subheader 
-            | Generate on the fly using 
-            a(href="https://ootrandomizer.com") ootrandomizer.com
-          br
-          div.generateform
-            form(ng-submit="fetchSeed()")
-              div Seed
-              br
-              input(type="text",ng-model="seed",placeholder="leave blank for random")
-              br
-              div Settings
-              br
-              input(type="text",ng-model="settingsString",placeholder="Settings String",required)
-              br
-              select(placeholder="test",ng-model="settingsPreset",ng-change="presetSelected()",ng-options="k for (k,v) in settingsPresets")
-              br
-              input(type="submit",value="Generate")
-          br
-          span(ng-if="generating").generating Generating...
-          div(ng-if="generationError != null").error {{generationError}}
-        .startright
-          span.header Upload a log
-          br
-          span.subheader Upload a preexisting v5.1 spoiler log
-          br
-          br
-          input(type="file",id="files",custom-on-change="fileSelected",ng-model="file")
-        br
-        | {{spoiler}}
-      span(ng-show="playing && !finished")
-        .lastchecked {{lastchecked}}
-        br
-        .main.tracker
-          .trackerinner
-            .items
-              div(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}",style="background-image: url('images/zootr-sim/{{getImage(x, itemCounts[x])[0]}}')",class="{{itemCounts[x] > 0 || x == 'Progressive Wallet' ? '' : 'disable'}}").item
-            .dungeons
-              div(ng-repeat="dungeon in dungeongrid",id="{{dungeon | removeSpaces}}").dungeon
-                div(style="background-image:url('images/zootr-sim/{{nameToImageTitle[dungeon]}}')").dungeontitle
-                div(style="background-image: url('images/zootr-sim/{{getMedallionImage(dungeon)}}')",class="{{currentItemsAll.includes(knownMedallions[dungeon]) ? '' : 'disable'}}").medallionimage
-                div(ng-if="hasKeys(dungeon)",class="{{itemCounts['Small Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{itemCounts['Small Key ('+dungeon+')'] > 0 ? itemCounts['Small Key ('+dungeon+')'] : 'small_key'}}.png')").smallkeyimage
-                div(ng-if="hasBossKey(dungeon)",class="{{itemCounts['Boss Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/boss_key.png')").bosskeyimage
-          br
-          br
-          span(ng-if="countChus() - usedChus > 0") Bombchus: {{countChus() - usedChus}} 
-          a(ng-if="countChus() - usedChus > 0",ng-click="useChu()").useChu Use Bombchu
-          br
-          br
-          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild == '') || (currentAge == 'Adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
-          a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild != '') || (currentAge == 'Adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{currentAge == 'Child' ? windRegionChild : windRegionAdult}})
-        .main.current
-          .currentinner
-            p Current Region: {{currentRegion}} [{{currentAge}}]
-            img(ng-repeat-start="loc in getAvailableLocations()", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
-            a(ng-if="!checkedLocations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
-              br
-            span(ng-repeat-end,ng-if="checkedLocations.includes(loc)", class="checked") {{ loc }}
-              br
-            br
-            a(ng-repeat="entrance in getAvailableEntrances()",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
-              br
-            p(ng-if="collectedWarps.length > 0") WARPS 
-            a(ng-repeat="warp in collectedWarps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
-              br
-            br
-            a(id="Savewarp {{currentAge}}",ng-click="takeEntrance('Savewarp ' + currentAge)").entrance -> Savewarp to {{currentAge == 'Child' ? 'Kokiri Forest' : 'Temple of Time'}}
-            br
-        .main.hints
-          span AVAILABLE HINTS
-          br
-          br
-          a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(currentRegion + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
-            br
-          span(ng-repeat-end,ng-if="checkedHints.includes(currentRegion + ' ' + k)").hint.checked {{k}}
-            br
-          br
-          table.hint-table
-            tr
-              th(colspan="2") KNOWN HINTS
-            tr(ng-repeat="loc in knownHints | reverseObj")
-              td.hint-loc {{loc}}
-              td.hint-item {{knownHints[loc].join(', ')}}
-          br
-        .main.shops(ng-if="isShopsanity")
-          span {{currentShop() || 'No Shop'}}
-          .shopgrid(ng-if="currentShop() != ''")
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][7].item}}",title="{{shopContents[currentShop()][7].item}}",ng-click="buyItem(7)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][7].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][7].item)}}');") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][5].item}}",title="{{shopContents[currentShop()][5].item}}",ng-click="buyItem(5)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][5].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][5].item)}}');") 
-            .shopchild.shopnpc(style="background-image:url('images/zootr-sim/{{shopNPCs[currentShop()]}}')") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][1].item}}",title="{{shopContents[currentShop()][1].item}}",ng-click="buyItem(1)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][1].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][1].item)}}');") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][3].item}}",title="{{shopContents[currentShop()][3].item}}",ng-click="buyItem(3)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][3].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][3].item)}}');") 
-            .shopchild.shopprice(ng-click="buyItem(7)") {{shopContents[currentShop()][7].cost}}
-            .shopchild.shopprice(ng-click="buyItem(5)") {{shopContents[currentShop()][5].cost}}
-            .shopchild.shopprice(ng-click="buyItem(1)") {{shopContents[currentShop()][1].cost}}
-            .shopchild.shopprice(ng-click="buyItem(3)") {{shopContents[currentShop()][3].cost}}
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][6].item}}",title="{{shopContents[currentShop()][6].item}}",ng-click="buyItem(6)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][6].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][6].item)}}');") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][4].item}}",title="{{shopContents[currentShop()][4].item}}",ng-click="buyItem(4)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][4].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][4].item)}}');") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][0].item}}",title="{{shopContents[currentShop()][0].item}}",ng-click="buyItem(0)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][0].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][0].item)}}');") 
-            .shopchild.shopitem(alt="{{shopContents[currentShop()][2].item}}",title="{{shopContents[currentShop()][2].item}}",ng-click="buyItem(2)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][2].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][2].item)}}');") 
-            .shopchild.shopprice(ng-click="buyItem(6)") {{shopContents[currentShop()][6].cost}}
-            .shopchild.shopprice(ng-click="buyItem(4)") {{shopContents[currentShop()][4].cost}}
-            .shopchild.shopprice(ng-click="buyItem(0)") {{shopContents[currentShop()][0].cost}}
-            .shopchild.shopprice(ng-click="buyItem(2)") {{shopContents[currentShop()][2].cost}}
-            .shopchild.shopspacer
-          a(ng-repeat-start="shop in otherShops()",ng-click="setShop(shop)") {{shop}}
-          br(ng-repeat-end)
-        .main.skulls
-          .skullsinner
-            p Gold Skulltulas [{{itemCounts['Gold Skulltula Token']}}/100]
-            a(ng-repeat-start="skull in getAvailableSkulltulas()",ng-if="!checkedLocations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
-              br
-            span(ng-repeat-end,ng-if="checkedLocations.includes(skull)").location.checked {{skull}}
-              br
-        br
-        br
-        a(class="{{actions.length == 0 ? 'disabled-button' : ''}}",ng-click="undoCheck()").button#undo
-          | Undo
-        a.button#reset(ng-click="throwAway()")
-          | This seed sucks, throw it away
-      span(ng-show="finished")
-        h1 Congratulations!
-        span Total checks made:
-        h1(style="margin-top:0") {{numChecksMade}}/{{totalChecks}}
-        h2 Route
-        .routecontainer
-          .route.main {{route}}
-          .routebuttons
-            a(ng-click="copyRoute()").button#copyroute Copy to clipboard
-            br 
-            br 
-            a(ng-click="saveRoute()").button#saveroute Save to .txt 
-            span(ng-show="copying")#copied.copied-anim Copied!
-        br 
-        br 
-        a(ng-click="throwAway()").button#reset Another one
-        a(ng-click="finished = false").button#unend Take me back
-    .footer 
-      a(href="..") Back to scatter.live
-      |  | 
-      a(href="https://github.com/scatter-dev/scatter.live/issues/new?title=[zootr-sim]") Report an Issue
-      |  | 
-      a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
-    +jquery
-    +localforage
-    +filesaver
-    +angular
-    
-    script(type="text/javascript",src="javascripts/zootr-sim/logic.js")
-    script(type="text/javascript",src="javascripts/zootr-sim/static.js")
-    script(type="text/javascript",src="javascripts/zootr-sim/angular.js")
+	head
+		+meta(meta)
+		+ga
+		title ZOoTR Sim
+		link(rel="stylesheet",type="text/css",href="stylesheets/zootr-sim.css")
+		link(rel="shortcut icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		link(rel="icon",href="favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		
+	body(ng-app="zootrSim",ng-controller="simController",class="{{darkModeOn ? 'dark-mode' : ''}}")
+		.headerbar.noselect
+			.title 
+				img(src="images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false")
+				span ZOoTR Sim
+			.hash
+				span.hash-label(ng-if="fsHash.length > 0") HASH
+				.hash-item(ng-repeat="x in fsHash track by $index",id="{{x}}",style="background-image: url('images/zootr-sim/{{hashImages[x]}}')")
+			span.credit made by scatter
+		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
+		a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
+		.mainbody
+			h1.navihey(ng-show="!playing") Hey!
+			p(ng-show="!playing") The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
+			
+			.praise(ng-show="!playing") PRAISE FOR ZOOTR SIM
+			br(ng-show="!playing")
+			.quotecontainer(ng-show="!playing")
+				figure.quote
+					blockquote.curly-quotes only reason i made it to grands
+					figcaption.quote-by - Whatthehellshappened
+			.start(ng-show="!playing")
+				.startleft
+					span.header Generate a seed
+					br
+					span.subheader 
+						| Generate on the fly using 
+						a(href="https://ootrandomizer.com") ootrandomizer.com
+					br
+					div.generateform
+						form(ng-submit="fetchSeed()")
+							div Seed
+							br
+							input(type="text",ng-model="seed",placeholder="leave blank for random")
+							br
+							div Settings
+							br
+							input(type="text",ng-model="settingsString",placeholder="Settings String",required)
+							br
+							select(placeholder="test",ng-model="settingsPreset",ng-change="presetSelected()",ng-options="k for (k,v) in settingsPresets")
+							br
+							input(type="submit",value="Generate")
+					br
+					span(ng-if="generating").generating Generating...
+					div(ng-if="generationError != null").error {{generationError}}
+				.startright
+					span.header Upload a log
+					br
+					span.subheader Upload a preexisting v5.1 spoiler log
+					br
+					br
+					input(type="file",id="files",custom-on-change="fileSelected",ng-model="file")
+				br
+				| {{spoiler}}
+			span(ng-show="playing && !finished")
+				.lastchecked {{lastchecked}}
+				br
+				.main.tracker
+					.trackerinner
+						.items
+							div(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}",style="background-image: url('images/zootr-sim/{{getImage(x, itemCounts[x])[0]}}')",class="{{itemCounts[x] > 0 || x == 'Progressive Wallet' ? '' : 'disable'}}").item
+						.dungeons
+							div(ng-repeat="dungeon in dungeongrid",id="{{dungeon | removeSpaces}}").dungeon
+								div(style="background-image:url('images/zootr-sim/{{nameToImageTitle[dungeon]}}')").dungeontitle
+								div(style="background-image: url('images/zootr-sim/{{getMedallionImage(dungeon)}}')",class="{{currentItemsAll.includes(knownMedallions[dungeon]) ? '' : 'disable'}}").medallionimage
+								div(ng-if="hasKeys(dungeon)",class="{{itemCounts['Small Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{itemCounts['Small Key ('+dungeon+')'] > 0 ? itemCounts['Small Key ('+dungeon+')'] : 'small_key'}}.png')").smallkeyimage
+								div(ng-if="hasBossKey(dungeon)",class="{{itemCounts['Boss Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/boss_key.png')").bosskeyimage
+					br
+					br
+					span(ng-if="countChus() - usedChus > 0") Bombchus: {{countChus() - usedChus}} 
+					a(ng-if="countChus() - usedChus > 0",ng-click="useChu()").useChu Use Bombchu
+					br
+					br
+					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild == '') || (currentAge == 'Adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
+					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild != '') || (currentAge == 'Adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{currentAge == 'Child' ? windRegionChild : windRegionAdult}})
+				.main.current
+					.currentinner
+						p Current Region: {{currentRegion}} [{{currentAge}}]
+						img(ng-repeat-start="loc in getAvailableLocations()", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
+						a(ng-if="!checkedLocations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
+							br
+						span(ng-repeat-end,ng-if="checkedLocations.includes(loc)", class="checked") {{ loc }}
+							br
+						br
+						a(ng-repeat="entrance in getAvailableEntrances()",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
+							br
+						p(ng-if="collectedWarps.length > 0") WARPS 
+						a(ng-repeat="warp in collectedWarps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
+							br
+						br
+						a(id="Savewarp {{currentAge}}",ng-click="takeEntrance('Savewarp ' + currentAge)").entrance -> Savewarp to {{currentAge == 'Child' ? 'Kokiri Forest' : 'Temple of Time'}}
+						br
+				.main.hints
+					span AVAILABLE HINTS
+					br
+					br
+					a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(currentRegion + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
+						br
+					span(ng-repeat-end,ng-if="checkedHints.includes(currentRegion + ' ' + k)").hint.checked {{k}}
+						br
+					br
+					table.hint-table
+						tr
+							th(colspan="2") KNOWN HINTS
+						tr(ng-repeat="loc in knownHints | reverseObj")
+							td.hint-loc {{loc}}
+							td.hint-item {{knownHints[loc].join(', ')}}
+					br
+				.main.shops(ng-if="isShopsanity")
+					span {{currentShop() || 'No Shop'}}
+					.shopgrid(ng-if="currentShop() != ''")
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][7].item}}",title="{{shopContents[currentShop()][7].item}}",ng-click="buyItem(7)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][7].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][7].item)}}');") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][5].item}}",title="{{shopContents[currentShop()][5].item}}",ng-click="buyItem(5)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][5].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][5].item)}}');") 
+						.shopchild.shopnpc(style="background-image:url('images/zootr-sim/{{shopNPCs[currentShop()]}}')") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][1].item}}",title="{{shopContents[currentShop()][1].item}}",ng-click="buyItem(1)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][1].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][1].item)}}');") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][3].item}}",title="{{shopContents[currentShop()][3].item}}",ng-click="buyItem(3)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][3].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][3].item)}}');") 
+						.shopchild.shopprice(ng-click="buyItem(7)") {{shopContents[currentShop()][7].cost}}
+						.shopchild.shopprice(ng-click="buyItem(5)") {{shopContents[currentShop()][5].cost}}
+						.shopchild.shopprice(ng-click="buyItem(1)") {{shopContents[currentShop()][1].cost}}
+						.shopchild.shopprice(ng-click="buyItem(3)") {{shopContents[currentShop()][3].cost}}
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][6].item}}",title="{{shopContents[currentShop()][6].item}}",ng-click="buyItem(6)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][6].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][6].item)}}');") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][4].item}}",title="{{shopContents[currentShop()][4].item}}",ng-click="buyItem(4)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][4].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][4].item)}}');") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][0].item}}",title="{{shopContents[currentShop()][0].item}}",ng-click="buyItem(0)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][0].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][0].item)}}');") 
+						.shopchild.shopitem(alt="{{shopContents[currentShop()][2].item}}",title="{{shopContents[currentShop()][2].item}}",ng-click="buyItem(2)",style="background-image:url('images/zootr-sim/{{shopContents[currentShop()][2].bought ? 'soldout.png' : getShopImage(shopContents[currentShop()][2].item)}}');") 
+						.shopchild.shopprice(ng-click="buyItem(6)") {{shopContents[currentShop()][6].cost}}
+						.shopchild.shopprice(ng-click="buyItem(4)") {{shopContents[currentShop()][4].cost}}
+						.shopchild.shopprice(ng-click="buyItem(0)") {{shopContents[currentShop()][0].cost}}
+						.shopchild.shopprice(ng-click="buyItem(2)") {{shopContents[currentShop()][2].cost}}
+						.shopchild.shopspacer
+					a(ng-repeat-start="shop in otherShops()",ng-click="setShop(shop)") {{shop}}
+					br(ng-repeat-end)
+				.main.skulls
+					.skullsinner
+						p Gold Skulltulas [{{itemCounts['Gold Skulltula Token']}}/100]
+						a(ng-repeat-start="skull in getAvailableSkulltulas()",ng-if="!checkedLocations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
+							br
+						span(ng-repeat-end,ng-if="checkedLocations.includes(skull)").location.checked {{skull}}
+							br
+				br
+				br
+				a(class="{{actions.length == 0 ? 'disabled-button' : ''}}",ng-click="undoCheck()").button#undo
+					| Undo
+				a.button#reset(ng-click="throwAway()")
+					| This seed sucks, throw it away
+			span(ng-show="finished")
+				h1 Congratulations!
+				span Total checks made:
+				h1(style="margin-top:0") {{numChecksMade}}/{{totalChecks}}
+				h2 Route
+				.routecontainer
+					.route.main {{route}}
+					.routebuttons
+						a(ng-click="copyRoute()").button#copyroute Copy to clipboard
+						br 
+						br 
+						a(ng-click="saveRoute()").button#saveroute Save to .txt 
+						span(ng-show="copying")#copied.copied-anim Copied!
+				br 
+				br 
+				a(ng-click="throwAway()").button#reset Another one
+				a(ng-click="finished = false").button#unend Take me back
+		p(ng-if="playing").playthroughid Playthrough ID: {{playthroughId}}
+		.footer 
+			a(href="..") Back to scatter.live
+			|  | 
+			a(href="https://github.com/scatter-dev/scatter.live/issues/new?title=[zootr-sim]") Report an Issue
+			|  | 
+			a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
+		+jquery
+		+localforage
+		+filesaver
+		+angular
+		
+		script(type="text/javascript",src="javascripts/zootr-sim/logic.js")
+		script(type="text/javascript",src="javascripts/zootr-sim/static.js")
+		script(type="text/javascript",src="javascripts/zootr-sim/angular.js")

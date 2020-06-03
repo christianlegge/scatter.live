@@ -935,8 +935,11 @@ $scope.hasBossKey = function(dungeon) {
 	$scope.fileSelected = function(event) {
 		reader = new FileReader();
 		reader.onload = function(e) {
-			$scope.parseLog(e.target.result);
-			$scope.$apply();
+			$http.post("/zootr-sim/uploadlog", e.target.result).then(function successCallback(response) {
+				$scope.initializeFromServer(response["data"]);
+			}, function errorCallback(response) {
+
+			});
 		}
 		reader.readAsText(event.target.files[0]);
 	}

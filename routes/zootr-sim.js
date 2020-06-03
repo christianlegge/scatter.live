@@ -141,5 +141,10 @@ router.get('/getspoiler', function(req, res, next) {
 	}
 });
 
+router.post('/uploadlog', function(req, res, next) {
+	console.log(req);
+	res.send(parseLog(req["body"]));
+});
+
 module.exports = router;
 

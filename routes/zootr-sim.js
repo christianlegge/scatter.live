@@ -17,7 +17,12 @@ var meta = {
 function parseLog(logfile) {
 	if (typeof logfile == 'string') {
 		logfile = JSON.parse(logfile);
-	}/*
+	}
+	if(!(":version" in logfile) || logfile[":version"] != "5.2.0 Release") {
+		throw "Incorrect version.";
+	}
+		
+	/*
 	$scope.currentSpoilerLog = logfile;
 	if (logfile['settings']['entrance_shuffle'] != "off") {
 		alert("Error! Entrance shuffle is not supported.");
@@ -99,6 +104,9 @@ function parseLog(logfile) {
 		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
 		known_medallions: new Map(),
 	});
+	if (!doc.current_age) {
+		doc.current_age = "child";
+	}
 	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
 	doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
 	doc.save();
@@ -163,9 +171,34 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	});
 });
 
+router.get('/badgateway', function(req, res, next) {
+	res.sendStatus(502);
+});
+
 router.get('/getspoiler', function(req, res, next) {
 	if (req.query.valid) {
-		request('https://www.ootrandomizer.com/api/seed/create?key='+process.env.ZOOTRAPIKEY+'&version=5.1.0&settingsString='+req.query.settings+'&seed='+req.query.seed, function (error, response, body) {
+		request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
+			console.log(error);
+			if (response.statusCode == 502) {
+				res.sendStatus(502);
+			}
+			else if (body.includes("Invalid API Key")) {
+				res.sendStatus(401);
+				return;
+			}
+			else if (body.includes("Invalid randomizer settings")) {
+				res.sendStatus(403);
+				return;
+			}
+			else if (body.includes("Game unbeatable")) {
+
+			}
+			else if (body.includes("Traceback")) {
+				if (body.includes("get_settings_from_command_line_args")) {
+					res.sendStatus(400);
+					return;
+				}
+			}
 			res.send(parseLog(body));
 		});
 	}
@@ -179,7 +212,7 @@ router.post('/uploadlog', function(req, res, next) {
 		res.send(parseLog(req["body"]));
 	}
 	catch (e) {
-		console.log(e);
+		res.send(e, status=400);
 	}
 });
 

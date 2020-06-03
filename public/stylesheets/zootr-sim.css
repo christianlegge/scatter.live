@@ -406,10 +406,6 @@ div.generateform form > * {
   box-sizing: border-box;
 }
 
-span.generating {
-  top:-130px;
-}
-
 div.loadfromid {
   border:0;
   margin:0;
@@ -458,6 +454,14 @@ div.startright input {
 .generating {
   animation: 1s ease 0s infinite fadeoutin;
   font-size: 2em;
+}
+
+.uploading {
+  display:inline-block;
+  margin-top:20px;
+  animation: 1s ease 0s infinite fadeoutin;
+  font-size: 2em;
+  top:-100px;
 }
 
 div.currentinner {

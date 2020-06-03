@@ -58,10 +58,13 @@ html
 				.startright
 					span.header Upload a log
 					br
-					span.subheader Upload a preexisting v5.1 spoiler log
+					span.subheader Upload a preexisting v5.2 spoiler log
 					br
 					br
 					input(type="file",id="files",custom-on-change="fileSelected",ng-model="file")
+					br
+					span(ng-if="uploading").uploading Uploading...
+					div(ng-if="uploadError != null").error {{uploadError}}
 				br
 				| {{spoiler}}
 			span(ng-show="playing && !finished")

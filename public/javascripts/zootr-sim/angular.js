@@ -167,13 +167,11 @@ app.controller('simController', function($scope, $http) {
 	
 	$scope.settingsPresets = {
 		'Settings Presets': '',
-		'Default / Beginner': 'AJCYTK2AB2FMAA2WCAAAAAK2DUCA',
-		'Easy Mode': 'AJYYTKAHT4BAAAJWAACTCTFBJBAAANK2HUCA',
-		'Hell Mode (minus Entrance Shuffle)': 'AJB4TT2AA2F9HQG85SAABSBACAAS9BADA33S',
-		'Standard Weekly (2020-01-04)': 'AJWGAJARB2BCAAJWAAJBASAGJBHNTHA3EA2UTVAFAA',
-		'Accessible Weekly (old) (2019-04-27)': 'AJWYTKAHB2BCAAJWAAJBASAGJBHNTHA3EA2UTVEFAA',
-		'S3 Tournament': 'AJWGAJARB2BCAAJWAAJBASAGJBHNTHA3EA2UTVAFAA',
-		'Scrub Tournament': 'AJWGAJARB2BCAAJWAACTCTFBJBASAGJBHNTHA3EAEVSVAFAA',
+		'Default / Beginner': 'AJCNG32ENSAAZNBAAVLAAAAAEBAASHSWAA',
+		'Easy Mode': 'AJGPG32ESVNAHAAAATCAJELEYEAFAAASFBAASRSWAA',
+		'Standard Weekly (2020-01-04)': 'AJEPGBAESZAAHJAAATCAAFAACSAE2AE2AETSUNASFDAASVWWAA',
+		'Scrub Tournament': 'AJEPGBAESZAAHJAAATCAJELEYEAFAACSAE2AE2AETSCAUKAAA6EAFAA',
+		'Hell Mode (minus Entrance Shuffle)': 'AJBWG32JNAAAZ69232RDCAEAGAJAAA8HAEAAEACQGE',
 	};
 	
 	$scope.itemgrid = [
@@ -980,17 +978,44 @@ $scope.hasBossKey = function(dungeon) {
 				}
 			}
 		}, function errorCallback(response) {
-			$scope.generationError = response;
+			$scope.generating = false;
+			if (response.status == 400) {
+				$scope.generationError = "Error! Invalid settings string."
+			}
+			else if (response.status == 401) {
+				$scope.generationError = "Error! Invalid API key! This is not user error - please report this."
+			}
+			else if (response.status == 403) {
+				$scope.generationError = "Error! Multiworld is not supported by the generator. Use the multiworld option."
+			}
+			else if (response.status == 502) {
+				$scope.generationError = "Error! 502 Bad Gateway response from ootrandomizer.com.";
+			}
+			else {
+				$scope.generationError = "Unknown error (please report this!): " + response.data;
+			}
 		});
 	};
 	
 	$scope.fileSelected = function(event) {
 		reader = new FileReader();
 		reader.onload = function(e) {
+			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog", e.target.result).then(function successCallback(response) {
+				$scope.uploading = false;
 				$scope.initializeFromServer(response["data"]);
 			}, function errorCallback(response) {
-
+				$scope.uploading = false;
+				if (response.status == 413) {
+					$scope.uploadError = "Error! File size too large. If this is a v5.2 spoiler log, report this so the limit can be increased.";
+				}
+				else if (response.status == 400) {
+					$scope.uploadError = "Error! Parsing file failed. If this is a v5.2 spoiler log, please report this."
+				}
+				else {
+					$scope.uploadError = "Unknown error (please report this!): " + response.data;
+					console.log(response.data);
+				}
 			});
 		}
 		reader.readAsText(event.target.files[0]);

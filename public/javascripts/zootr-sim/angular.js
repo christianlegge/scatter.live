@@ -49,7 +49,7 @@ app.controller('simController', function($scope, $http) {
 		
 		$scope.checkedLocations = [];
 		
-		$scope.currentItemsAll = [];
+		$scope.current_items = [];
 
 		$scope.windRegionChild = "";
 
@@ -60,7 +60,7 @@ app.controller('simController', function($scope, $http) {
 		$scope.current_region = 'Root';
 		$scope.current_age = 'child';
 		
-		$scope.knownMedallions = {
+		$scope.known_medallions = {
 			'Deku Tree': '???',
 			'Dodongos Cavern': '???',
 			'Jabu Jabus Belly': '???',
@@ -156,7 +156,7 @@ app.controller('simController', function($scope, $http) {
 	};
 	
 	$scope.countChus = function() {
-		var ownedChus = $scope.currentItemsAll.filter(item => item.includes('Bombchu'));
+		var ownedChus = $scope.current_items.filter(item => item.includes('Bombchu'));
 		return ownedChus.map(item => parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10)).reduce((a,b) => a + b, 0);
 	};
 	
@@ -221,14 +221,14 @@ app.controller('simController', function($scope, $http) {
 				$scope.checkedLocations.push('Check Pedestal (Stones)');
 			}
 			for (var key in $scope.medallions) {
-				if (!$scope.currentItemsAll.includes($scope.medallions[key])) {
+				if (!$scope.current_items.includes($scope.medallions[key])) {
 					if ($scope.medallions[key].includes('Medallion')) {
 						if ($scope.current_age == 'adult') {
-							$scope.knownMedallions[key] = $scope.medallions[key];
+							$scope.known_medallions[key] = $scope.medallions[key];
 						}
 					}
 					else {
-						$scope.knownMedallions[key] = $scope.medallions[key];
+						$scope.known_medallions[key] = $scope.medallions[key];
 					}
 				}
 			}
@@ -250,7 +250,7 @@ app.controller('simController', function($scope, $http) {
 			$scope.route += 'Light Arrows Hint ('+lighthint+')\n';
 		}
 		else if (loc == 'Ganon') {
-			if (false && !$scope.currentItemsAll.includes('Light Arrows')) {
+			if (false && !$scope.current_items.includes('Light Arrows')) {
 				$scope.actions.pop();
 				$scope.lastchecked = 'Not without Light Arrows!';
 			}
@@ -260,7 +260,7 @@ app.controller('simController', function($scope, $http) {
 			}
 		}
 		else if (!(loc in $scope.allLocations) && loc.startsWith('GS ')) {
-			$scope.currentItemsAll.push('Gold Skulltula Token');
+			$scope.current_items.push('Gold Skulltula Token');
 			$scope.itemCounts['Gold Skulltula Token']++;
 			$scope.checkedLocations.push(loc);
 		}
@@ -273,14 +273,14 @@ app.controller('simController', function($scope, $http) {
 			if (item.includes('[Costs')) {
 				item = item.split('[Costs')[0].trim();
 			}
-			$scope.currentItemsAll.push(item);
+			$scope.current_items.push(item);
 			$scope.route += loc + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
 			//$scope.lastchecked = loc + ': ' + item;
 			$scope.lastchecked = logic[$scope.current_region][loc];
 			$scope.itemCounts[item]++;
 			
 			if (loc in bosses) {
-				$scope.knownMedallions[bosses[loc]] = item;
+				$scope.known_medallions[bosses[loc]] = item;
 			}
 			
 			if (loc in regionChangingChecks) {
@@ -335,7 +335,7 @@ $scope.undoCheck = function() {
 		var lastCheckedLocation = mostRecent.split(':')[1];
 		$scope.checkedLocations.pop();
 		if (lastCheckedLocation in $scope.allLocations) {
-			$scope.currentItemsAll.splice($scope.currentItemsAll.lastIndexOf($scope.allLocations[lastCheckedLocation]));
+			$scope.current_items.splice($scope.current_items.lastIndexOf($scope.allLocations[lastCheckedLocation]));
 			$scope.numChecksMade--;
 			
 			$scope.itemCounts[$scope.allLocations[lastCheckedLocation]]--;
@@ -346,7 +346,7 @@ $scope.undoCheck = function() {
 				$scope.current_region = bosses[lastCheckedLocation];
 				if (!$scope.checkedLocations.includes('Check Pedestal (Medallions)')) {
 					if (!$scope.checkedLocations.includes('Check Pedestal (Stones)') || !($scope.allLocations[lastCheckedLocation] == 'Kokiri Emerald' || $scope.allLocations[lastCheckedLocation] == 'Goron Ruby' || $scope.allLocations[lastCheckedLocation] == 'Zora Sapphire')) {
-						$scope.knownMedallions[bosses[lastCheckedLocation]] = '???';
+						$scope.known_medallions[bosses[lastCheckedLocation]] = '???';
 					}
 				}
 			}
@@ -355,28 +355,28 @@ $scope.undoCheck = function() {
 			}
 		}
 		else if (lastCheckedLocation.startsWith('GS ')) {
-			$scope.currentItemsAll.splice($scope.currentItemsAll.lastIndexOf('Gold Skulltula Token'));
+			$scope.current_items.splice($scope.current_items.lastIndexOf('Gold Skulltula Token'));
 			$scope.itemCounts['Gold Skulltula Token']--;
 		}
 		else if (lastCheckedLocation == 'Check Pedestal (Stones)') {
 			if (!$scope.checkedLocations.includes('Check Pedestal (Medallions)')) {
-				for (loc in $scope.knownMedallions) {
-					var med = $scope.knownMedallions[loc];
-					if (!$scope.currentItemsAll.includes(med) && (med == 'Kokiri Emerald' || med == 'Goron Ruby' || med == 'Zora Sapphire')) {
-						$scope.knownMedallions[loc] = '???';
+				for (loc in $scope.known_medallions) {
+					var med = $scope.known_medallions[loc];
+					if (!$scope.current_items.includes(med) && (med == 'Kokiri Emerald' || med == 'Goron Ruby' || med == 'Zora Sapphire')) {
+						$scope.known_medallions[loc] = '???';
 					}
 				}
 			}
 		}
 		else if (lastCheckedLocation == 'Check Pedestal (Medallions)') {
 			$scope.checkedLocations.pop();
-			for (loc in $scope.knownMedallions) {
-				var med = $scope.knownMedallions[loc];
+			for (loc in $scope.known_medallions) {
+				var med = $scope.known_medallions[loc];
 				if ($scope.checkedLocations.includes('Check Pedestal (Stones)') && (med == 'Kokiri Emerald' || med == 'Goron Ruby' || med == 'Zora Sapphire')) {
 					continue;
 				}
-				if (!$scope.currentItemsAll.includes(med)) {
-					$scope.knownMedallions[loc] = '???';
+				if (!$scope.current_items.includes(med)) {
+					$scope.known_medallions[loc] = '???';
 				}
 			}
 		}
@@ -425,7 +425,7 @@ $scope.undoCheck = function() {
 				$scope.collectedWarps.pop();
 			}
 		}
-		$scope.currentItemsAll.pop();
+		$scope.current_items.pop();
 		$scope.itemCounts[item]--;
 	}
 
@@ -443,20 +443,20 @@ $scope.undoCheck = function() {
 	if ($scope.checkedLocations.length >= 2) {
 		var lastCheckedLocation = $scope.checkedLocations.pop();
 		if (lastCheckedLocation in $scope.allLocations) {
-			$scope.currentItemsAll.splice($scope.currentItemsAll.lastIndexOf($scope.allLocations[lastCheckedLocation]));
+			$scope.current_items.splice($scope.current_items.lastIndexOf($scope.allLocations[lastCheckedLocation]));
 			$scope.numChecksMade--;
 			
 			$scope.itemCounts[$scope.allLocations[lastCheckedLocation]]--;
 		}
 		else if (lastCheckedLocation.startsWith('GS ')) {
-			$scope.currentItemsAll.splice($scope.currentItemsAll.lastIndexOf('Gold Skulltula Token'));
+			$scope.current_items.splice($scope.current_items.lastIndexOf('Gold Skulltula Token'));
 			$scope.itemCounts['Gold Skulltula Token']--;
 		}
 		else if (lastCheckedLocation.includes('shopitem')) {
 			var shop = lastCheckedLocation.split('|')[1];
 			var index = parseInt(lastCheckedLocation.split('|')[2]);
 			$scope.shopContents[shop][index].bought = false;
-			$scope.currentItemsAll.splice($scope.currentItemsAll.lastIndexOf($scope.shopContents[shop][index].item));
+			$scope.current_items.splice($scope.current_items.lastIndexOf($scope.shopContents[shop][index].item));
 			$scope.numChecksMade--;
 			$scope.itemCounts[$scope.shopContents[shop][index].item]--;
 		}
@@ -535,7 +535,7 @@ $scope.hasBossKey = function(dungeon) {
 			else {
 				item = 'Ocarina';
 			}
-			$scope.currentItemsAll.push(item);
+			$scope.current_items.push(item);
 			$scope.numChecksMade++;
 			$scope.itemCounts[item]++;
 			if($scope.checkedLocations.length >= 2) {
@@ -568,8 +568,8 @@ $scope.hasBossKey = function(dungeon) {
 	];
 	
 	$scope.getMedallionImage = function(dungeon) {
-		if (dungeon in $scope.knownMedallions) {
-			med = $scope.knownMedallions[dungeon];
+		if (dungeon in $scope.known_medallions) {
+			med = $scope.known_medallions[dungeon];
 			var medToImage = {
 				'Kokiri Emerald': 'stones.png',
 				'Goron Ruby': 'stones.png',
@@ -614,10 +614,10 @@ $scope.hasBossKey = function(dungeon) {
 		if (item == 'Bottle') {
 			var bottles = 0;
 			var hasLetter = false;
-			for (var i = 0; i < $scope.currentItemsAll.length; i++) {
-				if ($scope.currentItemsAll[i].startsWith('Bottle')) {
+			for (var i = 0; i < $scope.current_items.length; i++) {
+				if ($scope.current_items[i].startsWith('Bottle')) {
 					bottles++;
-					if ($scope.currentItemsAll[i] == 'Bottle with Letter') {
+					if ($scope.current_items[i] == 'Bottle with Letter') {
 						hasLetter = true;
 					}
 				}
@@ -626,64 +626,64 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		else if (item == 'Child Trade') {
 			retval = [];
-			if ($.inArray('Weird Egg', $scope.currentItemsAll) == -1) {
+			if ($.inArray('Weird Egg', $scope.current_items) == -1) {
 				return ['egg.png', false];
 			}
-			if ($.inArray('Weird Egg', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Weird Egg', $scope.current_items) != -1) {
 				retval = ['egg.png', true];
 			}
-			if ($.inArray('Chicken', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Chicken', $scope.current_items) != -1) {
 				retval = ['cucco.png', true];
 			}
-			if ($.inArray('Zeldas Letter', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Zeldas Letter', $scope.current_items) != -1) {
 				retval = ['letter.png', true];
 			}
-			if ($.inArray('Keaton Mask', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Keaton Mask', $scope.current_items) != -1) {
 				retval = ['keaton.png', true];
 			}
-			if ($.inArray('Skull Mask', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Skull Mask', $scope.current_items) != -1) {
 				retval = ['skull.png', true];
 			}
-			if ($.inArray('Spooky Mask', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Spooky Mask', $scope.current_items) != -1) {
 				retval = ['spooky.png', true];
 			}
-			if ($.inArray('Bunny Hood', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Bunny Hood', $scope.current_items) != -1) {
 				retval = ['bunny.png', true];
 			}
-			if ($.inArray('Mask of Truth', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Mask of Truth', $scope.current_items) != -1) {
 				retval = ['truth.png', true];
 			}
 			return retval;
 		}
 		else if (item == 'Adult Trade') {
-			if ($.inArray('Claim Check', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Claim Check', $scope.current_items) != -1) {
 				return ['claim.png', true];
 			}
-			if ($.inArray('Eyedrops', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Eyedrops', $scope.current_items) != -1) {
 				return ['eyedrops.png', true];
 			}
-			if ($.inArray('Eyeball Frog', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Eyeball Frog', $scope.current_items) != -1) {
 				return ['frog.png', true];
 			}
-			if ($.inArray('Prescription', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Prescription', $scope.current_items) != -1) {
 				return ['prescription.png', true];
 			}
-			if ($.inArray('Broken Sword', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Broken Sword', $scope.current_items) != -1) {
 				return ['broken_sword.png', true];
 			}
-			if ($.inArray('Poachers Saw', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Poachers Saw', $scope.current_items) != -1) {
 				return ['saw.png', true];
 			}
-			if ($.inArray('Odd Mushroom', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Odd Mushroom', $scope.current_items) != -1) {
 				return ['mushroom.png', true];
 			}
-			if ($.inArray('Cojiro', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Cojiro', $scope.current_items) != -1) {
 				return ['cojiro.png', true];
 			}
-			if ($.inArray('Pocket Cucco', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Pocket Cucco', $scope.current_items) != -1) {
 				return ['cucco.png', true];
 			}
-			if ($.inArray('Pocket Egg', $scope.currentItemsAll) != -1) {
+			if ($.inArray('Pocket Egg', $scope.current_items) != -1) {
 				return ['egg.png', true];
 			}
 			else {
@@ -932,6 +932,9 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.checked_locations = data["checked_locations"];
 		$scope.current_age = data["current_age"];
 		$scope.current_region = data["current_region"];
+		$scope.known_medallions = data["known_medallions"];
+		console.log($scope.current_items);
+		console.log($scope.known_medallions);
 		localforage.setItem("playthroughId", data["id"]);
 	}
 	
@@ -1088,13 +1091,13 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.disableUndo = false;
 			}
 		}
-		$scope.currentItemsAll.push(item);
+		$scope.current_items.push(item);
 		$scope.lastchecked = $scope.currentShop() + ': ' + item;
 		$scope.itemCounts[item]++;
 		$scope.updateForage();
 	};
 	
-	//var forageItems = ['playthroughId', 'locations', 'windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'currentItemsAll', 'medallions', 'currentRegion', 'currentAge', 'knownMedallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
+	//var forageItems = ['playthroughId', 'locations', 'windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'current_items', 'medallions', 'currentRegion', 'currentAge', 'known_medallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
 	/*
 	$scope.updateForage = function() {
 		forageItems.forEach(function(item) {
@@ -1141,7 +1144,7 @@ $scope.hasBossKey = function(dungeon) {
 												 (x == "adult" && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
 												 (x == "both" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang()) && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
 												 (x == "either" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang() || logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))),
-		has: x => $scope.currentItemsAll.includes(x),
+		has: x => $scope.current_items.includes(x),
 		has_explosives: () => logicEvaluation.has("Bomb Bag") || $scope.countChus() - $scope.usedChus > 0,
 		has_bombchus: () => logicEvaluation.has_explosives(),
 		has_all_stones: () => logicEvaluation.has("Kokiri Emerald") && logicEvaluation.has("Goron Ruby") && logicEvaluation.has("Zora Sapphire"),
@@ -1159,8 +1162,8 @@ $scope.hasBossKey = function(dungeon) {
 		Progressive_Strength_Upgrade: () => logicEvaluation.has("Progressive Strength Upgrade"),
 		Blue_Fire: () => logicEvaluation.has_bottle(),
 		Bonooru: () => true,
-		can_play: x => (logicEvaluation.Ocarina()) && $scope.currentItemsAll.includes(x),
-		Boomerang: () => $scope.currentItemsAll.includes("Boomerang"),
+		can_play: x => (logicEvaluation.Ocarina()) && $scope.current_items.includes(x),
+		Boomerang: () => $scope.current_items.includes("Boomerang"),
 		Kokiri_Sword: () => true,
 		Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
 		"Skull Mask": () => true,
@@ -1173,7 +1176,7 @@ $scope.hasBossKey = function(dungeon) {
 		Big_Poe: () => logicEvaluation.has("Big Poe"),
 		Bottle_with_Letter: () => logicEvaluation.has("Bottle with Letter"),
 		can_child_attack: () => true,
-		has_bottle: () => $scope.currentItemsAll.filter(x => x.includes("Bottle")).length > 0,
+		has_bottle: () => $scope.current_items.filter(x => x.includes("Bottle")).length > 0,
 		is_adult: () => $scope.current_age == "adult",
 		can_use_projectile: () => logicEvaluation.has_explosives() || ($scope.current_age == "adult" && (logicEvaluation.has("Progressive Bow") || logicEvaluation.has("Progressive Hookshot"))) || ($scope.current_age == "child" && (logicEvaluation.has("Progressive Slingshot") || logicEvaluation.has("Boomerang"))),
 		here: () => true,
@@ -1348,7 +1351,7 @@ $scope.hasBossKey = function(dungeon) {
 			var comma = getChar();
 			whitespace();
 			var num = parseInt(getNum());
-			return $scope.currentItemsAll.filter(x => x == item).length >= num;
+			return $scope.current_items.filter(x => x == item).length >= num;
 		}
 
 		function term() {

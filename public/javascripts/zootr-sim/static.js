@@ -100,11 +100,11 @@ var importantItems = [
 
 var extraLocations = {
   "Temple of Time": {
-    Child: ["Check Pedestal (Stones)"],
-    Adult: ["Check Pedestal (Medallions)"],
+    child: ["Check Pedestal (Stones)"],
+    adult: ["Check Pedestal (Medallions)"],
   },
   "Ganons Castle": {
-    Adult: ["Light Arrows Hint", "Ganon"],
+    adult: ["Light Arrows Hint", "Ganon"],
   }
 };
 

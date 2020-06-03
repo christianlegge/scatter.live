@@ -115,8 +115,10 @@ function parseLog(logfile) {
 		entrances: logfile["entrances"],
 		hints: logfile["gossip_stones"],
 		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
+		known_medallions: new Map(),
 	});
 	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
+	doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
 	doc.save();
 	return {
 		id: doc._id,
@@ -126,9 +128,9 @@ function parseLog(logfile) {
 		current_age: doc.current_age,
 		current_region: doc.current_region,
 		checked_locations: ["Links Pocket"],
+		known_medallions: doc.known_medallions,
 	};
 }
-
 
 router.get('/', function(req, res, next) {
 	res.render('zootr-sim', {meta: meta});
@@ -155,6 +157,7 @@ router.get('/resume', function(req, res, next) {
 			current_age: result.current_age,
 			current_region: result.current_region,
 			checked_locations: result.checked_locations,
+			known_medallions: result.known_medallions,
 		};
 		res.send(info);
 	});

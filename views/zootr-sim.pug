@@ -180,6 +180,8 @@ html
 				form(ng-submit="resumeFromId(loadFormId)")
 					input(type="text",ng-model="loadFormId",placeholder="Playthrough ID",required)
 					input(type="submit",value="Load")
+					span(ng-if="loading").loading Loading...
+					div(ng-if="loadError != null").error {{loadError}}
 		.footer 
 			a(href="..") Back to scatter.live
 			|  | 

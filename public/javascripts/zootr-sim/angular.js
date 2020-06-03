@@ -916,14 +916,17 @@ $scope.hasBossKey = function(dungeon) {
 	};
 
 	$scope.resumeFromId = function(id) {
+		$scope.loading = true;
 		$http.get(`/zootr-sim/resume?id=${id}`).then(function(response) {
+			$scope.loading = false;
 			$scope.initializeFromServer(response["data"]);
 		}, function(error) {
+			$scope.loading = false;
 			if (error.status == 400) {
-				alert("Invalid Playthrough ID.");
+				$scope.loadError = "Invalid Playthrough ID.";
 			}
 			if (error.status == 404) {
-				alert("Playthrough not found.");
+				$scope.loadError = "Playthrough not found.";
 			}
 		});
 	};

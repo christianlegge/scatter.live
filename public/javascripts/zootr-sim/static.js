@@ -98,7 +98,15 @@ var importantItems = [
   'Triforce',
 ];
 
-var inSpoilerExceptions = ['Check Pedestal (Stones)', 'Check Pedestal (Medallions)', 'Light Arrows Hint', 'Ganon'];
+var extraLocations = {
+  "Temple of Time": {
+    Child: ["Check Pedestal (Stones)"],
+    Adult: ["Check Pedestal (Medallions)"],
+  },
+  "Ganons Castle": {
+    Adult: ["Light Arrows Hint", "Ganon"],
+  }
+};
 
 hashImages = {
     'Deku Stick': 'stick.png',

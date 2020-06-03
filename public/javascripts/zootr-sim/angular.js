@@ -607,110 +607,118 @@ $scope.hasBossKey = function(dungeon) {
 		'Ganons Castle': 'gc.png'
 	}
 
-	$scope.getImage = function(item, count) {
+	$scope.getImage = function(item) {
 		if (!$scope.playing) {
 			return '';
 		}
+		var count = $scope.current_items.filter(x => x == item).length;
 		if (item == 'Bottle') {
-			var bottles = 0;
-			var hasLetter = false;
-			for (var i = 0; i < $scope.current_items.length; i++) {
-				if ($scope.current_items[i].startsWith('Bottle')) {
-					bottles++;
-					if ($scope.current_items[i] == 'Bottle with Letter') {
-						hasLetter = true;
-					}
-				}
-			}
-			return [(hasLetter ? 'ruto' : '') + 'bottle' + bottles + '.png', bottles > 0]
+			var bottles = $scope.current_items.filter(x => x.startsWith("Bottle")).length;
+			var hasLetter = $scope.current_items.includes("Bottle with Letter");
+			return (hasLetter ? 'ruto' : '') + 'bottle' + bottles + '.png';
 		}
 		else if (item == 'Child Trade') {
 			retval = [];
 			if ($.inArray('Weird Egg', $scope.current_items) == -1) {
-				return ['egg.png', false];
+				return 'egg.png';
 			}
 			if ($.inArray('Weird Egg', $scope.current_items) != -1) {
-				retval = ['egg.png', true];
+				retval = 'egg.png';
 			}
 			if ($.inArray('Chicken', $scope.current_items) != -1) {
-				retval = ['cucco.png', true];
+				retval = 'cucco.png';
 			}
 			if ($.inArray('Zeldas Letter', $scope.current_items) != -1) {
-				retval = ['letter.png', true];
+				retval = 'letter.png';
 			}
 			if ($.inArray('Keaton Mask', $scope.current_items) != -1) {
-				retval = ['keaton.png', true];
+				retval = 'keaton.png';
 			}
 			if ($.inArray('Skull Mask', $scope.current_items) != -1) {
-				retval = ['skull.png', true];
+				retval = 'skull.png';
 			}
 			if ($.inArray('Spooky Mask', $scope.current_items) != -1) {
-				retval = ['spooky.png', true];
+				retval = 'spooky.png';
 			}
 			if ($.inArray('Bunny Hood', $scope.current_items) != -1) {
-				retval = ['bunny.png', true];
+				retval = 'bunny.png';
 			}
 			if ($.inArray('Mask of Truth', $scope.current_items) != -1) {
-				retval = ['truth.png', true];
+				retval = 'truth.png';
 			}
 			return retval;
 		}
 		else if (item == 'Adult Trade') {
 			if ($.inArray('Claim Check', $scope.current_items) != -1) {
-				return ['claim.png', true];
+				return 'claim.png';
 			}
 			if ($.inArray('Eyedrops', $scope.current_items) != -1) {
-				return ['eyedrops.png', true];
+				return 'eyedrops.png';
 			}
 			if ($.inArray('Eyeball Frog', $scope.current_items) != -1) {
-				return ['frog.png', true];
+				return 'frog.png';
 			}
 			if ($.inArray('Prescription', $scope.current_items) != -1) {
-				return ['prescription.png', true];
+				return 'prescription.png';
 			}
 			if ($.inArray('Broken Sword', $scope.current_items) != -1) {
-				return ['broken_sword.png', true];
+				return 'broken_sword.png';
 			}
 			if ($.inArray('Poachers Saw', $scope.current_items) != -1) {
-				return ['saw.png', true];
+				return 'saw.png';
 			}
 			if ($.inArray('Odd Mushroom', $scope.current_items) != -1) {
-				return ['mushroom.png', true];
+				return 'mushroom.png';
 			}
 			if ($.inArray('Cojiro', $scope.current_items) != -1) {
-				return ['cojiro.png', true];
+				return 'cojiro.png';
 			}
 			if ($.inArray('Pocket Cucco', $scope.current_items) != -1) {
-				return ['cucco.png', true];
+				return 'cucco.png';
 			}
 			if ($.inArray('Pocket Egg', $scope.current_items) != -1) {
-				return ['egg.png', true];
+				return 'egg.png';
 			}
 			else {
-				return ['egg.png', false];
+				return 'egg.png';
 			}
 		}
 		else if (item == 'Gold Skulltulas') {
-			return ['skulltula.png', false];
+			return 'skulltula.png';
 		}
 		else if (item == 'Progressive Wallet' && !$scope.isShopsanity && count == 2) {
-			return ['wallet2.png', true];
+			return 'wallet2.png';
 		}
 		else {
 			if (count >= $scope.codeToImage[item].length) {
-				return [$scope.codeToImage[item][$scope.codeToImage[item].length - 1], count > 0];
+				return $scope.codeToImage[item][$scope.codeToImage[item].length - 1];
 			}
 			else {
-				return [$scope.codeToImage[item][count], count > 0];
+				return $scope.codeToImage[item][count];
 			}
 		}
 	}
 	
-	$scope.getCount = function(item) {
+	$scope.getCount = function (item) {
 		if (!$scope.playing) {
-			return 0;
+			return '';
 		}
 		return $scope.current_items.filter(x => x == item).length;
+	}
+
+	$scope.lightUpTracker = function(item) {
+		if (item == "Child Trade") {
+			return $scope.current_items.filter(x => ["Weird Egg", "Chicken", "Zeldas Letter", "Keaton Mask", "Skull Mask", "Spooky Mask", "Bunny Hood", "Mask of Truth"].includes(x)).length > 0;
+		}
+		else if (item == "Adult Trade") {
+			return $scope.current_items.filter(x => ["Pocket Egg", "Pocket Cucco", "Cojiro", "Odd Mushroom", "Poachers Saw", "Broken Sword", "Prescription", "Eyeball Frog", "Eyedrops", "Claim Check"].includes(x)).length > 0;
+		}
+		else if (item == "Bottle") {
+			return $scope.current_items.filter(x => x.startsWith("Bottle")).length > 0;
+		}
+		else {
+			return $scope.getCount(item) > 0;
+		}
 	}
 
 	$scope.throwAway = function(item) {

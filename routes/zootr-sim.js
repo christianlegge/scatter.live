@@ -120,7 +120,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/resume', function(req, res, next) {
 	var id = req.query.id;
-	console.log(typeof id);
 	playthroughModel.findById(id, function(err, result) {
 		if (err) {
 			res.sendStatus(400);
@@ -130,7 +129,6 @@ router.get('/resume', function(req, res, next) {
 			res.sendStatus(404);
 			return;
 		}
-		console.log(Object.keys(result.locations));
 		var info = {
 			id: result._id,
 			hash: result.hash,
@@ -177,7 +175,6 @@ router.get('/getspoiler', function(req, res, next) {
 });
 
 router.post('/uploadlog', function(req, res, next) {
-	console.log("parsing uploaded log");
 	try {
 		res.send(parseLog(req["body"]));
 	}

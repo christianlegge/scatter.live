@@ -941,8 +941,6 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.current_age = data["current_age"];
 		$scope.current_region = data["current_region"];
 		$scope.known_medallions = data["known_medallions"];
-		console.log($scope.current_items);
-		console.log($scope.known_medallions);
 		localforage.setItem("playthroughId", data["id"]);
 	}
 	

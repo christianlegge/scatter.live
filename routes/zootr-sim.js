@@ -114,15 +114,17 @@ function parseLog(logfile) {
 		hash: logfile["file_hash"],
 		entrances: logfile["entrances"],
 		hints: logfile["gossip_stones"],
+		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
 	});
-	console.log(doc);
+	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
 	doc.save();
 	return {
 		id: doc._id,
 		hash: logfile["file_hash"],
 		locations: Object.keys(logfile["locations"]),
 		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
-		starting_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
+		current_age: doc.current_age,
+		current_region: doc.current_region,
 		checked_locations: ["Links Pocket"],
 	};
 }
@@ -144,12 +146,14 @@ router.get('/resume', function(req, res, next) {
 			res.sendStatus(404);
 			return;
 		}
+		console.log(Object.keys(result.locations));
 		var info = {
 			id: result._id,
 			hash: result.hash,
-			locations: Object.keys(result.locations),
+			locations: Array.from(result.locations.keys()),
 			current_items: result.current_items,
-			starting_age: "Child",
+			current_age: result.current_age,
+			current_region: result.current_region,
 			checked_locations: result.checked_locations,
 		};
 		res.send(info);
@@ -158,7 +162,7 @@ router.get('/resume', function(req, res, next) {
 
 router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (result.checkedLocations.includes(req.params["location"])) {
+		if (result.checked_locations.includes(req.params["location"])) {
 			res.send(400);
 			return;
 		}
@@ -166,8 +170,11 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 		if (typeof item == "object") {
 			item = item["item"];
 		}
-		result.currentItems.push(item);
-		result.checkedLocations.push(req.params["location"]);
+		if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
+			item = "Gold Skulltula Token";
+		}
+		result.current_items.push(item);
+		result.checked_locations.push(req.params["location"]);
 		result.save();
 		res.send(item);
 	});
@@ -185,7 +192,13 @@ router.get('/getspoiler', function(req, res, next) {
 });
 
 router.post('/uploadlog', function(req, res, next) {
-	res.send(parseLog(req["body"]));
+	console.log("parsing uploaded log");
+	try {
+		res.send(parseLog(req["body"]));
+	}
+	catch (e) {
+		console.log(e);
+	}
 });
 
 module.exports = router;

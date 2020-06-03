@@ -65,33 +65,33 @@ html
 				br
 				| {{spoiler}}
 			span(ng-show="playing && !finished")
-				.lastchecked {{lastchecked}}
+				.headline {{headline}}
 				br
 				.main.tracker
 					.trackerinner
 						.items
-							div(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}",style="background-image: url('images/zootr-sim/{{getImage(x, itemCounts[x])[0]}}')",class="{{itemCounts[x] > 0 || x == 'Progressive Wallet' ? '' : 'disable'}}").item
+							div(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}",style="background-image: url('images/zootr-sim/{{getImage(x, getCount(x))[0]}}')",class="{{getCount(x) > 0 || x == 'Progressive Wallet' ? '' : 'disable'}}").item
 						.dungeons
 							div(ng-repeat="dungeon in dungeongrid",id="{{dungeon | removeSpaces}}").dungeon
 								div(style="background-image:url('images/zootr-sim/{{nameToImageTitle[dungeon]}}')").dungeontitle
-								div(style="background-image: url('images/zootr-sim/{{getMedallionImage(dungeon)}}')",class="{{currentItemsAll.includes(knownMedallions[dungeon]) ? '' : 'disable'}}").medallionimage
-								div(ng-if="hasKeys(dungeon)",class="{{itemCounts['Small Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{itemCounts['Small Key ('+dungeon+')'] > 0 ? itemCounts['Small Key ('+dungeon+')'] : 'small_key'}}.png')").smallkeyimage
-								div(ng-if="hasBossKey(dungeon)",class="{{itemCounts['Boss Key ('+dungeon+')'] > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/boss_key.png')").bosskeyimage
+								div(style="background-image: url('images/zootr-sim/{{getMedallionImage(dungeon)}}')",class="{{current_items.includes(knownMedallions[dungeon]) ? '' : 'disable'}}").medallionimage
+								div(ng-if="hasKeys(dungeon)",class="{{getCount('Small Key ('+dungeon+')') > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{getCount('Small Key ('+dungeon+')') > 0 ? getCount('Small Key ('+dungeon+')') : 'small_key'}}.png')").smallkeyimage
+								div(ng-if="hasBossKey(dungeon)",class="{{getCount('Boss Key ('+dungeon+')') > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/boss_key.png')").bosskeyimage
 					br
 					br
 					span(ng-if="countChus() - usedChus > 0") Bombchus: {{countChus() - usedChus}} 
 					a(ng-if="countChus() - usedChus > 0",ng-click="useChu()").useChu Use Bombchu
 					br
 					br
-					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild == '') || (currentAge == 'Adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
-					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((currentAge == 'Child' && windRegionChild != '') || (currentAge == 'Adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{currentAge == 'Child' ? windRegionChild : windRegionAdult}})
+					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((current_age == 'child' && windRegionChild == '') || (current_age == 'adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
+					a(ng-if="currentItemsAll.includes('Farores Wind') && currentItemsAll.includes('Magic Meter') && ((current_age == 'child' && windRegionChild != '') || (current_age == 'adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{current_age == 'child' ? windRegionChild : windRegionAdult}})
 				.main.current
 					.currentinner
-						p Current Region: {{currentRegion}} [{{currentAge}}]
+						p Current Region: {{current_region}} [{{current_age}}]
 						img(ng-repeat-start="loc in getAvailableLocations()", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
-						a(ng-if="!checkedLocations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
+						a(ng-if="!checked_locations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
 							br
-						span(ng-repeat-end,ng-if="checkedLocations.includes(loc)", class="checked") {{ loc }}
+						span(ng-repeat-end,ng-if="checked_locations.includes(loc)", class="checked") {{ loc }}
 							br
 						br
 						a(ng-repeat="entrance in getAvailableEntrances()",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
@@ -100,15 +100,15 @@ html
 						a(ng-repeat="warp in collectedWarps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
 							br
 						br
-						a(id="Savewarp {{currentAge}}",ng-click="takeEntrance('Savewarp ' + currentAge)").entrance -> Savewarp to {{currentAge == 'Child' ? 'Kokiri Forest' : 'Temple of Time'}}
+						a(id="Savewarp {{current_age}}",ng-click="takeEntrance('Savewarp ' + current_age)").entrance -> Savewarp to {{current_age == 'child' ? 'Kokiri Forest' : 'Temple of Time'}}
 						br
 				.main.hints
 					span AVAILABLE HINTS
 					br
 					br
-					a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(currentRegion + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
+					a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(current_region + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
 						br
-					span(ng-repeat-end,ng-if="checkedHints.includes(currentRegion + ' ' + k)").hint.checked {{k}}
+					span(ng-repeat-end,ng-if="checkedHints.includes(current_region + ' ' + k)").hint.checked {{k}}
 						br
 					br
 					table.hint-table
@@ -143,10 +143,10 @@ html
 					br(ng-repeat-end)
 				.main.skulls
 					.skullsinner
-						p Gold Skulltulas [{{itemCounts['Gold Skulltula Token']}}/100]
-						a(ng-repeat-start="skull in getAvailableSkulltulas()",ng-if="!checkedLocations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
+						p Gold Skulltulas [{{getCount('Gold Skulltula Token')}}/100]
+						a(ng-repeat-start="skull in getAvailableSkulltulas()",ng-if="!checked_locations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
 							br
-						span(ng-repeat-end,ng-if="checkedLocations.includes(skull)").location.checked {{skull}}
+						span(ng-repeat-end,ng-if="checked_locations.includes(skull)").location.checked {{skull}}
 							br
 				br
 				br

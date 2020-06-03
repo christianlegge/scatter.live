@@ -553,7 +553,7 @@ a.useChu {
   max-height: 425px;
 }
 
-.lastchecked {
+.headline {
   width: 90%;
   margin:10px;
   min-height:34px;
@@ -564,7 +564,7 @@ a.useChu {
   border-bottom: 2px solid black;
 }
 
-.dark-mode .lastchecked {
+.dark-mode .headline {
   border-bottom: 2px solid #bbb;
 }
 

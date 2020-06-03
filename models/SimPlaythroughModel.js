@@ -8,7 +8,9 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	start_time: Number,
 	hints: Map,
 	entrances: Map,
-	hash: Array
+	hash: Array,
+	current_age: String,
+	current_region: String,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

@@ -130,6 +130,29 @@ router.get('/', function(req, res, next) {
 	res.render('zootr-sim', {meta: meta});
 });
 
+router.get('/resume', function(req, res, next) {
+	var id = req.query.id;
+	console.log(typeof id);
+	playthroughModel.findById(id, function(err, result) {
+		if (err) {
+			res.sendStatus(400);
+			return;
+		}
+		if (result == null) {
+			res.sendStatus(404);
+			return;
+		}
+		var info = {
+			id: result._id,
+			hash: result.hash,
+			locations: Object.keys(result.locations),
+			starting_items: result.currentItems,
+			starting_age: "Child",
+		};
+		res.send(info);
+	});
+});
+
 router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		if (result.checkedLocations.includes(req.params["location"])) {

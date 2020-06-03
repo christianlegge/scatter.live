@@ -171,7 +171,12 @@ html
 				br 
 				a(ng-click="throwAway()").button#reset Another one
 				a(ng-click="finished = false").button#unend Take me back
-		p(ng-if="playing").playthroughid Playthrough ID: {{playthroughId}}
+			p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
+			div(ng-show="!playing").loadfromid
+				p Load from Playthrough ID
+				form(ng-submit="resumeFromId(loadFormId)")
+					input(type="text",ng-model="loadFormId",placeholder="Playthrough ID",required)
+					input(type="submit",value="Load")
 		.footer 
 			a(href="..") Back to scatter.live
 			|  | 

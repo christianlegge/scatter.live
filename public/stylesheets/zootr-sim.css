@@ -307,8 +307,6 @@ div.start {
 }
 
 div.startleft {
-  border-right: 1px solid #222;
-  border-bottom: 1px solid #222;
   margin:0;
   justify-content: center;
   align-items: center;
@@ -350,12 +348,34 @@ div.generateform input {
   border: 1px solid #ccc;
 }
 
+div.loadfromid input {
+  padding:10px;
+  font-family: 'scatter OpenSans', sans-serif;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
 div.generateform select {
   padding:10px;
   font-family: 'scatter OpenSans', sans-serif;
   border-radius: 6px;
   border: 1px solid #ccc;
   margin-top:2px;
+}
+
+div.generateform input[type="submit"] {
+  font-weight: bold;
+  text-decoration: none;
+  padding:6px 10px;
+  border-radius:6px;
+  border: 2px solid black;
+  color:white;
+  background-color: #0061ff;
+  width: 50%;
+  text-align: center;
+  font-size: 1.1em;
+  margin-top:10px;
+  cursor:pointer;
 }
 
 div.generateform input[type="submit"] {
@@ -390,6 +410,14 @@ span.generating {
   top:-130px;
 }
 
+div.loadfromid {
+  border:0;
+  margin:0;
+  padding:4px;
+  display:inline-block;
+  text-align: center;
+}
+
 div.error {
   background-color: #ffdddd;
   border-radius: 6px;
@@ -403,8 +431,6 @@ div.error {
 }
 
 div.startright {
-  border-left: 1px solid #222;
-  border-top: 1px solid #222;
   margin:0;
 }
 

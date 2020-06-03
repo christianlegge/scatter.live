@@ -895,6 +895,19 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	};
 
+	$scope.resumeFromId = function(id) {
+		$http.get(`/zootr-sim/resume?id=${id}`).then(function(response) {
+			$scope.initializeFromServer(response["data"]);
+		}, function(error) {
+			if (error.status == 400) {
+				alert("Invalid Playthrough ID.");
+			}
+			if (error.status == 404) {
+				alert("Playthrough not found.");
+			}
+		});
+	};
+
 	$scope.initializeFromServer = function(data) {
 		console.log(data);
 		$scope.generating = false;
@@ -910,6 +923,7 @@ $scope.hasBossKey = function(dungeon) {
 	}
 	
 	$scope.fetchSeed = function() {
+		console.log($scope.settingsString);
 		if ($scope.generating) {
 			return;
 		}

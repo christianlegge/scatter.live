@@ -91,7 +91,7 @@ html
 				.main.current
 					.currentinner
 						p Current Region: {{current_region}} [{{current_age}}]
-						img(ng-repeat-start="loc in getAvailableLocations()", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
+						img(ng-repeat-start="loc in available_locations", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
 						a(ng-if="!checked_locations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
 							br
 						span(ng-repeat-end,ng-if="checked_locations.includes(loc)", class="checked") {{ loc }}
@@ -147,7 +147,7 @@ html
 				.main.skulls
 					.skullsinner
 						p Gold Skulltulas [{{getCount('Gold Skulltula Token')}}/100]
-						a(ng-repeat-start="skull in getAvailableSkulltulas()",ng-if="!checked_locations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
+						a(ng-repeat-start="skull in available_skulltulas",ng-if="!checked_locations.includes(skull)",ng-click="checkLocation(skull)",id="{{skull}}").location {{skull}}
 							br
 						span(ng-repeat-end,ng-if="checked_locations.includes(skull)").location.checked {{skull}}
 							br
@@ -193,6 +193,7 @@ html
 		+filesaver
 		+angular
 		
+		script(type="text/javascript",src="javascripts/zootr-sim/locations.js")
 		script(type="text/javascript",src="javascripts/zootr-sim/logic.js")
 		script(type="text/javascript",src="javascripts/zootr-sim/static.js")
 		script(type="text/javascript",src="javascripts/zootr-sim/angular.js")

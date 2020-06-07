@@ -1,7 +1,7 @@
 var jsons = ['Overworld', 'Bottom of the Well', 'Deku Tree', 'Dodongos Cavern', 'Fire Temple', 'Forest Temple', 'Ganons Castle', 'Gerudo Training Grounds', 'Ice Cavern', 'Jabu Jabus Belly', 'Shadow Temple', 'Spirit Temple', 'Water Temple'];
 var mqjsons = jsons.map(x => x + " MQ");
 mqjsons = mqjsons.filter(x => x != "Overworld MQ");
-jsons = jsons.concat(mqjsons);
+//jsons = jsons.concat(mqjsons);
 console.log(jsons);
 
 var locationsLogic = {};
@@ -39,9 +39,12 @@ function parseData(data) {
 	var lines = lines.flat();
 	var filtered = lines.map(function (s) {
 		var n = s.indexOf('#');
-		return s.substring(0, n != -1 ? n - 1 : s.length);
+		s = s.substring(0, n != -1 ? n - 1 : s.length);
+		s = s.replace(/\s+/g, " ");
+		s = s.trim();
+		return s;
 	});
-	var joined = filtered.join('');
+	var joined = filtered.join(' ');
 	var parsed = JSON.parse(joined);
 	return parsed;
 }
@@ -49,7 +52,7 @@ function parseData(data) {
 function getParentRegion(subregion) {
 	var region = Object.keys(subregions).filter(x => subregions[x].includes(subregion));
 	if (region.length != 1) {
-		throw "Region not found.";
+		throw `Parent region not found for subregion ${subregion}.`;
 	}
 	return region[0];
 }
@@ -73,6 +76,7 @@ Object.keyContaining = function(obj, val) {
 }
 
 var promises = jsons.map(filename => fetch(window.location.origin + '/javascripts/zootr-sim/data/World/' + filename + '.json'));
+var mqpromises = mqjsons.map(filename => fetch(window.location.origin + '/javascripts/zootr-sim/data/World/' + filename + '.json'));
 
 var keys = ["region_name", "hint", "locations", "exits", "scene", "events", "time_passes", "dungeon"];
 
@@ -88,9 +92,10 @@ Promise.all(promises).then(function (responses) {
 				if ("dungeon" in region) {
 					if (!(region["dungeon"] in locationsLogic)) {
 						locationsLogic[region["dungeon"]] = {};
+						locationsLogic[region["dungeon"]]["vanilla"] = {};
 					}
-					locationsLogic[region["dungeon"]][region["region_name"]] = {};
-					Object.assign(locationsLogic[region["dungeon"]][region["region_name"]], region);
+					locationsLogic[region["dungeon"]]["vanilla"][region["region_name"]] = {};
+					Object.assign(locationsLogic[region["dungeon"]]["vanilla"][region["region_name"]], region);
 				}
 				else {
 					var area = getParentRegion(region["region_name"]);
@@ -100,12 +105,32 @@ Promise.all(promises).then(function (responses) {
 					locationsLogic[area][region["region_name"]] = {};
 					Object.assign(locationsLogic[area][region["region_name"]], region);
 				}
-			})
+			});
 		});
-		console.log("done");
-		console.log(locationsLogic);
-		var blob = new Blob([JSON.stringify(locationsLogic, null, '\t')], { type: "application/json" });
-		window.saveAs(blob, "fulllogic.json");
+	}).then(function() {
+		Promise.all(mqpromises).then(function(responses) {
+			var mqparsePromises = [];
+			responses.forEach(function(response) {
+				mqparsePromises.push(response.text());
+			});
+			Promise.all(mqparsePromises).then(function(texts) {
+				texts.forEach(function(text) {
+					var parsed = parseData(text);
+					parsed.forEach(function (region) {
+						if (!("mq" in locationsLogic[region["dungeon"]])) {
+							locationsLogic[region["dungeon"]]["mq"] = {};
+						}
+						locationsLogic[region["dungeon"]]["mq"][region["region_name"]] = {};
+						Object.assign(locationsLogic[region["dungeon"]]["mq"][region["region_name"]], region);
+					});
+				});
+			}).then(function() {
+				console.log("done");
+				console.log(locationsLogic);
+				var blob = new Blob([JSON.stringify(locationsLogic, null, '\t')], { type: "application/json" });
+				//window.saveAs(blob, "fulllogic.json");
+			});
+		})
 	});
 });
 

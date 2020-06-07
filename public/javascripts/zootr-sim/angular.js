@@ -109,7 +109,15 @@ app.controller('simController', function($scope, $http) {
 		if (!$scope.playing) {
 			return [];
 		}
-		var allLocsInRegion = [];
+		console.log("getting locations");
+		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
+			$scope.available_shop_items = response.data.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
+			$scope.available_skulltulas = response.data.filter(x => x.startsWith("GS ") && !$scope.available_shop_items.includes(x));
+			$scope.available_locations = response.data.filter(x => !$scope.available_shop_items.includes(x) && !$scope.available_skulltulas.includes(x));
+		}, function(error) {
+			console.log(error);
+		});
+		/*var allLocsInRegion = [];
 		for (region in logic[$scope.current_region]) {
 			if ("locations" in logic[$scope.current_region][region]) {
 				allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.current_region][region]["locations"]));
@@ -119,18 +127,8 @@ app.controller('simController', function($scope, $http) {
 		if ($scope.current_region in extraLocations) {
 			locsToShow = locsToShow.concat(extraLocations[$scope.current_region][$scope.current_age]);
 		}
-		return locsToShow;
+		return locsToShow;*/
 	}
-	
-	$scope.getAvailableSkulltulas = function () {
-		var allLocsInRegion = [];
-		for (region in logic[$scope.current_region]) {
-			if ("locations" in logic[$scope.current_region][region]) {
-				allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.current_region][region]["locations"]));
-			}
-		}
-		return allLocsInRegion.filter(x => x.includes("GS "));
-	};
 	
 	$scope.getAvailableEntrances = function() {
 		return $scope.current_age == 'child' ? entrancesByRegionChild[$scope.current_region] : entrancesByRegionAdult[$scope.current_region];
@@ -196,8 +194,19 @@ app.controller('simController', function($scope, $http) {
 				$scope.current_items.push(response.data);
 				$scope.checkingLocation = false;
 			}, function(error) {
+				if (error.status == 403) {
+					$scope.headline = `Can't access that! ${error.data}`;
+					var el = document.getElementById(loc);
+					el.classList.add('logicfailed-anim');
+					el.style.animation = 'none';
+					el.offsetHeight;
+					el.style.animation = null;
+				}
 				$scope.checkingLocation = false;
 				console.log(error);
+			}).catch(function(error) {
+				$scope.checkingLocation = false;
+				console.error(error);
 			});
 		}
 		return;
@@ -546,7 +555,8 @@ $scope.hasBossKey = function(dungeon) {
 		else {
 			$scope.current_region = entrance;
 		}
-		$scope.updateForage();
+		$scope.getAvailableLocations();
+		$http.get(`/zootr-sim/updateregion/${$scope.playthroughId}/${$scope.current_region}`);
 	};
 	
 	$scope.dungeongrid = [
@@ -937,12 +947,13 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.current_items = data["current_items"];
 		$scope.fsHash = data["hash"];
 		$scope.playthroughId = data["id"];
-		$scope.playing = true;
 		$scope.checked_locations = data["checked_locations"];
 		$scope.current_age = data["current_age"];
 		$scope.current_region = data["current_region"];
 		$scope.known_medallions = data["known_medallions"];
+		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);
+		$scope.getAvailableLocations();
 	}
 	
 	$scope.fetchSeed = function() {
@@ -990,6 +1001,9 @@ $scope.hasBossKey = function(dungeon) {
 			}
 			else if (response.status == 403) {
 				$scope.generationError = "Error! Multiworld is not supported by the generator. Use the multiworld option."
+			}
+			else if (response.status == 408) {
+				$scope.generationError = "Error! Request timed out."
 			}
 			else if (response.status == 502) {
 				$scope.generationError = "Error! 502 Bad Gateway response from ootrandomizer.com.";
@@ -1148,8 +1162,7 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.resumeFromId(result);
 		}
 	});
-	
-	
+
 	/*Promise.all(
 		forageItems.map(x => localforage.getItem(x))
 	).then(function(results) {
@@ -1160,277 +1173,6 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		$scope.$apply();
 	});*/
-
-	var logicEvaluation = {
-		True: () => true,
-		False: () => false,
-		can_use: x => (logicEvaluation.is_magic_item(x) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
-									(logicEvaluation.is_adult_item(x) && $scope.current_age == "adult" && logicEvaluation.has(x)) ||
-									(logicEvaluation.is_magic_arrow(x) && $scope.current_age == "adult" && logicEvaluation.has("Progressive Bow") && logicEvaluation.has(x)) ||
-									(logicEvaluation.is_child_item(x) && $scope.current_age == "child" && logicEvaluation.has(x)),
-		is_magic_item:x => x == "Dins Fire" || x == "Farores Wind" || x == "Nayrus Love" || x == "Lens of Truth",
-		is_magic_arrow:x => x == "Fire Arrows" || x == "Light Arrows",
-		is_adult_item: x => x == "Progressive Bow" || x == "Hammer" || x == "Iron Boots" || x == "Hover Boots" || x == "Progressive Hookshot" || x == "Progressive Strength Upgrade" || x == "Scarecrow" || x == "Distant_Scarecrow",
-		is_child_item: x => x == "Slingshot" || x == "Boomerang" || x == "Kokiri Sword" || x == "Deku Shield",
-		can_see_with_lens: () => true,
-		has_projectile: x => logicEvaluation.has_explosives() ||
-												 (x == "child" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang())) ||
-												 (x == "adult" && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
-												 (x == "both" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang()) && (logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))) ||
-												 (x == "either" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang() || logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))),
-		has: x => $scope.current_items.includes(x),
-		has_explosives: () => logicEvaluation.has("Bomb Bag") || $scope.countChus() - $scope.usedChus > 0,
-		has_bombchus: () => logicEvaluation.has_explosives(),
-		has_all_stones: () => logicEvaluation.has("Kokiri Emerald") && logicEvaluation.has("Goron Ruby") && logicEvaluation.has("Zora Sapphire"),
-		Sticks: () => true,
-		Bombs: () => logicEvaluation.has("Bomb Bag"),
-		Hammer: () => logicEvaluation.has("Hammer"),
-		Bow: () => logicEvaluation.has("Progressive Bow"),
-		Mirror_Shield: () => logicEvaluation.has("Mirror Shield"),
-		Slingshot: () => logicEvaluation.has("Slingshot"),
-		Iron_Boots: () => logicEvaluation.has("Iron Boots"),
-		Hover_Boots: () => logicEvaluation.has("Hover Boots"),
-		Progressive_Wallet: () => logicEvaluation.has("Progressive Wallet"),
-		Gerudo_Membership_Card: () => logicEvaluation.has("Gerudo Card"),
-		Progressive_Hookshot: () => logicEvaluation.has("Progressive Hookshot"),
-		Progressive_Strength_Upgrade: () => logicEvaluation.has("Progressive Strength Upgrade"),
-		Blue_Fire: () => logicEvaluation.has_bottle(),
-		Bonooru: () => true,
-		can_play: x => (logicEvaluation.Ocarina()) && $scope.current_items.includes(x),
-		Boomerang: () => $scope.current_items.includes("Boomerang"),
-		Kokiri_Sword: () => true,
-		Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
-		"Skull Mask": () => true,
-		"Mask of Truth": () => logicEvaluation.has_all_stones(),
-		Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
-		Eyedrops: () => logicEvaluation.has("Eyedrops"),
-		Claim_Check: () => logicEvaluation.has("Claim Check"),
-		"Water Temple Clear": () => logicEvaluation.has("Water Medallion"),
-		Forest_Medallion: () => logicEvaluation.has("Forest Medallion"),
-		Big_Poe: () => logicEvaluation.has("Big Poe"),
-		Bottle_with_Letter: () => logicEvaluation.has("Bottle with Letter"),
-		can_child_attack: () => true,
-		has_bottle: () => $scope.current_items.filter(x => x.includes("Bottle")).length > 0,
-		is_adult: () => $scope.current_age == "adult",
-		can_use_projectile: () => logicEvaluation.has_explosives() || ($scope.current_age == "adult" && (logicEvaluation.has("Progressive Bow") || logicEvaluation.has("Progressive Hookshot"))) || ($scope.current_age == "child" && (logicEvaluation.has("Progressive Slingshot") || logicEvaluation.has("Boomerang"))),
-		here: () => true,
-		has_fire_source: () => logicEvaluation.can_use("Dins Fire") || logicEvaluation.can_use("Fire Arrows"),
-		has_fire_source_with_torch: () => logicEvaluation.has_fire_source() || $scope.current_age == "child",
-		can_stun_deku: () => true,
-		can_summon_gossip_fairy: () => true,
-		can_summon_gossip_fairy_without_suns: () => true,
-		can_finish_GerudoFortress: () => true,
-		can_blast_or_smash: () => logicEvaluation.has_explosives() || logicEvaluation.can_use("Hammer"),
-		can_dive: () => logicEvaluation.has("Progressive Scale"),
-		logic_fewer_tunic_requirements: () => true,
-		is_child: () => $scope.current_age == "child",
-		is_adult: () => $scope.current_age == "adult",
-		can_plant_bugs: () => logicEvaluation.is_child() && logicEvaluation.has_bottle(),
-		can_plant_bean: () => logicEvaluation.is_child(),
-		can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
-		can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
-		found_bombchus: () => logicEvaluation.has("Bombchus") || logicEvaluation.has("Bomb Bag"),
-		at_night: () => true,
-		damage_multiplier: () => true,
-		at: () => true,
-		shuffle_dungeon_entrances: () => false,
-		can_trigger_lacs: () => logicEvaluation.has("Shadow Medallion") && logicEvaluation.has("Spirit Medallion"),
-		at_day: () => true,
-		at_dampe_time: () => true,
-		guarantee_trade_path: () => true,
-		"Eyedrops Access": () => true,
-		"Goron City Child Fire": () => logicEvaluation.is_child() && logicEvaluation.can_use("Dins Fire"),
-		bombchus_in_logic: () => true,
-		can_open_bomb_grotto: () => logicEvaluation.can_blast_or_smash(),
-		can_open_storms_grotto: () => logicEvaluation.can_play("Song of Storms"),
-	}
-
-	function parseLogicRule(rule) {
-		rule = rule.trim();
-		var stack = [];
-		var it = 0;
-		var curChar = ' ';
-		var curWord = '';
-
-		function evaluate(term, params = []) {
-			if (term.includes("Small_Key") || term.includes("Boss_Key") || term.startsWith("logic_")) {
-				return true;
-			}
-			if (!(term in logicEvaluation)) {
-				throw "Unrecognized term: " + term;
-			}
-			return logicEvaluation[term](params.length == 1 ? params[0] : params);
-		}
-
-		function peekChar(n = 1) {
-			return rule.substring(it, it + n);
-		}
-
-		function getChar(n = 1) {
-			//console.log(rule.substring(0, it) + '[' + rule.substring(it, it+n) + ']' + rule.substring(it+n, rule.length));
-			it += n;
-			return rule.substring(it - n, it);
-		}
-
-		function getNum() {
-			var n = 0;
-			while (/^[0-9]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
-				n++;
-			}
-			return getChar(n);
-		}
-
-		function commaFollowsToken() {
-			var n = 1;
-			if (peekChar() == "'") {
-				while (it + n < rule.length) {
-					if (/^'[^']*' *,$/.test(peekChar(n))) {
-						return true;
-					}
-					else if (/^'[^']*' *[^,]$/.test(peekChar(n))) {
-						return false;
-					}
-					n++;
-				}
-				return false;
-			}
-			else {
-				while (it + n < rule.length) {
-					if (/^[A-Za-z_]+ *,$/.test(peekChar(n))) {
-						return true;
-					}
-					else if (/^[A-Za-z_]+ +[^,]$/.test(peekChar(n)) || /^[A-Za-z_]+ *[^,A-Za-z_]$/.test(peekChar(n))) {
-						return false;
-					}
-					n++;
-				}
-				return false;
-			}
-		}
-
-		function whitespace() {
-			while (peekChar() == ' ') {
-				getChar();
-			}
-		}
-
-		function peekToken() {
-			var n = 0;
-			if (peekChar() == "'") {
-				while (!/^'[^']*'$/.test(peekChar(n + 1)) && it + n < rule.length) {
-					n++;
-				}
-				return peekChar(n + 1).substring(1, n + 1);
-			}
-			else {
-				while (/^[A-Za-z_]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
-					n++;
-				}
-				return peekChar(n);
-			}
-		}
-
-		function getToken() {
-			var n = 0;
-			if (peekChar() == "'") {
-				while (!/^'[^']*'$/.test(peekChar(n + 1)) && it + n < rule.length) {
-					n++;
-				}
-				getChar();
-				var tok = getChar(n - 1);
-				getChar();
-				return tok;
-			}
-			else {
-				while (/^[A-Za-z_]+$/.test(peekChar(n + 1)) && it + n < rule.length) {
-					n++;
-				}
-				return getChar(n);
-			}
-		}
-
-		function expression() {
-			whitespace();
-			var num = term();
-			whitespace();
-			while (peekToken() == 'and' || peekToken() == 'or') {
-				whitespace();
-				var op = getToken();
-				whitespace();
-				if (op == 'and') {
-					num = term() && num;
-				}
-				if (op == 'or') {
-					num = term() || num;
-				}
-			}
-			return num;
-		}
-
-		function params() {
-			var retval = [];
-			retval.push(getToken());
-			whitespace();
-			while (peekChar() == ',') {
-				getChar();
-				whitespace();
-				retval.push(getToken());
-			}
-			return retval;
-		}
-
-		function tuple() {
-			var item = getToken();
-			whitespace();
-			var comma = getChar();
-			whitespace();
-			var num = parseInt(getNum());
-			return $scope.current_items.filter(x => x == item).length >= num;
-		}
-
-		function term() {
-			var negate = false;
-			if (peekToken() == 'not') {
-				negate = true;
-				getToken();
-				whitespace();
-			}
-			if (peekChar() == '(') {
-				getChar();
-				whitespace();
-				if (commaFollowsToken()) {
-					var expr = tuple();
-					whitespace();
-					getChar();
-					return negate ? !expr : expr;
-				}
-				else {
-					var e = expression();
-					whitespace();
-					getChar();
-					return negate ? !e : e;
-				}
-			}
-			else {
-				var token = getToken();
-				if (peekChar() == '(') {
-					getChar();
-					whitespace();
-					var parameters = params();
-					whitespace();
-					getChar();
-					var expr = evaluate(token, parameters);
-					return negate ? !expr : expr;
-				}
-				else {
-					var expr = evaluate(token);
-					return negate ? !expr : expr;
-				}
-			}
-		}
-
-		return expression();
-	}
 });
 
 function parseHint(hint) {

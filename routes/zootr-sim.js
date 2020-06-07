@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var request = require('request');
 var uuid = require('uuid');
+var simHelper = require("../zootr-sim/helper.js");
 var router = express.Router();
 var playthroughModel = require('../models/SimPlaythroughModel.js')
 
@@ -103,6 +104,8 @@ function parseLog(logfile) {
 		hints: logfile["gossip_stones"],
 		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
 		known_medallions: new Map(),
+		settings: logfile["settings"],
+		dungeons: logfile["dungeons"],
 	});
 	if (!doc.current_age) {
 		doc.current_age = "child";
@@ -157,19 +160,40 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			res.send(400);
 			return;
 		}
-		var item = result.locations.get(req.params["location"]);
-		if (typeof item == "object") {
-			item = item["item"];
+		if (simHelper.canCheckLocation(result, req.params["location"])) {
+			var item = result.locations.get(req.params["location"]);
+			if (typeof item == "object") {
+				item = item["item"];
+			}
+			if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
+				item = "Gold Skulltula Token";
+			}
+			result.current_items.push(item);
+			result.checked_locations.push(req.params["location"]);
+			result.save();
+			res.send(item);
 		}
-		if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
-			item = "Gold Skulltula Token";
+		else {
+			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
 		}
-		result.current_items.push(item);
-		result.checked_locations.push(req.params["location"]);
-		result.save();
-		res.send(item);
 	});
 });
+
+router.get('/updateregion/:playthroughId/:region', function(req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function(err, result) {
+		result.current_region = req.params["region"];
+		result.save();
+		res.sendStatus(200);
+	});
+});
+
+router.get('/getlocations/:playthroughId/:region', function(req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		var locs = simHelper.getLocations(result, req.params["region"]);
+		console.log(locs);
+		res.send(locs);
+	});
+})
 
 router.get('/badgateway', function(req, res, next) {
 	res.sendStatus(502);
@@ -179,7 +203,11 @@ router.get('/getspoiler', function(req, res, next) {
 	if (req.query.valid) {
 		request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
 			console.log(error);
-			if (response.statusCode == 502) {
+			if (error.code == "ETIMEDOUT") {
+				res.sendStatus(408);
+				return;
+			}
+			else if (response.statusCode == 502) {
 				res.sendStatus(502);
 			}
 			else if (body.includes("Invalid API Key")) {

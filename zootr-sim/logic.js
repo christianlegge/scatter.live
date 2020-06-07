@@ -27,7 +27,7 @@ var logic = {
 			"scene": "Kokiri Forest",
 			"hint": "Kokiri Forest",
 			"events": {
-				"Showed Mido Sword & Shield": "open_forest == 'open' or (is_child and Kokiri_Sword and Buy_Deku_Shield)"
+				"Showed Mido Sword & Shield": "open_forest or (is_child and Kokiri_Sword and has(Deku_Shield))"
 			},
 			"locations": {
 				"Kokiri Sword Chest": "is_child",
@@ -166,10 +166,10 @@ var logic = {
 			"exits": {
 				"Lost Woods Forest Exit": "True",
 				"Goron City Woods Warp": "True",
-				"Lost Woods Bridge": " is_adult and (can_use(Hover_Boots) or can_use(Longshot) or here(can_plant_bean) or logic_lost_woods_bridge)",
+				"Lost Woods Bridge": " is_adult and (can_use(Hover_Boots) or can_use(Longshot) or (can_plant_bean) or logic_lost_woods_bridge)",
 				"Zora River": "can_leave_forest and (can_dive or can_use(Iron_Boots))",
 				"Lost Woods Beyond Mido": "is_child or logic_mido_backflip or can_play(Sarias_Song)",
-				"Lost Woods Generic Grotto": "here(can_blast_or_smash)"
+				"Lost Woods Generic Grotto": "(can_blast_or_smash)"
 			}
 		},
 		"Lost Woods Beyond Mido": {
@@ -179,8 +179,8 @@ var logic = {
 			"locations": {
 				"LW Deku Scrub Deku Nuts": "is_child and can_stun_deku",
 				"LW Deku Scrub Deku Sticks": "is_child and can_stun_deku",
-				"GS Lost Woods Above Stage": " is_adult and at_night and (here(can_plant_bean) or (logic_lost_woods_gs_bean and can_use(Hookshot) and (can_use(Longshot) or can_use(Bow) or has_bombchus or can_use(Dins_Fire))))",
-				"GS Lost Woods Bean Patch Near Stage": " can_plant_bugs and (can_child_attack or (shuffle_scrubs == 'off' and Buy_Deku_Shield))",
+				"GS Lost Woods Above Stage": " is_adult and at_night and ((can_plant_bean) or (logic_lost_woods_gs_bean and can_use(Hookshot) and (can_use(Longshot) or can_use(Bow) or has_bombchus or can_use(Dins_Fire))))",
+				"GS Lost Woods Bean Patch Near Stage": " can_plant_bugs and (can_child_attack or (not shuffle_scrubs and has(Deku_Shield)))",
 				"Butterfly Fairy": "can_use(Sticks) and has_bottle"
 			},
 			"exits": {
@@ -188,7 +188,7 @@ var logic = {
 				"Lost Woods": "is_child or can_play(Sarias_Song)",
 				"Sacred Forest Meadow Entryway": "True",
 				"Deku Theater": "True",
-				"Lost Woods Sales Grotto": "here(can_blast_or_smash)"
+				"Lost Woods Sales Grotto": "(can_blast_or_smash)"
 			}
 		},
 		"Lost Woods Bridge From Forest": {
@@ -326,12 +326,12 @@ var logic = {
 				"Kakariko Village": "True",
 				"Zora River Front": "True",
 				"Lon Lon Ranch": "True",
-				"Remote Southern Grotto": "here(can_blast_or_smash)",
+				"Remote Southern Grotto": "(can_blast_or_smash)",
 				"Field Near Lake Outside Fence Grotto": "True",
 				"Field Near Lake Inside Fence Grotto": "can_open_bomb_grotto",
 				"Field Valley Grotto": "(can_use(Hammer) or is_child) and can_open_bomb_grotto",
-				"Field West Castle Town Grotto": "here(can_blast_or_smash)",
-				"Field Far West Castle Town Grotto": "here(can_blast_or_smash)",
+				"Field West Castle Town Grotto": "(can_blast_or_smash)",
+				"Field Far West Castle Town Grotto": "(can_blast_or_smash)",
 				"Field Kakariko Grotto": "can_open_bomb_grotto",
 				"Field North Lon Lon Grotto": "can_open_bomb_grotto"
 			}
@@ -442,7 +442,7 @@ var logic = {
 				"Pierre": "is_adult and Bonooru and not free_scarecrow",
 				"Underwater Bottle": "is_child and can_dive",
 				"Lake Hylia Sun": " is_adult and (can_use(Distant_Scarecrow) or 'Water Temple Clear') and can_use(Bow)",
-				"Lake Hylia Freestanding PoH": " is_adult and (can_use(Scarecrow) or here(can_plant_bean))",
+				"Lake Hylia Freestanding PoH": " is_adult and (can_use(Scarecrow) or (can_plant_bean))",
 				"GS Lake Hylia Bean Patch": "can_plant_bugs and can_child_attack",
 				"GS Lake Hylia Lab Wall": " is_child and (Boomerang or (logic_lab_wall_gs and (Sticks or Kokiri_Sword))) and at_night",
 				"GS Lake Hylia Small Island": "is_child and can_child_attack and at_night",
@@ -460,7 +460,7 @@ var logic = {
 				"Zoras Domain": "is_child and can_dive",
 				"Lake Hylia Owl Flight": "is_child",
 				"Lake Hylia Lab": "True",
-				"Fishing Hole": " is_child or can_use(Scarecrow) or here(can_plant_bean) or 'Water Temple Clear'",
+				"Fishing Hole": " is_child or can_use(Scarecrow) or (can_plant_bean) or 'Water Temple Clear'",
 				"Water Temple Lobby": " can_use(Hookshot) and (can_use(Iron_Boots) or ((can_use(Longshot) or logic_water_hookshot_entry) and (Progressive_Scale, 2)))",
 				"Lake Hylia Grotto": "True"
 			}
@@ -522,7 +522,7 @@ var logic = {
 				"Gerudo Valley Stream": "True",
 				"Gerudo Valley Crate Ledge": "is_child or can_use(Longshot)",
 				"Gerudo Valley Octorok Grotto": "can_use(Silver_Gauntlets)",
-				"Gerudo Valley Far Side": " is_adult and (can_ride_epona or can_use(Longshot) or gerudo_fortress == 'open' or 'Carpenter Rescue')"
+				"Gerudo Valley Far Side": " is_adult and (can_ride_epona or can_use(Longshot) or open_gerudo_fortress or 'Carpenter Rescue')"
 			}
 		},
 		"Gerudo Valley Stream": {
@@ -567,8 +567,8 @@ var logic = {
 			"exits": {
 				"Gerudo Fortress": "True",
 				"Gerudo Valley Stream": "True",
-				"Gerudo Valley Crate Ledge": " logic_valley_crate_hovers and can_use(Hover_Boots) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love))",
-				"Gerudo Valley": " is_child or can_ride_epona or can_use(Longshot) or gerudo_fortress == 'open' or 'Carpenter Rescue'",
+				"Gerudo Valley Crate Ledge": " logic_valley_crate_hovers and can_use(Hover_Boots) and (True or Fairy or can_use(Nayrus_Love))",
+				"Gerudo Valley": " is_child or can_ride_epona or can_use(Longshot) or open_gerudo_fortress or 'Carpenter Rescue'",
 				"Carpenter Tent": "is_adult",
 				"Gerudo Valley Storms Grotto": "is_adult and can_open_storm_grotto"
 			}
@@ -666,7 +666,7 @@ var logic = {
 				"Nut Pot": "True"
 			},
 			"exits": {
-				"Haunted Wasteland Near Colossus": "(logic_lens == 'chest') or can_use(Lens_of_Truth)",
+				"Haunted Wasteland Near Colossus": "True",
 				"Haunted Wasteland Near Fortress": " logic_wasteland_crossing or can_use(Hover_Boots) or can_use(Longshot)"
 			}
 		},
@@ -686,11 +686,11 @@ var logic = {
 			"hint": "Desert Colossus",
 			"time_passes": true,
 			"locations": {
-				"Colossus Freestanding PoH": "is_adult and here(can_plant_bean)",
+				"Colossus Freestanding PoH": "is_adult and (can_plant_bean)",
 				"Sheik at Colossus": "True",
 				"GS Desert Colossus Bean Patch": "can_plant_bugs and can_child_attack",
 				"GS Desert Colossus Tree": "can_use(Hookshot) and at_night",
-				"GS Desert Colossus Hill": " is_adult and at_night and (here(can_plant_bean) or can_use(Longshot) or (logic_colossus_gs and can_use(Hookshot)))",
+				"GS Desert Colossus Hill": " is_adult and at_night and ((can_plant_bean) or can_use(Longshot) or (logic_colossus_gs and can_use(Hookshot)))",
 				"Desert Colossus Gossip Stone": "True",
 				"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle",
 				"Fairy Pond": "can_play(Song_of_Storms) and has_bottle",
@@ -759,7 +759,7 @@ var logic = {
 				"Sell Big Poe": "is_adult and Bottle_with_Big_Poe"
 			},
 			"locations": {
-				"10 Big Poes": " is_adult and (Big_Poe or (Bottle_with_Big_Poe, big_poe_count))",
+				"10 Big Poes": " is_adult",
 				"GS Castle Market Guard House": "is_child"
 			},
 			"exits": {
@@ -785,8 +785,8 @@ var logic = {
 		"Castle Town Mask Shop": {
 			"region_name": "Castle Town Mask Shop",
 			"events": {
-				"Skull Mask": "at('Kakariko Village', is_child and Zeldas_Letter)",
-				"Mask of Truth": "'Skull Mask' and at('Lost Woods', is_child and can_play(Sarias_Song)) and at('Graveyard', is_child and at_day) and at('Hyrule Field', is_child and has_all_stones)"
+				"Skull Mask": "( is_child and Zeldas_Letter)",
+				"Mask of Truth": "'Skull Mask' and ( is_child and can_play(Sarias_Song)) and ( is_child and at_day) and ( is_child and has_all_stones)"
 			},
 			"exits": {
 				"Castle Town": "True"
@@ -1016,7 +1016,7 @@ var logic = {
 				"GS Kakariko Skulltula House": "is_child and at_night",
 				"GS Kakariko Guard's House": "is_child and at_night",
 				"GS Kakariko Tree": "is_child and at_night",
-				"GS Kakariko Watchtower": " is_child and (Slingshot or has_bombchus or (logic_kakariko_tower_gs and (Sticks or Kokiri_Sword) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love)))) and at_night",
+				"GS Kakariko Watchtower": " is_child and (Slingshot or has_bombchus or (logic_kakariko_tower_gs and (Sticks or Kokiri_Sword))) and at_night",
 				"GS Kakariko Above Impa's House": "can_use(Hookshot) and at_night",
 				"Bug Rock": "has_bottle"
 			},
@@ -1032,7 +1032,7 @@ var logic = {
 				"Kakariko Potion Shop Front": "is_child or at_day",
 				"Kakariko Bombable Grotto": "can_open_bomb_grotto",
 				"Kakariko Impa Ledge": " (is_child and at_day) or (is_adult and logic_visible_collisions) or can_use(Hookshot)",
-				"Kakariko Rooftop": " can_use(Hookshot) or (logic_man_on_roof and (is_adult or at_day or Slingshot or has_bombchus or (logic_kakariko_tower_gs and (Sticks or Kokiri_Sword) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love)))))",
+				"Kakariko Rooftop": " can_use(Hookshot) or (logic_man_on_roof and (is_adult or at_day or Slingshot or has_bombchus or (logic_kakariko_tower_gs and (Sticks or Kokiri_Sword))))",
 				"Kakariko Village Backyard": "is_adult or (is_child and at_day)",
 				"Graveyard": "True",
 				"Kakariko Village Behind Gate": "is_adult or 'Kakariko Village Gate Open'"
@@ -1123,7 +1123,7 @@ var logic = {
 				"Drain Well": "is_child and can_play(Song_of_Storms)"
 			},
 			"locations": {
-				"Windmill Freestanding PoH": " can_use(Boomerang) or (logic_windmill_poh and is_adult) or 'Dampes Windmill Access'",
+				"Windmill Freestanding PoH": " can_use(Boomerang) or (logic_windmill_poh and is_adult)",
 				"Song at Windmill": "is_adult and Ocarina"
 			},
 			"exits": {
@@ -1182,7 +1182,7 @@ var logic = {
 		"Odd Medicine Building": {
 			"region_name": "Odd Medicine Building",
 			"events": {
-				"Odd Potion Access": " is_adult and ('Odd Mushroom Access' or (Odd_Mushroom and disable_trade_revert))"
+				"Odd Potion Access": " is_adult and has(Odd_Mushroom)"
 			},
 			"exits": {
 				"Kakariko Village Backyard": "True"
@@ -1226,7 +1226,7 @@ var logic = {
 			"scene": "Graveyard",
 			"hint": "the Graveyard",
 			"locations": {
-				"Graveyard Freestanding PoH": " (is_adult and (here(can_plant_bean) or can_use(Longshot))) or (logic_graveyard_poh and can_use(Boomerang))",
+				"Graveyard Freestanding PoH": " (is_adult and ((can_plant_bean) or can_use(Longshot))) or (logic_graveyard_poh and can_use(Boomerang))",
 				"Gravedigging Tour": "is_child and at_dampe_time",
 				"GS Graveyard Wall": "can_use(Boomerang) and at_night",
 				"GS Graveyard Bean Patch": "can_plant_bugs and can_child_attack",
@@ -1274,9 +1274,6 @@ var logic = {
 		},
 		"Dampes Grave": {
 			"region_name": "Dampes Grave",
-			"events": {
-				"Dampes Windmill Access": "is_adult and can_play(Song_of_Time)"
-			},
 			"locations": {
 				"Hookshot Chest": "True",
 				"Dampe Race Freestanding PoH": "is_adult or logic_child_dampe_race_poh",
@@ -1315,16 +1312,16 @@ var logic = {
 			"time_passes": true,
 			"locations": {
 				"Death Mountain Bombable Chest": " can_blast_or_smash or (logic_dmt_bombable and is_child and Progressive_Strength_Upgrade)",
-				"DM Trail Freestanding PoH": " (damage_multiplier != 'ohko') or can_use(Nayrus_Love) or Fairy or can_use(Hover_Boots) or (is_adult and here(can_plant_bean and (has_explosives or Progressive_Strength_Upgrade)))",
+				"DM Trail Freestanding PoH": "True",
 				"GS Mountain Trail Bean Patch": " can_plant_bugs and (has_explosives or Progressive_Strength_Upgrade or (logic_dmt_soil_gs and can_use(Boomerang)))",
 				"GS Mountain Trail Bomb Alcove": "can_blast_or_smash",
-				"GS Mountain Trail Above Dodongo's Cavern": " is_adult and at_night and (can_use(Hammer) or (logic_trail_gs_lower_hookshot and can_use(Hookshot)) or (logic_trail_gs_lower_bean and here(can_plant_bean and (has_explosives or Progressive_Strength_Upgrade))))",
+				"GS Mountain Trail Above Dodongo's Cavern": " is_adult and at_night and (can_use(Hammer) or (logic_trail_gs_lower_hookshot and can_use(Hookshot)) or (logic_trail_gs_lower_bean and (can_plant_bean and (has_explosives or Progressive_Strength_Upgrade))))",
 				"Bean Plant Fairy": " can_plant_bean and can_play(Song_of_Storms) and has_bottle and (has_explosives or Progressive_Strength_Upgrade)"
 			},
 			"exits": {
 				"Kakariko Village Behind Gate": "True",
 				"Goron City": "True",
-				"Death Mountain Summit": " here(can_blast_or_smash) or (is_adult and here(can_plant_bean and Progressive_Strength_Upgrade))",
+				"Death Mountain Summit": " (can_blast_or_smash) or (is_adult and (can_plant_bean and Progressive_Strength_Upgrade))",
 				"Dodongos Cavern Entryway": " has_explosives or Progressive_Strength_Upgrade or is_adult",
 				"Mountain Storms Grotto": "can_open_storm_grotto"
 			}
@@ -1338,7 +1335,7 @@ var logic = {
 				"Prescription Access": "is_adult and ('Broken Sword Access' or Broken_Sword)"
 			},
 			"locations": {
-				"Biggoron": " is_adult and (Claim_Check or (guarantee_trade_path and ('Eyedrops Access' or (Eyedrops and disable_trade_revert))))",
+				"Biggoron": " is_adult and (Claim_Check or (guarantee_trade_path and has(Eyedrops)))",
 				"GS Mountain Trail Path to Crater": " is_adult and (can_use(Hammer) or logic_trail_gs_upper) and at_night",
 				"Death Mountain Trail Gossip Stone": "True",
 				"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle",
@@ -1348,8 +1345,8 @@ var logic = {
 				"Death Mountain": "True",
 				"Death Mountain Crater Upper Local": "True",
 				"Death Mountain Summit Owl Flight": "is_child",
-				"Mountain Bombable Grotto": "here(can_blast_or_smash)",
-				"Mountain Summit Fairy": "here(can_blast_or_smash)"
+				"Mountain Bombable Grotto": "(can_blast_or_smash)",
+				"Mountain Summit Fairy": "(can_blast_or_smash)"
 			}
 		},
 		"Death Mountain Summit Owl Flight": {
@@ -1430,7 +1427,7 @@ var logic = {
 				"Goron City Woods Warp": "'Goron City Woods Warp Open'",
 				"Goron Shop": " (is_adult and 'Stop Link the Goron') or (is_child and (has_explosives or Progressive_Strength_Upgrade or 'Goron City Child Fire'))",
 				"Darunias Chamber": " (is_adult and 'Stop Link the Goron') or (is_child and can_play(Zeldas_Lullaby))",
-				"Goron City Grotto": " is_adult and ((can_play(Song_of_Time) and ((damage_multiplier != 'ohko' and damage_multiplier != 'quadruple') or can_use(Goron_Tunic) or can_use(Longshot) or can_use(Nayrus_Love))) or (damage_multiplier != 'ohko' and can_use(Goron_Tunic) and can_use(Hookshot)) or (can_use(Nayrus_Love) and can_use(Hookshot)))"
+				"Goron City Grotto": " is_adult and ((can_play(Song_of_Time)) or (can_use(Goron_Tunic) and can_use(Hookshot)) or (can_use(Nayrus_Love) and can_use(Hookshot)))"
 			}
 		},
 		"Goron City Woods Warp": {
@@ -1495,7 +1492,7 @@ var logic = {
 			"exits": {
 				"Death Mountain Crater Upper Local": "can_use(Goron_Tunic)",
 				"Death Mountain Summit": "True",
-				"Top of Crater Grotto": "here(can_blast_or_smash)"
+				"Top of Crater Grotto": "(can_blast_or_smash)"
 			}
 		},
 		"Death Mountain Crater Upper Local": {
@@ -1511,7 +1508,7 @@ var logic = {
 			"exits": {
 				"Death Mountain Crater Upper Nearby": "True",
 				"Death Mountain Crater Ladder Area Nearby": "True",
-				"Death Mountain Crater Central Nearby": " can_use(Goron_Tunic) and can_use(Longshot) and ((damage_multiplier != 'ohko' and damage_multiplier != 'quadruple') or (Fairy and not shuffle_dungeon_entrances) or can_use(Nayrus_Love))"
+				"Death Mountain Crater Central Nearby": " can_use(Goron_Tunic) and can_use(Longshot)"
 			}
 		},
 		"Death Mountain Crater Ladder Area Nearby": {
@@ -1553,7 +1550,7 @@ var logic = {
 			"scene": "Death Mountain Crater",
 			"hint": "Death Mountain Crater",
 			"locations": {
-				"DM Crater Volcano Freestanding PoH": " is_adult and (here(can_plant_bean) or (logic_crater_bean_poh_with_hovers and Hover_Boots))",
+				"DM Crater Volcano Freestanding PoH": " is_adult and ((can_plant_bean) or (logic_crater_bean_poh_with_hovers and Hover_Boots))",
 				"Sheik in Crater": "is_adult"
 			},
 			"exits": {
@@ -1570,8 +1567,8 @@ var logic = {
 			},
 			"exits": {
 				"Death Mountain Crater Central Nearby": "True",
-				"Death Mountain Crater Lower Nearby": " is_adult and (can_use(Hover_Boots) or can_use(Hookshot) or here(can_plant_bean))",
-				"Death Mountain Crater Upper Nearby": "is_adult and here(can_plant_bean)",
+				"Death Mountain Crater Lower Nearby": " is_adult and (can_use(Hover_Boots) or can_use(Hookshot) or (can_plant_bean))",
+				"Death Mountain Crater Upper Nearby": "is_adult and (can_plant_bean)",
 				"Fire Temple Entrance": " (is_child and shuffle_dungeon_entrances) or (is_adult and (logic_fewer_tunic_requirements or can_use(Goron_Tunic)))"
 			}
 		},
@@ -1656,7 +1653,7 @@ var logic = {
 			"exits": {
 				"Zora River Front": "True",
 				"Zora River Plateau Open Grotto": "True",
-				"Zora River Plateau Bombable Grotto": "here(can_blast_or_smash)",
+				"Zora River Plateau Bombable Grotto": "(can_blast_or_smash)",
 				"Lost Woods": "can_dive or can_use(Iron_Boots)",
 				"Zora River Storms Grotto": "can_open_storm_grotto",
 				"Zora River Behind Waterfall": " can_play(Zeldas_Lullaby) or (can_use(Hover_Boots) and logic_zora_with_hovers) or (is_child and logic_zora_with_cucco)"
@@ -1716,7 +1713,7 @@ var logic = {
 			"locations": {
 				"Diving Minigame": "is_child",
 				"Zoras Domain Torch Run": "can_use(Sticks)",
-				"Deliver Ruto's Letter": " is_child and Bottle_with_Letter and zora_fountain != 'open'",
+				"Deliver Ruto's Letter": " is_child and Bottle_with_Letter and (closed_zora_fountain or adult_zora_fountain)",
 				"King Zora Thawed": "'Zora Thawed'",
 				"GS Zora's Domain Frozen Waterfall": " is_adult and at_night and (Progressive_Hookshot or Bow or Magic_Meter)",
 				"Zoras Domain Gossip Stone": "True",
@@ -1728,7 +1725,7 @@ var logic = {
 			"exits": {
 				"Zora River Behind Waterfall": "True",
 				"Lake Hylia": "is_child and can_dive",
-				"Zoras Domain Behind King Zora": " Deliver_Letter or zora_fountain == 'open' or (zora_fountain == 'adult' and is_adult)",
+				"Zoras Domain Behind King Zora": " Deliver_Letter or open_zora_fountain or (adult_zora_fountain and is_adult)",
 				"Zora Shop": "is_child or Blue_Fire",
 				"Zoras Domain Storms Grotto": "can_open_storm_grotto"
 			}
@@ -1737,7 +1734,7 @@ var logic = {
 			"region_name": "Zoras Domain Behind King Zora",
 			"scene": "Zoras Domain",
 			"exits": {
-				"Zoras Domain": " Deliver_Letter or zora_fountain == 'open' or (zora_fountain == 'adult' and is_adult)",
+				"Zoras Domain": " Deliver_Letter or open_zora_fountain or (adult_zora_fountain and is_adult)",
 				"Zoras Fountain": "True"
 			}
 		},
@@ -2063,7 +2060,7 @@ var logic = {
 				"region_name": "Ganons Castle Light Trial",
 				"dungeon": "Ganons Castle",
 				"events": {
-					"Light Trial Clear": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens and (Progressive_Hookshot or (logic_light_trial_mq and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love))))"
+					"Light Trial Clear": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens"
 				},
 				"locations": {
 					"Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby)"
@@ -2152,14 +2149,14 @@ var logic = {
 					"GS Deku Tree Compass Room": "is_adult or can_child_attack",
 					"GS Deku Tree Basement Vines": " can_use_projectile or can_use(Dins_Fire) or (logic_deku_basement_gs and (is_adult or Sticks or Kokiri_Sword))",
 					"GS Deku Tree Basement Gate": "is_adult or can_child_attack",
-					"GS Deku Tree Basement Back Room": " (here(has_fire_source_with_torch or (logic_deku_b1_webs_with_bow and can_use(Bow))) and here(can_use(Slingshot) or can_use(Bow)) and here(can_blast_or_smash) and here(can_use(Hookshot) or can_use(Boomerang))) or ((logic_deku_b1_skip or here(is_adult)) and is_child and has_explosives and can_use(Boomerang) and (Sticks or can_use(Dins_Fire)))",
+					"GS Deku Tree Basement Back Room": " ((has_fire_source_with_torch or (logic_deku_b1_webs_with_bow and can_use(Bow))) and (can_use(Slingshot) or can_use(Bow)) and (can_blast_or_smash) and (can_use(Hookshot) or can_use(Boomerang))) or ((logic_deku_b1_skip or (is_adult)) and is_child and has_explosives and can_use(Boomerang) and (Sticks or can_use(Dins_Fire)))",
 					"Deku Baba Sticks": "is_adult or Kokiri_Sword or Boomerang",
 					"Deku Baba Nuts": " is_adult or Slingshot or Sticks or has_explosives or Kokiri_Sword or can_use(Dins_Fire)"
 				},
 				"exits": {
 					"Outside Deku Tree": "True",
-					"Deku Tree Slingshot Room": "here(has_shield)",
-					"Deku Tree Boss Room": " here(has_fire_source_with_torch or (logic_deku_b1_webs_with_bow and can_use(Bow))) and (logic_deku_b1_skip or here(is_adult or can_use(Slingshot)))"
+					"Deku Tree Slingshot Room": "(has_shield)",
+					"Deku Tree Boss Room": " (has_fire_source_with_torch or (logic_deku_b1_webs_with_bow and can_use(Bow))) and (logic_deku_b1_skip or (is_adult or can_use(Slingshot)))"
 				}
 			},
 			"Deku Tree Slingshot Room": {
@@ -2177,11 +2174,11 @@ var logic = {
 				"region_name": "Deku Tree Boss Room",
 				"dungeon": "Deku Tree",
 				"events": {
-					"Deku Tree Clear": " here(has_shield) and (is_adult or Kokiri_Sword or Sticks)"
+					"Deku Tree Clear": " (has_shield) and (is_adult or Kokiri_Sword or Sticks)"
 				},
 				"locations": {
-					"Queen Gohma Heart": " here(has_shield) and (is_adult or Kokiri_Sword or Sticks)",
-					"Queen Gohma": " here(has_shield) and (is_adult or Kokiri_Sword or Sticks)"
+					"Queen Gohma Heart": " (has_shield) and (is_adult or Kokiri_Sword or Sticks)",
+					"Queen Gohma": " (has_shield) and (is_adult or Kokiri_Sword or Sticks)"
 				},
 				"exits": {
 					"Deku Tree Lobby": "True"
@@ -2203,9 +2200,9 @@ var logic = {
 				},
 				"exits": {
 					"Outside Deku Tree": "True",
-					"Deku Tree Compass Room": " here(can_use(Slingshot) or can_use(Bow)) and here(has_fire_source_with_torch or can_use(Bow))",
-					"Deku Tree Basement Water Room": " here(can_use(Slingshot) or can_use(Bow)) and here(has_fire_source_with_torch)",
-					"Deku Tree Basement Ledge": "logic_deku_b1_skip or here(is_adult)"
+					"Deku Tree Compass Room": " (can_use(Slingshot) or can_use(Bow)) and (has_fire_source_with_torch or can_use(Bow))",
+					"Deku Tree Basement Water Room": " (can_use(Slingshot) or can_use(Bow)) and (has_fire_source_with_torch)",
+					"Deku Tree Basement Ledge": "logic_deku_b1_skip or (is_adult)"
 				}
 			},
 			"Deku Tree Compass Room": {
@@ -2213,7 +2210,7 @@ var logic = {
 				"dungeon": "Deku Tree",
 				"locations": {
 					"Deku Tree MQ Compass Chest": "True",
-					"GS Deku Tree MQ Compass Room": " (can_use(Hookshot) or can_use(Boomerang)) and (has_bombchus or (Bombs and (here(is_adult) or can_play(Song_of_Time))))"
+					"GS Deku Tree MQ Compass Room": " (can_use(Hookshot) or can_use(Boomerang)) and (has_bombchus or (Bombs and ((is_adult) or can_play(Song_of_Time))))"
 				},
 				"exits": {
 					"Deku Tree Lobby": "True"
@@ -2236,7 +2233,7 @@ var logic = {
 				"dungeon": "Deku Tree",
 				"locations": {
 					"GS Deku Tree MQ Basement Ceiling": " can_use(Longshot) or (can_play(Song_of_Time) and (can_use(Boomerang) or can_use(Hookshot)))",
-					"GS Deku Tree MQ Basement Back Room": " here(has_fire_source_with_torch) and (can_use(Hookshot) or can_use(Boomerang))"
+					"GS Deku Tree MQ Basement Back Room": " (has_fire_source_with_torch) and (can_use(Hookshot) or can_use(Boomerang))"
 				},
 				"exits": {
 					"Deku Tree Basement Ledge": "is_child",
@@ -2248,11 +2245,11 @@ var logic = {
 				"dungeon": "Deku Tree",
 				"locations": {
 					"DT MQ Deku Scrub Deku Shield": "can_stun_deku",
-					"Queen Gohma Heart": " here(has_fire_source_with_torch) and here(has_shield) and (is_adult or Kokiri_Sword or Sticks)",
-					"Queen Gohma": " here(has_fire_source_with_torch) and here(has_shield) and (is_adult or Kokiri_Sword or Sticks)"
+					"Queen Gohma Heart": " (has_fire_source_with_torch) and (has_shield) and (is_adult or Kokiri_Sword or Sticks)",
+					"Queen Gohma": " (has_fire_source_with_torch) and (has_shield) and (is_adult or Kokiri_Sword or Sticks)"
 				},
 				"events": {
-					"Deku Tree Clear": " here(has_fire_source_with_torch) and here(has_shield) and (is_adult or Kokiri_Sword or Sticks)"
+					"Deku Tree Clear": " (has_fire_source_with_torch) and (has_shield) and (is_adult or Kokiri_Sword or Sticks)"
 				},
 				"exits": {
 					"Deku Tree Basement Back Room": "is_child",
@@ -2268,7 +2265,7 @@ var logic = {
 				"dungeon": "Dodongos Cavern",
 				"exits": {
 					"Dodongos Cavern Entryway": "True",
-					"Dodongos Cavern Lobby": " here(can_blast_or_smash) or Progressive_Strength_Upgrade"
+					"Dodongos Cavern Lobby": " (can_blast_or_smash) or Progressive_Strength_Upgrade"
 				}
 			},
 			"Dodongos Cavern Lobby": {
@@ -2286,7 +2283,7 @@ var logic = {
 				},
 				"exits": {
 					"Dodongos Cavern Beginning": "True",
-					"Dodongos Cavern Climb": " here( (is_adult or ((Sticks or can_use(Dins_Fire)) and (Slingshot or Sticks or has_explosives or Kokiri_Sword)))) and (has_explosives or Progressive_Strength_Upgrade or can_use(Dins_Fire) or (logic_dc_staircase and can_use(Bow)))"
+					"Dodongos Cavern Climb": " ( (is_adult or ((Sticks or can_use(Dins_Fire)) and (Slingshot or Sticks or has_explosives or Kokiri_Sword)))) and (has_explosives or Progressive_Strength_Upgrade or can_use(Dins_Fire) or (logic_dc_staircase and can_use(Bow)))"
 				}
 			},
 			"Dodongos Cavern Climb": {
@@ -2300,7 +2297,7 @@ var logic = {
 				},
 				"exits": {
 					"Dodongos Cavern Lobby": "True",
-					"Dodongos Cavern Far Bridge": " here(is_child and (Slingshot or (logic_dc_slingshot_skip and (Sticks or has_explosives or Kokiri_Sword)))) or here(is_adult and (Bow or Hover_Boots or can_use(Longshot) or logic_dc_jump))"
+					"Dodongos Cavern Far Bridge": " (is_child and (Slingshot or (logic_dc_slingshot_skip and (Sticks or has_explosives or Kokiri_Sword)))) or (is_adult and (Bow or Hover_Boots or can_use(Longshot) or logic_dc_jump))"
 				}
 			},
 			"Dodongos Cavern Far Bridge": {
@@ -2337,7 +2334,7 @@ var logic = {
 				"dungeon": "Dodongos Cavern",
 				"exits": {
 					"Dodongos Cavern Entryway": "True",
-					"Dodongos Cavern Lobby": " here(can_blast_or_smash or Progressive_Strength_Upgrade)"
+					"Dodongos Cavern Lobby": " (can_blast_or_smash or Progressive_Strength_Upgrade)"
 				}
 			},
 			"Dodongos Cavern Lobby": {
@@ -2359,8 +2356,8 @@ var logic = {
 					"Gossip Stone Fairy": "can_summon_gossip_fairy and has_bottle"
 				},
 				"exits": {
-					"Dodongos Cavern Lower Right Side": " here(can_blast_or_smash or ((can_use(Sticks) or can_use(Dins_Fire)) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love))))",
-					"Dodongos Cavern Bomb Bag Area": " is_adult or (here(is_adult) and has_explosives) or (logic_dc_mq_child_bombs and (Kokiri_Sword or Sticks) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love)))",
+					"Dodongos Cavern Lower Right Side": " (can_blast_or_smash or ((can_use(Sticks) or can_use(Dins_Fire)) and (True or Fairy or can_use(Nayrus_Love))))",
+					"Dodongos Cavern Bomb Bag Area": " is_adult or ((is_adult) and has_explosives) or (logic_dc_mq_child_bombs and (Kokiri_Sword or Sticks) and (True or Fairy or can_use(Nayrus_Love)))",
 					"Dodongos Cavern Boss Area": "has_explosives"
 				}
 			},
@@ -2371,7 +2368,7 @@ var logic = {
 					"DC MQ Deku Scrub Red Potion": "can_stun_deku"
 				},
 				"exits": {
-					"Dodongos Cavern Bomb Bag Area": " (here(is_adult and can_use(Bow)) or Progressive_Strength_Upgrade or can_use(Dins_Fire) or has_explosives) and (can_use(Slingshot))"
+					"Dodongos Cavern Bomb Bag Area": " ((is_adult and can_use(Bow)) or Progressive_Strength_Upgrade or can_use(Dins_Fire) or has_explosives) and (can_use(Slingshot))"
 				}
 			},
 			"Dodongos Cavern Bomb Bag Area": {
@@ -2379,7 +2376,7 @@ var logic = {
 				"dungeon": "Dodongos Cavern",
 				"locations": {
 					"Dodongos Cavern MQ Bomb Bag Chest": "True",
-					"GS Dodongo's Cavern MQ Scrub Room": " (here(is_adult and can_use(Bow)) or Progressive_Strength_Upgrade or can_use(Dins_Fire) or has_explosives) and (can_use(Hookshot) or can_use(Boomerang))"
+					"GS Dodongo's Cavern MQ Scrub Room": " ((is_adult and can_use(Bow)) or Progressive_Strength_Upgrade or can_use(Dins_Fire) or has_explosives) and (can_use(Hookshot) or can_use(Boomerang))"
 				},
 				"exits": {
 					"Dodongos Cavern Lower Right Side": "True"
@@ -2408,8 +2405,8 @@ var logic = {
 					"Fire Temple Chest Near Boss": " logic_fewer_tunic_requirements or can_use(Goron_Tunic)",
 					"Fire Temple Fire Dancer Chest": " ((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Hammer)",
 					"Fire Temple Boss Key Chest": " ((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Hammer)",
-					"Volvagia Heart": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and (logic_fire_boss_door_jump or Hover_Boots or at('Fire Temple Upper', can_play(Song_of_Time) or has_explosives))",
-					"Volvagia": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and (logic_fire_boss_door_jump or Hover_Boots or at('Fire Temple Upper', can_play(Song_of_Time) or has_explosives))",
+					"Volvagia Heart": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and (logic_fire_boss_door_jump or Hover_Boots or ( can_play(Song_of_Time) or has_explosives))",
+					"Volvagia": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and (logic_fire_boss_door_jump or Hover_Boots or ( can_play(Song_of_Time) or has_explosives))",
 					"GS Fire Temple Basement": " ((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Hammer)",
 					"Fairy Pot": " has_bottle and (can_use(Hover_Boots) or can_use(Hookshot)) and (logic_fewer_tunic_requirements or can_use(Goron_Tunic))"
 				},
@@ -2465,12 +2462,12 @@ var logic = {
 				"dungeon": "Fire Temple",
 				"locations": {
 					"Fire Temple MQ Entrance Hallway Small Chest": " is_adult or Kokiri_Sword or can_use(Sticks) or can_use(Slingshot)",
-					"Fire Temple MQ Chest Near Boss": " (logic_fewer_tunic_requirements or can_use(Goron_Tunic)) and ( ((can_use(Hover_Boots) or (logic_fire_mq_near_boss and can_use(Bow))) and has_fire_source) or (can_use(Hookshot) and (can_use(Fire_Arrows) or (can_use(Dins_Fire) and ((damage_multiplier != 'ohko' and damage_multiplier != 'quadruple') or can_use(Goron_Tunic) or can_use(Bow) or (Progressive_Hookshot, 2))))))",
+					"Fire Temple MQ Chest Near Boss": " (logic_fewer_tunic_requirements or can_use(Goron_Tunic)) and ( ((can_use(Hover_Boots) or (logic_fire_mq_near_boss and can_use(Bow))) and has_fire_source) or (can_use(Hookshot) and (can_use(Fire_Arrows) or (can_use(Dins_Fire) and ((True and True) or can_use(Goron_Tunic) or can_use(Bow) or (Progressive_Hookshot, 2))))))",
 					"Fairy Pot": "has_bottle and (Small_Key_Fire_Temple, 5)"
 				},
 				"exits": {
 					"Fire Temple Entrance": "True",
-					"Fire Boss Room": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and ((has_fire_source and (logic_fire_boss_door_jump or Hover_Boots)) or at('Fire Temple Upper', True))",
+					"Fire Boss Room": " can_use(Goron_Tunic) and can_use(Hammer) and Boss_Key_Fire_Temple and ((has_fire_source and (logic_fire_boss_door_jump or Hover_Boots)) or ( True))",
 					"Fire Lower Locked Door": " (Small_Key_Fire_Temple, 5) and (has_explosives or can_use(Hammer) or can_use(Hookshot))",
 					"Fire Big Lava Room": " (logic_fewer_tunic_requirements or can_use(Goron_Tunic)) and can_use(Hammer)"
 				}
@@ -2488,7 +2485,7 @@ var logic = {
 				"dungeon": "Fire Temple",
 				"locations": {
 					"Fire Temple MQ Boss Key Chest": " has_fire_source and (Bow or logic_fire_mq_bk_chest) and Progressive_Hookshot",
-					"Fire Temple MQ Big Lava Room Bombable Chest": " has_fire_source and has_explosives and (Progressive_Hookshot or (logic_fire_mq_bombable_chest and (damage_multiplier != 'ohko' or can_use(Nayrus_Love))))",
+					"Fire Temple MQ Big Lava Room Bombable Chest": " has_fire_source and has_explosives and (Progressive_Hookshot or (logic_fire_mq_bombable_chest and (True or can_use(Nayrus_Love))))",
 					"GS Fire Temple MQ Big Lava Room": "True",
 					"Fairy Pot": " has_bottle and has_fire_source and (Bow or logic_fire_mq_bk_chest) and (Progressive_Hookshot or logic_fire_song_of_time)"
 				},
@@ -2566,20 +2563,20 @@ var logic = {
 				"region_name": "Forest Temple NW Outdoors",
 				"dungeon": "Forest Temple",
 				"locations": {
-					"GS Forest Temple Outdoor West": " can_use(Longshot) or at('Forest Temple Outside Upper Ledge', can_use(Hookshot))",
+					"GS Forest Temple Outdoor West": " can_use(Longshot) or ( can_use(Hookshot))",
 					"Deku Baba Sticks": "is_adult or Kokiri_Sword or Boomerang",
 					"Deku Baba Nuts": " is_adult or Slingshot or Sticks or has_explosives or Kokiri_Sword or can_use(Dins_Fire)"
 				},
 				"exits": {
-					"Forest Temple Outdoors High Balconies": " is_adult or (has_explosives or ((can_use(Boomerang) or Nuts or Buy_Deku_Shield) and (Sticks or Kokiri_Sword or can_use(Slingshot))))"
+					"Forest Temple Outdoors High Balconies": " is_adult or (has_explosives or ((can_use(Boomerang) or Nuts or has(Deku_Shield)) and (Sticks or Kokiri_Sword or can_use(Slingshot))))"
 				}
 			},
 			"Forest Temple NE Outdoors": {
 				"region_name": "Forest Temple NE Outdoors",
 				"dungeon": "Forest Temple",
 				"locations": {
-					"Forest Temple Outside Hookshot Chest": " can_use(Hookshot) or at('Forest Temple Falling Room', True) or (logic_forest_outdoors_ledge and can_use(Hover_Boots) and at('Forest Temple Outdoors High Balconies', True))",
-					"GS Forest Temple Outdoor East": " can_use(Hookshot) or (logic_forest_outdoor_east_gs and can_use(Boomerang)) or at('Forest Temple Falling Room', can_use(Bow) or can_use(Dins_Fire) or has_explosives)",
+					"Forest Temple Outside Hookshot Chest": " can_use(Hookshot) or ( True) or (logic_forest_outdoors_ledge and can_use(Hover_Boots) and ( True))",
+					"GS Forest Temple Outdoor East": " can_use(Hookshot) or (logic_forest_outdoor_east_gs and can_use(Boomerang)) or ( can_use(Bow) or can_use(Dins_Fire) or has_explosives)",
 					"Deku Baba Sticks": "is_adult or Kokiri_Sword or Boomerang",
 					"Deku Baba Nuts": " is_adult or Slingshot or Sticks or has_explosives or Kokiri_Sword or can_use(Dins_Fire)"
 				},
@@ -2824,7 +2821,7 @@ var logic = {
 				"exits": {
 					"Gerudo Fortress": "True",
 					"Gerudo Training Grounds Heavy Block Room": " (is_adult or Kokiri_Sword) and (can_use(Hookshot) or logic_gtg_without_hookshot)",
-					"Gerudo Training Grounds Lava Room": " here(has_explosives and (is_adult or Kokiri_Sword))",
+					"Gerudo Training Grounds Lava Room": " (has_explosives and (is_adult or Kokiri_Sword))",
 					"Gerudo Training Grounds Central Maze": "True"
 				}
 			},
@@ -2934,8 +2931,8 @@ var logic = {
 				},
 				"exits": {
 					"Gerudo Fortress": "True",
-					"Gerudo Training Grounds Left Side": "here(has_fire_source)",
-					"Gerudo Training Grounds Right Side": "here(can_use(Bow) or can_use(Slingshot))"
+					"Gerudo Training Grounds Left Side": "(has_fire_source)",
+					"Gerudo Training Grounds Right Side": "(can_use(Bow) or can_use(Slingshot))"
 				}
 			},
 			"Gerudo Training Grounds Right Side": {
@@ -2952,7 +2949,7 @@ var logic = {
 				"region_name": "Gerudo Training Grounds Underwater",
 				"dungeon": "Gerudo Training Grounds",
 				"locations": {
-					"Gerudo Training Grounds MQ Underwater Silver Rupee Chest": " has_fire_source and can_use(Iron_Boots) and (logic_fewer_tunic_requirements or can_use(Zora_Tunic)) and (damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love))"
+					"Gerudo Training Grounds MQ Underwater Silver Rupee Chest": " has_fire_source and can_use(Iron_Boots) and (logic_fewer_tunic_requirements or can_use(Zora_Tunic)) and (True or Fairy or can_use(Nayrus_Love))"
 				}
 			},
 			"Gerudo Training Grounds Left Side": {
@@ -3012,7 +3009,7 @@ var logic = {
 				"dungeon": "Ice Cavern",
 				"exits": {
 					"Zoras Fountain": "True",
-					"Ice Cavern": "here(is_adult or has_explosives or can_use(Dins_Fire))"
+					"Ice Cavern": "(is_adult or has_explosives or can_use(Dins_Fire))"
 				}
 			},
 			"Ice Cavern": {
@@ -3138,7 +3135,7 @@ var logic = {
 				},
 				"exits": {
 					"Zoras Fountain": "True",
-					"Jabu Jabus Belly Main": "here(is_child and can_use(Slingshot))"
+					"Jabu Jabus Belly Main": "(is_child and can_use(Slingshot))"
 				}
 			},
 			"Jabu Jabus Belly Main": {
@@ -3146,7 +3143,7 @@ var logic = {
 				"dungeon": "Jabu Jabus Belly",
 				"locations": {
 					"Jabu Jabus Belly MQ Second Room Lower Chest": "True",
-					"Jabu Jabus Belly MQ Second Room Upper Chest": " can_use(Hover_Boots) or can_use(Hookshot) or at('Jabu Jabus Belly Boss Area', is_child)",
+					"Jabu Jabus Belly MQ Second Room Upper Chest": " can_use(Hover_Boots) or can_use(Hookshot) or ( is_child)",
 					"Jabu Jabus Belly MQ Compass Chest": "True",
 					"Jabu Jabus Belly MQ Basement South Chest": "True",
 					"Jabu Jabus Belly MQ Basement North Chest": "True",
@@ -3165,7 +3162,7 @@ var logic = {
 				"locations": {
 					"Jabu Jabus Belly MQ Falling Like Like Room Chest": "True",
 					"GS Jabu Jabu MQ Tailpasaran Room": "Sticks or can_use(Dins_Fire)",
-					"GS Jabu Jabu MQ Invisible Enemies Room": " can_see_with_lens or at('Jabu Jabus Belly Main', can_use(Hover_Boots))"
+					"GS Jabu Jabu MQ Invisible Enemies Room": " can_see_with_lens or ( can_use(Hover_Boots))"
 				},
 				"exits": {
 					"Jabu Jabus Belly Main": "True",
@@ -3403,7 +3400,7 @@ var logic = {
 				"locations": {
 					"Spirit Temple Child Climb East Chest": " has_projectile(both) or (((Small_Key_Spirit_Temple, 3) or ((Small_Key_Spirit_Temple, 2) and bombchus_in_logic and not shuffle_dungeon_entrances)) and can_use(Silver_Gauntlets) and has_projectile(adult)) or ((Small_Key_Spirit_Temple, 5) and is_child and has_projectile(child))",
 					"Spirit Temple Child Climb North Chest": " has_projectile(both) or (((Small_Key_Spirit_Temple, 3) or ((Small_Key_Spirit_Temple, 2) and bombchus_in_logic and not shuffle_dungeon_entrances)) and can_use(Silver_Gauntlets) and has_projectile(adult)) or ((Small_Key_Spirit_Temple, 5) and is_child and has_projectile(child))",
-					"GS Spirit Temple Bomb for Light Room": " has_projectile(both) or can_use(Dins_Fire) or ((damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love)) and (Sticks or Kokiri_Sword or has_projectile(child))) or (is_child and (Small_Key_Spirit_Temple, 5) and has_projectile(child)) or (((Small_Key_Spirit_Temple, 3) or ((Small_Key_Spirit_Temple, 2) and bombchus_in_logic and not shuffle_dungeon_entrances)) and can_use(Silver_Gauntlets) and (has_projectile(adult) or damage_multiplier != 'ohko' or Fairy or can_use(Nayrus_Love)))"
+					"GS Spirit Temple Bomb for Light Room": " has_projectile(both) or can_use(Dins_Fire) or ((True or Fairy or can_use(Nayrus_Love)) and (Sticks or Kokiri_Sword or has_projectile(child))) or (is_child and (Small_Key_Spirit_Temple, 5) and has_projectile(child)) or (((Small_Key_Spirit_Temple, 3) or ((Small_Key_Spirit_Temple, 2) and bombchus_in_logic and not shuffle_dungeon_entrances)) and can_use(Silver_Gauntlets) and (has_projectile(adult) or True or Fairy or can_use(Nayrus_Love)))"
 				},
 				"exits": {
 					"Spirit Temple Central Chamber": "has_explosives"
@@ -3480,7 +3477,7 @@ var logic = {
 				"dungeon": "Spirit Temple",
 				"locations": {
 					"Spirit Temple MQ Entrance Front Left Chest": "True",
-					"Spirit Temple MQ Entrance Back Left Chest": " here(can_blast_or_smash) and (can_use(Slingshot) or can_use(Bow))",
+					"Spirit Temple MQ Entrance Back Left Chest": " (can_blast_or_smash) and (can_use(Slingshot) or can_use(Bow))",
 					"Spirit Temple MQ Entrance Back Right Chest": " has_bombchus or can_use(Bow) or can_use(Hookshot) or can_use(Slingshot) or can_use(Boomerang)"
 				},
 				"exits": {
@@ -3493,10 +3490,10 @@ var logic = {
 				"region_name": "Child Spirit Temple",
 				"dungeon": "Spirit Temple",
 				"locations": {
-					"Spirit Temple MQ Child Center Chest": " at('Adult Spirit Temple', (Small_Key_Spirit_Temple, 7) and Hammer)",
+					"Spirit Temple MQ Child Center Chest": " ( (Small_Key_Spirit_Temple, 7) and Hammer)",
 					"Spirit Temple MQ Child Left Chest": " (Sticks or Kokiri_Sword) and has_bombchus and Slingshot and can_use(Dins_Fire)",
 					"Spirit Temple MQ Map Chest": " Sticks or Kokiri_Sword or has_explosives",
-					"Spirit Temple MQ Silver Block Hallway Chest": " has_bombchus and (Small_Key_Spirit_Temple, 7) and Slingshot and (can_use(Dins_Fire) or at('Adult Spirit Temple', (can_use(Fire_Arrows) or (logic_spirit_mq_frozen_eye and can_use(Bow) and can_play(Song_of_Time)))))",
+					"Spirit Temple MQ Silver Block Hallway Chest": " has_bombchus and (Small_Key_Spirit_Temple, 7) and Slingshot and (can_use(Dins_Fire) or ( (can_use(Fire_Arrows) or (logic_spirit_mq_frozen_eye and can_use(Bow) and can_play(Song_of_Time)))))",
 					"Fairy Pot": " has_bottle and (Sticks or Kokiri_Sword) and has_bombchus and Slingshot"
 				},
 				"exits": {
@@ -3606,10 +3603,10 @@ var logic = {
 				"region_name": "Water Temple Dive",
 				"dungeon": "Water Temple",
 				"locations": {
-					"Water Temple Map Chest": " can_use(Hover_Boots) or can_use(Hookshot) or can_use(Bow) or (at('Water Temple Lobby', has_fire_source_with_torch) and at('Water Temple Lobby', can_use_projectile))",
+					"Water Temple Map Chest": " can_use(Hover_Boots) or can_use(Hookshot) or can_use(Bow) or (( has_fire_source_with_torch) and ( can_use_projectile))",
 					"Water Temple Compass Chest": " (can_play(Zeldas_Lullaby) or Iron_Boots) and can_use(Hookshot)",
 					"Water Temple Torches Chest": " (Bow or can_use(Dins_Fire) or (Child_Water_Temple and Sticks and Kokiri_Sword and Magic_Meter)) and can_play(Zeldas_Lullaby)",
-					"Water Temple Central Bow Target Chest": " Progressive_Strength_Upgrade and can_play(Zeldas_Lullaby) and ((Bow and (logic_water_central_bow or Hover_Boots or can_use(Longshot))) or (logic_water_central_bow and Child_Water_Temple and Slingshot and at('Water Temple Middle Water Level', True)))",
+					"Water Temple Central Bow Target Chest": " Progressive_Strength_Upgrade and can_play(Zeldas_Lullaby) and ((Bow and (logic_water_central_bow or Hover_Boots or can_use(Longshot))) or (logic_water_central_bow and Child_Water_Temple and Slingshot and ( True)))",
 					"GS Water Temple South Basement": " (can_use(Hookshot) or can_use(Hover_Boots)) and has_explosives and can_play(Zeldas_Lullaby) and (can_use(Iron_Boots) or can_dive)"
 				},
 				"exits": {
@@ -3700,7 +3697,7 @@ var logic = {
 				"region_name": "Water Temple Lowered Water Levels",
 				"dungeon": "Water Temple",
 				"locations": {
-					"Water Temple MQ Compass Chest": " can_use(Bow) or can_use(Dins_Fire) or at('Water Temple Lobby', can_use(Sticks) and has_explosives)",
+					"Water Temple MQ Compass Chest": " can_use(Bow) or can_use(Dins_Fire) or ( can_use(Sticks) and has_explosives)",
 					"Water Temple MQ Longshot Chest": "can_use(Hookshot)",
 					"GS Water Temple MQ Lizalfos Hallway": "can_use(Dins_Fire)",
 					"GS Water Temple MQ Before Upper Water Switch": "can_use(Longshot)"
@@ -3757,3 +3754,5 @@ var subregions = {
 	'Zoras Fountain': ['Zoras Fountain', 'Zoras Fountain Fairy'],
 	'Ganons Castle': ['Ganons Castle Tower'],
 };
+
+module.exports = logic;

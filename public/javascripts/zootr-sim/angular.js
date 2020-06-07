@@ -109,7 +109,6 @@ app.controller('simController', function($scope, $http) {
 		if (!$scope.playing) {
 			return [];
 		}
-		console.log("getting locations");
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
 			$scope.available_shop_items = response.data.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
 			$scope.available_skulltulas = response.data.filter(x => x.startsWith("GS ") && !$scope.available_shop_items.includes(x));

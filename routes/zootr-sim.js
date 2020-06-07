@@ -190,7 +190,6 @@ router.get('/updateregion/:playthroughId/:region', function(req, res, next) {
 router.get('/getlocations/:playthroughId/:region', function(req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		var locs = simHelper.getLocations(result, req.params["region"]);
-		console.log(locs);
 		res.send(locs);
 	});
 })

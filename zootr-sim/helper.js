@@ -8,13 +8,14 @@ function parseLogicRule(save_file, rule) {
 	var logicEvaluation = {
 		True: () => true,
 		False: () => false,
-		can_use: x => (logicEvaluation.is_magic_item(x) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
-			(logicEvaluation.is_adult_item(x) && logicEvaluation.is_adult() && logicEvaluation.has(x)) ||
-			(logicEvaluation.is_magic_arrow(x) && logicEvaluation.is_adult() && logicEvaluation.has("Progressive Bow") && logicEvaluation.has(x)) ||
-			(logicEvaluation.is_child_item(x) && logicEvaluation.is_child() && logicEvaluation.has(x)),
+		can_use: x => (logicEvaluation.is_magic_item(x.replace(/_/g, " ")) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
+			(logicEvaluation.is_adult_item(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has(x)) ||
+			(logicEvaluation.is_magic_arrow(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has("Progressive Bow") && logicEvaluation.has(x)) ||
+			(logicEvaluation.is_child_item(x.replace(/_/g, " ")) && logicEvaluation.is_child() && logicEvaluation.has(x)) ||
+			(x.replace(/_/g, " ") == "Goron Tunic" || x.replace(/_/g, " ") == "Zora Tunic"),
 		is_magic_item: x => x == "Dins Fire" || x == "Farores Wind" || x == "Nayrus Love" || x == "Lens of Truth",
 		is_magic_arrow: x => x == "Fire Arrows" || x == "Light Arrows",
-		is_adult_item: x => x == "Progressive Bow" || x == "Hammer" || x == "Iron Boots" || x == "Hover Boots" || x == "Progressive Hookshot" || x == "Progressive Strength Upgrade" || x == "Scarecrow" || x == "Distant_Scarecrow",
+		is_adult_item: x => x == "Progressive Bow" || x == "Hammer" || x == "Iron Boots" || x == "Hover Boots" || x == "Progressive Hookshot" || x == "Progressive Strength Upgrade" || x == "Scarecrow" || x == "Distant Scarecrow",
 		is_child_item: x => x == "Slingshot" || x == "Boomerang" || x == "Kokiri Sword" || x == "Deku Shield",
 		can_see_with_lens: () => true,
 		has_projectile: x => logicEvaluation.has_explosives() ||
@@ -60,7 +61,6 @@ function parseLogicRule(save_file, rule) {
 		Bottle_with_Letter: () => logicEvaluation.has("Bottle with Letter"),
 		can_child_attack: () => true,
 		has_bottle: () => items.filter(x => x.includes("Bottle")).length > 0,
-		is_adult: () => logicEvaluation.is_adult(),
 		can_use_projectile: () => logicEvaluation.has_explosives() || (logicEvaluation.is_adult() && (logicEvaluation.has("Progressive Bow") || logicEvaluation.has("Progressive Hookshot"))) || (logicEvaluation.is_child() && (logicEvaluation.has("Progressive Slingshot") || logicEvaluation.has("Boomerang"))),
 		here: () => true,
 		has_fire_source: () => logicEvaluation.can_use("Dins Fire") || logicEvaluation.can_use("Fire Arrows"),
@@ -99,6 +99,7 @@ function parseLogicRule(save_file, rule) {
 		bombchus_in_logic: () => true,
 		can_open_bomb_grotto: () => logicEvaluation.can_blast_or_smash(),
 		can_open_storms_grotto: () => logicEvaluation.can_play("Song of Storms"),
+		can_open_storm_grotto: () => logicEvaluation.can_play("Song of Storms"),
 		had_night_start: () => true,
 		can_leave_forest: () => true,
 		Fairy: () => logicEvaluation.has_bottle(),
@@ -311,19 +312,50 @@ function parseLogicRule(save_file, rule) {
 }
 
 function buildRule(save_file, region, location) {
+	var paths = [];
+	var first = logic.defaultAreas[region];
+
 	var subregions = logic[region];
 	if (save_file["dungeons"].has(region)) {
 		subregions = logic[region][save_file["dungeons"].get(region)];
 	}
+
+	var visited = {}
+	var path = {}
 	for (subregion in subregions) {
-		if ("locations" in subregions[subregion]) {
-			if (location in subregions[subregion]["locations"]) {
-				var rule = subregions[subregion]["locations"][location];
-				console.log(rule);
-				return rule;
-			}
-		}
+		visited[subregion] = false;
 	}
+
+	function findPaths(node, ind) {
+		visited[node] = true;
+		path[ind] = node;
+		ind++;
+
+		if ("locations" in subregions[node] && location in subregions[node]["locations"]) {
+			thisPath = [];
+			for (var i = 0; i < ind-1; i++) {
+				thisPath.push(subregions[path[i]]["exits"][path[i+1]]);
+			}
+			thisPath.push(subregions[node]["locations"][location]);
+			paths.push(`(${thisPath.join(") and (")})`);
+		}
+		else {
+			Object.keys(subregions[node]["exits"]).filter(x => x in subregions).forEach(function(exit) {
+				if (!visited[exit]) {
+					findPaths(exit, ind);
+				}
+			});
+		}
+
+		ind--;
+		visited[node] = false;
+	}
+
+	findPaths(first, 0);
+	if (paths.length == 0) {
+		return "False";
+	}
+	return "(" + paths.join(") or (") + ")";
 }
 
 function canCheckLocation(save_file, location) {

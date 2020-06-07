@@ -518,23 +518,8 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.route += 'Play ' + entrance + '\n';
 		}
 		else if ($scope.current_region == 'Kokiri Forest' && entrance == 'Hyrule Field' && $scope.current_age == 'child' && !$scope.checked_locations.includes('Gift from Saria')) {
-			$scope.checkedLocations.push('Gift from Saria');
-			var item = '';
-			if ('Gift from Saria' in $scope.allLocations) {
-				item = $scope.allLocations['Gift from Saria'];
-			}
-			else {
-				item = 'Ocarina';
-			}
-			$scope.current_items.push(item);
-			$scope.numChecksMade++;
-			$scope.itemCounts[item]++;
-			if($scope.checkedLocations.length >= 2) {
-				$scope.disableUndo = false;
-			}
-			$scope.route += 'Gift from Saria' + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
-			$scope.headline = 'Gift from Saria: ' + item;
-			$scope.current_region = entrance;
+			$scope.checkLocation("Gift from Saria");
+			$scope.current_region = "Hyrule Field";
 		}
 		else {
 			$scope.current_region = entrance;

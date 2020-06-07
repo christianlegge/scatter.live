@@ -169,6 +169,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
 				item = "Gold Skulltula Token";
 			}
+			if (!(req.params["location"] in result.locations) && req.params["location"] == "Gift from Saria") {
+				item = "Ocarina";
+			}
 			result.current_items.push(item);
 			result.checked_locations.push(req.params["location"]);
 			result.save();

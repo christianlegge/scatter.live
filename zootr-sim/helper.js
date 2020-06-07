@@ -887,6 +887,9 @@ function parseLogicRule(save_file, rule) {
 }
 
 function buildRule(save_file, region, location) {
+	if (location == "Gift from Saria") {
+		return "is_child";
+	}
 	var paths = [];
 	var first = logic.defaultAreas[region];
 
@@ -934,7 +937,8 @@ function buildRule(save_file, region, location) {
 }
 
 function canCheckLocation(save_file, location) {
-	return parseLogicRule(save_file, buildRule(save_file, save_file["current_region"], location));
+	var rule = buildRule(save_file, save_file["current_region"], location);
+	return parseLogicRule(save_file, rule);
 }
 
 function testAllRules(save_file) {

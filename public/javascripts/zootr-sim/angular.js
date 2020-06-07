@@ -691,6 +691,7 @@ $scope.hasBossKey = function(dungeon) {
 
 	$scope.throwAway = function(item) {
 		$scope.playthroughId = null;
+		$scope.headline = "";
 		localforage.setItem("playthroughId", null);
 		$scope.init();
 		$scope.updateForage();

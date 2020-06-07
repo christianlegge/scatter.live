@@ -180,9 +180,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	});
 });
 
-router.get('/updateregion/:playthroughId/:region', function (req, res, next) {
+router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		result.current_region = req.params["region"];
+		result.current_age = req.params["age"];
 		result.save();
 		res.sendStatus(200);
 	});

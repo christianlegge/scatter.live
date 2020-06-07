@@ -505,11 +505,11 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.route += '\n---- CHILD ' + $scope.currentChild + ' ----\n\n';
 			$scope.current_age = 'child';
 		}
-		else if (entrance == 'Savewarp Child') {
+		else if (entrance == 'Savewarp child') {
 			$scope.current_region = 'Kokiri Forest';
 			$scope.route += 'Savewarp\n';
 		}
-		else if (entrance == 'Savewarp Adult') {
+		else if (entrance == 'Savewarp adult') {
 			$scope.current_region = 'Temple of Time';
 			$scope.route += 'Savewarp\n';
 		}
@@ -540,7 +540,7 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.current_region = entrance;
 		}
 		$scope.getAvailableLocations();
-		$http.get(`/zootr-sim/updateregion/${$scope.playthroughId}/${$scope.current_region}`);
+		$http.get(`/zootr-sim/updateregion/${$scope.playthroughId}/${$scope.current_region}/${$scope.current_age}`);
 	};
 	
 	$scope.dungeongrid = [

@@ -114,30 +114,12 @@ app.controller('simController', function($scope, $http) {
 			$scope.available_skulltulas = response.data.filter(x => x.startsWith("GS ") && !$scope.available_shop_items.includes(x));
 			$scope.available_locations = response.data.filter(x => !$scope.available_shop_items.includes(x) && !$scope.available_skulltulas.includes(x));
 		}, function(error) {
-			console.log(error);
+			console.error(error);
 		});
-		/*var allLocsInRegion = [];
-		for (region in logic[$scope.current_region]) {
-			if ("locations" in logic[$scope.current_region][region]) {
-				allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.current_region][region]["locations"]));
-			}
-		}
-		var locsToShow = $scope.locations.filter(x => allLocsInRegion.includes(x) && (!x.includes("GS ") && (!x.includes("Shop Item") && (!x.includes("Bazaar Item")))));
-		if ($scope.current_region in extraLocations) {
-			locsToShow = locsToShow.concat(extraLocations[$scope.current_region][$scope.current_age]);
-		}
-		return locsToShow;*/
 	}
 	
 	$scope.getAvailableEntrances = function() {
 		return $scope.current_age == 'child' ? entrancesByRegionChild[$scope.current_region] : entrancesByRegionAdult[$scope.current_region];
-		var allExitsInRegion = [];
-		subregions[$scope.current_region].forEach(function(subregion) {
-			console.log("ASDFdf");
-			allExitsInRegion.concat(Object.keys(logic[$scope.current_region][subregion]["exits"]));
-		});
-		console.log(allExitsInRegion);
-		return allExitsInRegion;
 	};
 
 	$scope.checkingLocation = false;
@@ -194,15 +176,18 @@ app.controller('simController', function($scope, $http) {
 				$scope.checkingLocation = false;
 			}, function(error) {
 				if (error.status == 403) {
-					$scope.headline = `Can't access that! ${error.data}`;
+					console.error(`Logic required: ${error.data}`);
+					$scope.headline = `Can't access that!`;
 					var el = document.getElementById(loc);
 					el.classList.add('logicfailed-anim');
 					el.style.animation = 'none';
 					el.offsetHeight;
 					el.style.animation = null;
 				}
+				else {
+					console.error(error);
+				}
 				$scope.checkingLocation = false;
-				console.log(error);
 			}).catch(function(error) {
 				$scope.checkingLocation = false;
 				console.error(error);
@@ -968,28 +953,6 @@ $scope.hasBossKey = function(dungeon) {
 		}).then(function successCallback(response) {
 			$scope.initializeFromServer(response["data"]);
 			return;
-			$scope.generating = false;
-			if (response.data[':version'] == ('5.1.0 Release')) {
-				$scope.currentSpoilerLog = response.data;
-				$scope.parseLog(response.data);
-			}
-			else {
-				if (response.data.includes('settings_string') || response.data.includes('Invalid randomizer settings')) {
-					$scope.generationError = "Error! Invalid settings string! Note that multiworld isn't supported by the API endpoint.";
-				}
-				else if (response.data.includes('Game unbeatable')) {
-					$scope.generationError = "Error! Game unbeatable! Try again with a different seed."
-				}
-				else if (response.data.includes('You may only generate a seed once every 5 seconds')) {
-					$scope.generationError = "Error! Too many seeds being generated. Try again in 5 seconds.";
-				}
-				else if (response.data.includes('502 Bad Gateway')) {
-					$scope.generationError = "Error! 502 Bad Gateway response from ootrandomizer.com.";
-				}
-				else {
-					$scope.generationError = "Unknown Error (please report this!): " + response.data;
-				}
-			}
 		}, function errorCallback(response) {
 			$scope.generating = false;
 			if (response.status == 400) {
@@ -1030,7 +993,7 @@ $scope.hasBossKey = function(dungeon) {
 				}
 				else {
 					$scope.uploadError = "Unknown error (please report this!): " + response.data;
-					console.log(response.data);
+					console.error(response.data);
 				}
 			});
 		}

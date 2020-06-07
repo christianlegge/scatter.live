@@ -1885,7 +1885,7 @@ var logic = {
 					"Ganons Castle Shadow Trial": "True",
 					"Ganons Castle Spirit Trial": "True",
 					"Ganons Castle Light Trial": "can_use(Golden_Gauntlets)",
-					"Ganons Castle Tower": " (skipped_trials[Forest] or 'Forest Trial Clear') and (skipped_trials[Fire] or 'Fire Trial Clear') and (skipped_trials[Water] or 'Water Trial Clear') and (skipped_trials[Shadow] or 'Shadow Trial Clear') and (skipped_trials[Spirit] or 'Spirit Trial Clear') and (skipped_trials[Light] or 'Light Trial Clear')",
+					"Ganons Castle Tower": " (skipped_trial(Forest) or 'Forest Trial Clear') and (skipped_trial(Fire) or 'Fire Trial Clear') and (skipped_trial(Water) or 'Water Trial Clear') and (skipped_trial(Shadow) or 'Shadow Trial Clear') and (skipped_trial(Spirit) or 'Spirit Trial Clear') and (skipped_trial(Light) or 'Light Trial Clear')",
 					"Ganons Castle Deku Scrubs": "can_see_with_lens"
 				}
 			},
@@ -1983,7 +1983,7 @@ var logic = {
 					"Ganons Castle Shadow Trial": "True",
 					"Ganons Castle Spirit Trial": "True",
 					"Ganons Castle Light Trial": "can_use(Golden_Gauntlets)",
-					"Ganons Castle Tower": " (skipped_trials[Forest] or 'Forest Trial Clear') and (skipped_trials[Fire] or 'Fire Trial Clear') and (skipped_trials[Water] or 'Water Trial Clear') and (skipped_trials[Shadow] or 'Shadow Trial Clear') and (skipped_trials[Spirit] or 'Spirit Trial Clear') and (skipped_trials[Light] or 'Light Trial Clear')",
+					"Ganons Castle Tower": " (skipped_trial(Forest) or 'Forest Trial Clear') and (skipped_trial(Fire) or 'Fire Trial Clear') and (skipped_trial(Water) or 'Water Trial Clear') and (skipped_trial(Shadow) or 'Shadow Trial Clear') and (skipped_trial(Spirit) or 'Spirit Trial Clear') and (skipped_trial(Light) or 'Light Trial Clear')",
 					"Ganons Castle Deku Scrubs": "can_see_with_lens"
 				}
 			},
@@ -2556,7 +2556,7 @@ var logic = {
 					"Forest Temple NW Outdoors": "can_play(Song_of_Time) or is_child",
 					"Forest Temple NE Outdoors": "can_use(Bow) or can_use(Slingshot)",
 					"Forest Temple Block Push Room": "(Small_Key_Forest_Temple, 1)",
-					"Forest Temple Boss Region": "Forest_Temple_Jo_and_Beth and Forest_Temple_Amy_and_Meg"
+					"Forest Temple Boss Region": "'Forest Temple Jo and Beth' and 'Forest Temple Amy and Meg'"
 				}
 			},
 			"Forest Temple NW Outdoors": {
@@ -2696,7 +2696,7 @@ var logic = {
 					"Forest Temple NE Outdoors": "can_use(Bow) or can_use(Slingshot)",
 					"Forest Temple After Block Puzzle": " (is_adult and Progressive_Strength_Upgrade) or (has_bombchus and logic_forest_mq_block_puzzle and can_use(Hookshot))",
 					"Forest Temple Outdoor Ledge": " can_use(Hover_Boots) or (can_use(Hookshot) and (Progressive_Strength_Upgrade or logic_forest_mq_hallway_switch or (has_bombchus and logic_forest_mq_block_puzzle)))",
-					"Forest Temple Boss Region": " Forest_Temple_Jo_and_Beth and Forest_Temple_Amy_and_Meg"
+					"Forest Temple Boss Region": "'Forest Temple Jo and Beth' and 'Forest Temple Amy and Meg'"
 				}
 			},
 			"Forest Temple After Block Puzzle": {

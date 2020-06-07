@@ -106,6 +106,7 @@ function parseLog(logfile) {
 		known_medallions: new Map(),
 		settings: logfile["settings"],
 		dungeons: logfile["dungeons"],
+		trials: logfile["trials"],
 	});
 	if (!doc.current_age) {
 		doc.current_age = "child";
@@ -179,11 +180,22 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	});
 });
 
-router.get('/updateregion/:playthroughId/:region', function(req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function(err, result) {
+router.get('/updateregion/:playthroughId/:region', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		result.current_region = req.params["region"];
 		result.save();
 		res.sendStatus(200);
+	});
+});
+
+router.get('/testallrules', function (req, res, next) {
+	playthroughModel.findOne({ _id: "5edd4aae9a4af366f4600dbb" }, function (err, result) {
+		try {
+			res.send(simHelper.testAllRules(result));
+		}
+		catch (err) {
+			res.send(err);
+		}
 	});
 });
 

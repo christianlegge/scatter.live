@@ -8,6 +8,9 @@ function parseLogicRule(save_file, rule) {
 	var logicEvaluation = {
 		True: () => true,
 		False: () => false,
+		is_starting_age: () => true,
+		Time_Travel: () => true,
+		open_forest: () => settings["open_forest"] == "open",
 		can_use: x => (logicEvaluation.is_magic_item(x.replace(/_/g, " ")) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
 			(logicEvaluation.is_adult_item(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has(x)) ||
 			(logicEvaluation.is_magic_arrow(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has("Progressive Bow") && logicEvaluation.has(x)) ||
@@ -27,6 +30,7 @@ function parseLogicRule(save_file, rule) {
 		has_explosives: () => logicEvaluation.has("Bomb Bag") || logicEvaluation.has_bombchus(),
 		has_bombchus: () => items.filter(x => x.includes("Bombchu")).length > 0,
 		has_all_stones: () => logicEvaluation.has("Kokiri Emerald") && logicEvaluation.has("Goron Ruby") && logicEvaluation.has("Zora Sapphire"),
+		has_all_medallions: () => logicEvaluation.has("Light Medallion") && logicEvaluation.has("Forest Medallion") && logicEvaluation.has("Fire Medallion") && logicEvaluation.has("Water Medallion") && logicEvaluation.has("Spirit Medallion") && logicEvaluation.has("Shadow Medallion"),
 		Sticks: () => true,
 		Bombs: () => logicEvaluation.has("Bomb Bag"),
 		Hammer: () => logicEvaluation.has("Hammer"),
@@ -45,12 +49,9 @@ function parseLogicRule(save_file, rule) {
 		Boomerang: () => logicEvaluation.has("Boomerang"),
 		Kokiri_Sword: () => true,
 		Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
-		"Skull Mask": () => true,
-		"Mask of Truth": () => logicEvaluation.has_all_stones(),
 		Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
 		Eyedrops: () => logicEvaluation.has("Eyedrops"),
 		Claim_Check: () => logicEvaluation.has("Claim Check"),
-		"Water Temple Clear": () => checked_locations.includes("Morpha"),
 		Forest_Medallion: () => logicEvaluation.has("Forest Medallion"),
 		Fire_Medallion: () => logicEvaluation.has("Fire Medallion"),
 		Water_Medallion: () => logicEvaluation.has("Water Medallion"),
@@ -78,7 +79,7 @@ function parseLogicRule(save_file, rule) {
 		can_plant_bean: () => logicEvaluation.is_child(),
 		can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
 		can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
-		found_bombchus: () => logicEvaluation.has("Bombchus") || logicEvaluation.has("Bomb Bag"),
+		found_bombchus: () => settings["bombchus_in_logic"] ? items.filter(x => x.includes("Bombchus")).length > 0 : logicEvaluation.has("Bomb Bag"),
 		has_shield: () => (logicEvaluation.is_adult() && logicEvaluation.has("Hylian_Shield")) || (logicEvaluation.is_child() && logicEvaluation.has("Deku_Shield")),
 		at_night: () => true,
 		damage_multiplier: () => true,
@@ -94,26 +95,75 @@ function parseLogicRule(save_file, rule) {
 		Suns_Song: () => logicEvaluation.can_play("Suns Song"),
 		Song_of_Storms: () => logicEvaluation.can_play("Song of Storms"),
 		Zeldas_Lullaby: () => logicEvaluation.can_play("Zeldas Lullaby"),
-		"Eyedrops Access": () => true,
-		"Goron City Child Fire": () => logicEvaluation.is_child() && logicEvaluation.can_use("Dins Fire"),
 		bombchus_in_logic: () => true,
 		can_open_bomb_grotto: () => logicEvaluation.can_blast_or_smash(),
 		can_open_storms_grotto: () => logicEvaluation.can_play("Song of Storms"),
 		can_open_storm_grotto: () => logicEvaluation.can_play("Song of Storms"),
 		had_night_start: () => true,
 		can_leave_forest: () => true,
+		Dins_Fire: () => logicEvaluation.has("Dins Fire"),
 		Fairy: () => logicEvaluation.has_bottle(),
 		Fire_Arrows: () => logicEvaluation.can_use("Fire Arrows"),
-		"Links Cow": () => checked_locations.includes("Horseback Archery 1500 Points"),
 		shuffle_scrubs: () => settings["shuffle_scrubs"] == "on",
 		free_scarecrow: () => true,
+		open_gerudo_fortress: () => settings["gerudo_fortress"] == "open",
 		closed_zora_fountain: () => settings["zora_fountain"] == "closed",
 		adult_zora_fountain: () => settings["zora_fountain"] == "adult",
-		"Zora Thawed": () => logicEvaluation.is_adult() && logicEvaluation.has_bottle(),
 		Magic_Meter: () => logicEvaluation.has("Magic Meter"),
 		Nuts: () => true,
 		Child_Water_Temple: () => false,
-		"Stop Link the Goron": () => logicEvaluation.is_adult() && (logicEvaluation.has(Progressive_Strength_Upgrade) || logicEvaluation.has_explosives() || logicEvaluation.has("Bow") || logicEvaluation.can_use("Dins_Fire")),
+		shuffle_overworld_entrances: () => settings["entrance_shuffle"] == "all",
+		open_door_of_time: () => settings["open_door_of_time"],
+		Weird_Egg: () => logicEvaluation.has("Weird Egg"),
+		shuffle_weird_egg: () => settings.shuffle_weird_egg,
+		can_build_rainbow_bridge: () => (settings.bridge == "open") ||
+										(settings.bridge == "vanilla" && logicEvaluation.has("Shadow Medallion") && logicEvaluation.has("Spirit Medallion") && logicEvaluation.has("Light Arrows")) ||
+										(settings.bridge == "stones" && logicEvaluation.has_all_stones()) ||
+										(settings.bridge == "medallions" && logicEvaluation.has_all_medallions()) ||
+										(settings.bridge == "dungeons" && logicEvaluation.has_all_stones() && logicEvaluation.has_all_medallions()) ||
+										(settings.bridge == "tokens" && items.filter(x => x == "Gold Skulltula Token").length >= 100),
+		Deliver_Letter: () => logicEvaluation.has("Bottle with Letter"),
+		open_zora_fountain: () => settings.zora_fountain == "open",
+		Fish: () => logicEvaluation.has_bottle(),
+		skipped_trial: (x) => save_file.trials[x] == "inactive",
+		"Showed Mido Sword & Shield": () => parseLogicRule(save_file, "open_forest or (is_child and Kokiri_Sword and has(Deku_Shield))"),
+		"Odd Mushroom Access": () => parseLogicRule(save_file, "is_adult and ('Cojiro Access' or Cojiro)"),
+		"Poachers Saw Access": () => parseLogicRule(save_file, "is_adult and 'Odd Potion Access'"),
+		"Bonooru": () => parseLogicRule(save_file, "is_child and Ocarina"),
+		"Eyedrops Access": () => parseLogicRule(save_file, " is_adult and ('Eyeball Frog Access' or (Eyeball_Frog and disable_trade_revert))"),
+		"Broken Sword Access": () => parseLogicRule(save_file, "is_adult and ('Poachers Saw Access' or Poachers_Saw)"),
+		"Carpenter Rescue": () => parseLogicRule(save_file, "can_finish_GerudoFortress"),
+		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, "is_adult and Gerudo_Membership_Card"),
+		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, " is_adult and Gerudo_Membership_Card and (shuffle_gerudo_card or shuffle_overworld_entrances or shuffle_special_indoor_entrances)"),
+		"Sell Big Poe": () => parseLogicRule(save_file, "is_adult and Bottle_with_Big_Poe"),
+		"Skull Mask": () => parseLogicRule(save_file, "( is_child and Zeldas_Letter)"),
+		"Mask of Truth": () => parseLogicRule(save_file, "'Skull Mask' and ( is_child and can_play(Sarias_Song)) and ( is_child and at_day) and ( is_child and has_all_stones)"),
+		"Cojiro Access": () => parseLogicRule(save_file, "is_adult and 'Wake Up Adult Talon'"),
+		"Kakariko Village Gate Open": () => parseLogicRule(save_file, "is_child and Zeldas_Letter"),
+		"Wake Up Adult Talon": () => parseLogicRule(save_file, "is_adult and (Pocket_Egg or Pocket_Cucco)"),
+		"Drain Well": () => parseLogicRule(save_file, "is_child and can_play(Song_of_Storms)"),
+		"Odd Potion Access": () => parseLogicRule(save_file, " is_adult and has(Odd_Mushroom)"),
+		"Prescription Access": () => parseLogicRule(save_file, "is_adult and ('Broken Sword Access' or Broken_Sword)"),
+		"Goron City Child Fire": () => parseLogicRule(save_file, "is_child and can_use(Dins_Fire)"),
+		"Goron City Woods Warp Open": () => parseLogicRule(save_file, " can_blast_or_smash or can_use(Dins_Fire) or can_use(Bow) or Progressive_Strength_Upgrade or 'Goron City Child Fire'"),
+		"Stop Link the Goron": () => parseLogicRule(save_file, " is_adult and (Progressive_Strength_Upgrade or has_explosives or Bow or (logic_link_goron_dins and can_use(Dins_Fire)))"),
+		"Goron City Woods Warp Open": () => parseLogicRule(save_file, "can_blast_or_smash or can_use(Dins_Fire)"),
+		"Goron City Child Fire": () => parseLogicRule(save_file, "can_use(Sticks)"),
+		"Zora Thawed": () => parseLogicRule(save_file, "is_adult and Blue_Fire"),
+		"Eyeball Frog Access": () => parseLogicRule(save_file, " is_adult and 'Zora Thawed' and (Eyedrops or Eyeball_Frog or Prescription or 'Prescription Access')"),
+		"Epona": () => parseLogicRule(save_file, "can_play(Eponas_Song) and is_adult and at_day"),
+		"Links Cow": () => parseLogicRule(save_file, "can_play(Eponas_Song) and is_adult and at_day"),
+		"Forest Trial Clear": () => parseLogicRule(save_file, "can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire)"),
+		"Fire Trial Clear": () => parseLogicRule(save_file, " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot)"),
+		"Water Trial Clear": () => parseLogicRule(save_file, "Blue_Fire and Hammer and can_use(Light_Arrows)"),
+		"Shadow Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens))))"),
+		"Spirit Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot)"),
+		"Light Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens"),
+		"Deku Tree Clear": () => parseLogicRule(save_file, " (has_shield) and (is_adult or Kokiri_Sword or Sticks)"),
+		"Forest Temple Amy and Meg": () => parseLogicRule(save_file, "can_use(Bow)"),
+		"Forest Temple Jo and Beth": () => parseLogicRule(save_file, "can_use(Bow)"),
+		"Child Water Temple": () => parseLogicRule(save_file, "is_child"),
+		"Water Temple Clear": () => parseLogicRule(save_file, "Boss_Key_Water_Temple and can_use(Longshot)"),
 	}
 
 	rule = rule.trim();
@@ -362,6 +412,47 @@ function canCheckLocation(save_file, location) {
 	return parseLogicRule(save_file, buildRule(save_file, save_file["current_region"], location));
 }
 
+function testAllRules(save_file) {
+	var eventsRules = [];
+	for (region in logic) {
+		if (region == "defaultAreas") {
+			continue;
+		}
+		var subregions = logic[region];
+		if ("vanilla" in logic[region]) {
+			subregions = logic[region]["mq"];
+		}
+		else {
+			continue;
+		}
+		console.log(region);
+		for (subregion in subregions) {
+			console.log(subregion);
+			if ("exits" in subregions[subregion]) {
+				for (exit in subregions[subregion]["exits"]) {
+					try {
+						parseLogicRule(save_file, subregions[subregion]["exits"][exit]);
+					}
+					catch (err) {
+						return err;
+					}
+				}
+			}
+			if ("locations" in subregions[subregion]) {
+				for (location in subregions[subregion]["locations"]) {
+					try {
+						parseLogicRule(save_file, subregions[subregion]["locations"][location]);
+					}
+					catch (err) {
+						return err;
+					}
+				}
+			}
+		}
+	}
+	return "Success";
+}
+
 function getLocations(save_file, region) {
 	var all_locs = [];
 	var subregions = logic[region];
@@ -379,3 +470,4 @@ function getLocations(save_file, region) {
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
 module.exports.buildRule = buildRule;
+module.exports.testAllRules = testAllRules;

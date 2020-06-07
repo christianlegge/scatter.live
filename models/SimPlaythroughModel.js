@@ -14,6 +14,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	known_medallions: Map,
 	settings: Map,
 	dungeons: Map,
+	trials: Map,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

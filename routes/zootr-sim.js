@@ -194,7 +194,7 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 		}
 		if (simHelper.canCheckLocation(result, req.params["stone"])) {
 			var hint = simHelper.getHint(result, req.params["stone"]);
-			if (hint.hint[0] in result.known_hints) {
+			if (result.known_hints.has(hint.hint[0])) {
 				result.known_hints.get(hint.hint[0]).push(hint.hint[1]);
 			}
 			else {
@@ -244,7 +244,6 @@ router.get('/badgateway', function(req, res, next) {
 router.get('/getspoiler', function(req, res, next) {
 	if (req.query.valid) {
 		request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
-			console.log(error);
 			if (error && error.code == "ETIMEDOUT") {
 				res.sendStatus(408);
 				return;

@@ -7,6 +7,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	current_items: Array,
 	start_time: Number,
 	hints: Map,
+	known_hints: Map,
 	entrances: Map,
 	hash: Array,
 	current_age: String,

@@ -109,17 +109,17 @@ html
 					span AVAILABLE HINTS
 					br
 					br
-					a(ng-repeat-start="k in getAvailableHints()",ng-if="!checkedHints.includes(current_region + ' ' + k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
+					a(ng-repeat-start="k in available_hints",ng-if="!checked_locations.includes(k)",ng-click="checkHint(k)",id="{{k}}").hint {{k}}
 						br
-					span(ng-repeat-end,ng-if="checkedHints.includes(current_region + ' ' + k)").hint.checked {{k}}
+					span(ng-repeat-end,ng-if="checked_locations.includes(k)").hint.checked {{k}}
 						br
 					br
 					table.hint-table
 						tr
 							th(colspan="2") KNOWN HINTS
-						tr(ng-repeat="loc in knownHints | reverseObj")
+						tr(ng-repeat="loc in known_hints | reverseObj")
 							td.hint-loc {{loc}}
-							td.hint-item {{knownHints[loc].join(', ')}}
+							td.hint-item {{known_hints[loc].join(', ')}}
 					br
 				.main.shops(ng-if="isShopsanity")
 					span {{currentShop() || 'No Shop'}}

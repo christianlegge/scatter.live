@@ -110,9 +110,10 @@ app.controller('simController', function($scope, $http) {
 			return [];
 		}
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
+			$scope.available_hints = response.data.filter(x => x.includes("Gossip Stone"));
 			$scope.available_shop_items = response.data.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
 			$scope.available_skulltulas = response.data.filter(x => x.startsWith("GS ") && !$scope.available_shop_items.includes(x));
-			$scope.available_locations = response.data.filter(x => !$scope.available_shop_items.includes(x) && !$scope.available_skulltulas.includes(x));
+			$scope.available_locations = response.data.filter(x => !$scope.available_shop_items.includes(x) && !$scope.available_skulltulas.includes(x) && !$scope.available_hints.includes(x));
 		}, function(error) {
 			console.error(error);
 		});
@@ -123,16 +124,6 @@ app.controller('simController', function($scope, $http) {
 	};
 
 	$scope.checkingLocation = false;
-	
-	$scope.getAvailableHints = function () {
-		var allLocsInRegion = [];
-		for (region in logic[$scope.current_region]) {
-			if ("locations" in logic[$scope.current_region][region]) {
-				allLocsInRegion = allLocsInRegion.concat(Object.keys(logic[$scope.current_region][region]["locations"]));
-			}
-		}
-		return [...new Set(allLocsInRegion.filter(x => x.includes("Gossip Stone")))];
-	};
 	
 	$scope.countChus = function() {
 		var ownedChus = $scope.current_items.filter(item => item.includes('Bombchu'));
@@ -920,6 +911,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.current_age = data["current_age"];
 		$scope.current_region = data["current_region"];
 		$scope.known_medallions = data["known_medallions"];
+		$scope.known_hints = data["known_hints"];
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);
 		$scope.getAvailableLocations();
@@ -986,7 +978,30 @@ $scope.hasBossKey = function(dungeon) {
 	}
 	
 	$scope.checkHint = function(stone) {
-		
+		if (!$scope.checkingLocation) {
+			$scope.checkingLocation = true;
+			$http.get(`/zootr-sim/checkhint/${$scope.playthroughId}/${stone}`).then(function(response) {
+				$scope.headline = response.data.text;
+				$scope.known_hints = response.data.known_hints;
+				$scope.checked_locations.push(stone);
+				$scope.checkingLocation = false;
+			}, function(error) {
+				if (error.status == 403) {
+					console.error(`Logic required: ${error.data}`);
+					$scope.headline = `Can't access that!`;
+					var el = document.getElementById(stone);
+					el.classList.add('logicfailed-anim');
+					el.style.animation = 'none';
+					el.offsetHeight;
+					el.style.animation = null;
+				}
+				else {
+					console.error(error);
+				}
+				$scope.checkingLocation = false;
+			})
+		}
+		return;
 		var hint = '';
 		if (stone == 'Generic Grotto') {
 			hint = $scope.gossipHints[stone];
@@ -1121,29 +1136,6 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.$apply();
 	});*/
 });
-
-function parseHint(hint) {
-	var hintLoc = [];
-	var hintItem = [];
-	for (loc in hintLocationsMeanings) {
-		if (hint.includes(loc)) {
-			if (typeof(hintLocationsMeanings[loc]) == 'string') {
-				hintLoc = hintLocationsMeanings[loc];
-			}
-			else {
-				hintLoc = hintLocationsMeanings[loc]();
-			}
-			break;
-		}
-	}
-	for (item in hintItemsMeanings) {
-		if (hint.includes(item)) {
-			hintItem = hintItemsMeanings[item];
-			break;
-		}
-	}
-	return [hintLoc, hintItem];
-}
 
 var shopItemImages = {
 	'Arrows (5)': 'arrows5.png',

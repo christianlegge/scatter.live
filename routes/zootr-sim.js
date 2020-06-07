@@ -102,6 +102,7 @@ function parseLog(logfile) {
 		hash: logfile["file_hash"],
 		entrances: logfile["entrances"],
 		hints: logfile["gossip_stones"],
+		known_hints: {},
 		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
 		known_medallions: new Map(),
 		settings: logfile["settings"],
@@ -122,6 +123,7 @@ function parseLog(logfile) {
 		current_age: doc.current_age,
 		current_region: doc.current_region,
 		checked_locations: ["Links Pocket"],
+		known_hints: {},
 		known_medallions: doc.known_medallions,
 	};
 }
@@ -149,6 +151,7 @@ router.get('/resume', function(req, res, next) {
 			current_age: result.current_age,
 			current_region: result.current_region,
 			checked_locations: result.checked_locations,
+			known_hints: result.known_hints,
 			known_medallions: result.known_medallions,
 		};
 		res.send(info);
@@ -179,6 +182,30 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
+		}
+	});
+});
+
+router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (result.checked_locations.includes(req.params["stone"])) {
+			res.send(400);
+			return;
+		}
+		if (simHelper.canCheckLocation(result, req.params["stone"])) {
+			var hint = simHelper.getHint(result, req.params["stone"]);
+			if (hint.hint[0] in result.known_hints) {
+				result.known_hints.get(hint.hint[0]).push(hint.hint[1]);
+			}
+			else {
+				result.known_hints.set(hint.hint[0], [hint.hint[1]]);
+			}
+			result.checked_locations.push(req.params["stone"]);
+			result.save();
+			res.send({ text: hint.hint_text, known_hints: result.known_hints });
+		}
+		else {
+			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.stone));
 		}
 	});
 });

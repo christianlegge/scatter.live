@@ -195,11 +195,11 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 		if (simHelper.canCheckLocation(result, req.params["stone"])) {
 			var hint = simHelper.getHint(result, req.params["stone"]);
 			if (result.known_hints.has(hint.hint[0])) {
-				console.log(`pushing ${hint.hint[1]} to ${hint.hint[0]}`);
-				result.known_hints.get(hint.hint[0]).push(hint.hint[1]);
+				var arr = result.known_hints.get(hint.hint[0]);
+				arr.push(hint.hint[1]);
+				result.known_hints.set(hint.hint[0], arr);
 			}
 			else {
-				console.log(`setting ${hint.hint[0]} to ${hint.hint[1]}`);
 				result.known_hints.set(hint.hint[0], [hint.hint[1]]);
 			}
 			result.checked_locations.push(req.params["stone"]);

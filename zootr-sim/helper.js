@@ -610,7 +610,7 @@ function parseLogicRule(save_file, rule) {
 		can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
 		can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
 		found_bombchus: () => settings.get("bombchus_in_logic") ? items.filter(x => x.includes("Bombchus")).length > 0 : logicEvaluation.has("Bomb Bag"),
-		has_shield: () => (logicEvaluation.is_adult() && logicEvaluation.has("Hylian_Shield")) || (logicEvaluation.is_child() && logicEvaluation.has("Deku_Shield")),
+		has_shield: () => true, //(logicEvaluation.is_adult() && logicEvaluation.has("Hylian_Shield")) || (logicEvaluation.is_child() && logicEvaluation.has("Deku_Shield")),
 		at_night: () => true,
 		damage_multiplier: () => true,
 		at: () => true,

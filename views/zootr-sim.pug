@@ -99,8 +99,8 @@ html
 						br
 						a(ng-repeat="entrance in getAvailableEntrances()",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
 							br
-						p(ng-if="collectedWarps.length > 0") WARPS 
-						a(ng-repeat="warp in collectedWarps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
+						p(ng-if="collected_warps.length > 0") WARPS 
+						a(ng-repeat="warp in collected_warps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
 							br
 						br
 						a(id="Savewarp {{current_age}}",ng-click="takeEntrance('Savewarp ' + current_age)").entrance -> Savewarp to {{current_age == 'child' ? 'Kokiri Forest' : 'Temple of Time'}}

@@ -164,6 +164,7 @@ app.controller('simController', function($scope, $http) {
 				$scope.headline = `${loc}: ${response.data}`;
 				$scope.checked_locations.push(loc);
 				$scope.current_items.push(response.data);
+				$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 				$scope.checkingLocation = false;
 			}, function(error) {
 				if (error.status == 403) {
@@ -773,6 +774,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.current_region = data["current_region"];
 		$scope.known_medallions = data["known_medallions"];
 		$scope.known_hints = data["known_hints"];
+		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);
 		$scope.getAvailableLocations();

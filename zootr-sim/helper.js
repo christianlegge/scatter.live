@@ -897,9 +897,6 @@ function parseLogicRule(save_file, rule) {
 }
 
 function buildRule(save_file, region, location) {
-	if (location == "Gift from Saria") {
-		return "is_child";
-	}
 	var paths = [];
 	var first = save_file.current_subregion;
 

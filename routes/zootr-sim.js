@@ -244,6 +244,19 @@ router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next
 
 router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (req.params.entrance.includes("Savewarp")) {
+			if (result.current_age == "child") {
+				result.current_region = "Kokiri Forest";
+				result.current_subregion = "Links House";
+			}
+			else if (result.current_age == "adult") {
+				result.current_region = "Temple of Time";
+				result.current_subregion = "Temple of Time";
+			}
+			result.save();
+			res.send({ region: result.current_region, subregion: result.current_subregion });
+			return;
+		}
 		if (simHelper.canCheckLocation(result, req.params["entrance"])) {
 			result.current_region = simHelper.getParentRegion(req.params["entrance"]);
 			result.current_subregion = req.params["entrance"];

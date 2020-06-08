@@ -1022,6 +1022,8 @@ function testAllRules(save_file) {
 	return "Success";
 }
 
+var location_exceptions = ["Master Sword Pedestal", "Check Pedestal"]
+
 function getLocations(save_file, region) {
 	var all_locs = [];
 	var subregions = logic[region];
@@ -1033,7 +1035,7 @@ function getLocations(save_file, region) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
 	}
-	return all_locs.filter(x => Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy"));
+	return all_locs.filter(x => location_exceptions.includes(x) || Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy"));
 }
 
 function getEntrances(save_file, region) {
@@ -1052,6 +1054,33 @@ function getEntrances(save_file, region) {
 	}
 	var entrances = [...new Set(all_entrances.filter(x => !(x in subregions)))];
 	return entrances;
+}
+
+var bosses = {
+	'Queen Gohma': 'Deku Tree',
+	'King Dodongo': 'Dodongos Cavern',
+	'Barinade': 'Jabu Jabus Belly',
+	'Phantom Ganon': 'Forest Temple',
+	'Volvagia': 'Fire Temple',
+	'Morpha': 'Water Temple',
+	'Bongo Bongo': 'Shadow Temple',
+	'Twinrova': 'Spirit Temple'
+};
+
+function checkPedestal(save_file, age, known_medallions) {
+	var stones = ["Kokiri Emerald", "Goron Ruby", "Zora Sapphire"];
+	var medallions = ["Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"];
+	if (age == "child") {
+		Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x))).forEach(function (loc) {
+			known_medallions.set(bosses[loc], save_file["locations"].get(loc));
+		})
+	}
+	else if (age == "adult") {
+		Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x)) || medallions.includes(save_file.locations.get(x))).forEach(function (loc) {
+			known_medallions.set(bosses[loc], save_file["locations"].get(loc));
+		})
+	}
+	return known_medallions;
 }
 
 function getParentRegion(subregion) {
@@ -1137,3 +1166,4 @@ module.exports.buildRule = buildRule;
 module.exports.testAllRules = testAllRules;
 module.exports.getHint = getHint;
 module.exports.getParentRegion = getParentRegion;
+module.exports.checkPedestal = checkPedestal;

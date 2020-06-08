@@ -168,12 +168,25 @@ app.controller('simController', function($scope, $http) {
 		if (!$scope.checkingLocation) {
 			$scope.checkingLocation = true;
 			$http.get(`/zootr-sim/checklocation/${$scope.playthroughId}/${loc}`).then(function(response) {
-				$scope.headline = `${loc}: ${response.data.item}`;
-				$scope.checked_locations.push(loc);
-				$scope.current_items.push(response.data.item);
-				$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
-				$scope.known_medallions = response.data.known_medallions;
-				$scope.checkingLocation = false;
+				if (loc == "Check Pedestal") {
+					if ($scope.current_age == "adult") {
+						$scope.checked_locations.push("Check Pedestal");
+					}
+					$scope.known_medallions = response.data;
+					$scope.checkingLocation = false;
+				}
+				else if (loc == "Master Sword Pedestal") {
+					$scope.current_age = response.data;
+					$scope.checkingLocation = false;
+				}
+				else {
+					$scope.headline = `${loc}: ${response.data.item}`;
+					$scope.checked_locations.push(loc);
+					$scope.current_items.push(response.data.item);
+					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
+					$scope.known_medallions = response.data.known_medallions;
+					$scope.checkingLocation = false;
+				}
 			}, function(error) {
 				if (error.status == 403) {
 					console.error(`Logic required: ${error.data}`);

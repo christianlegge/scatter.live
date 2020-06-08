@@ -890,7 +890,8 @@ var logic = {
 			"region_name": "Temple of Time",
 			"hint": "Temple of Time",
 			"locations": {
-				"Zelda": "is_adult and can_trigger_lacs"
+				"Zelda": "is_adult and can_trigger_lacs",
+				"Check Pedestal": "True",
 			},
 			"exits": {
 				"Temple of Time Exterior": "True",

@@ -167,7 +167,22 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			res.send(400);
 			return;
 		}
-		if (simHelper.canCheckLocation(result, req.params["location"])) {
+		if (simHelper.canCheckLocation(result, req.params["location"]) || (result.current_age == "child" && req.params["location"] == "Treasure Chest Game" && Math.floor(Math.random() * 32) == 0)) {
+			if (req.params["location"] == "Check Pedestal") {
+				result.known_medallions = simHelper.checkPedestal(result, result.current_age, result.known_medallions);
+				result.save();
+				if (result.current_age == "adult") {
+					result.checked_locations.push("Check Pedestal");
+				}
+				res.send(result.known_medallions);
+				return;
+			}
+			else if (req.params["location"] == "Master Sword Pedestal") {
+				result.current_age = result.current_age == "child" ? "adult" : "child";
+				result.save();
+				res.send(result.current_age);
+				return;
+			}
 			var item = result.locations.get(req.params["location"]);
 			if (typeof item == "object") {
 				item = item["item"];

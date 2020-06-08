@@ -113,6 +113,7 @@ function parseLog(logfile) {
 		doc.current_age = "child";
 	}
 	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
+	doc.current_subregion = doc.current_age == "child" ? "Links House" : "Temple of Time";
 	doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
 	doc.save();
 	return {
@@ -122,6 +123,7 @@ function parseLog(logfile) {
 		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
 		current_age: doc.current_age,
 		current_region: doc.current_region,
+		current_subregion: doc.current_subregion,
 		checked_locations: ["Links Pocket"],
 		known_hints: {},
 		known_medallions: doc.known_medallions,
@@ -150,6 +152,7 @@ router.get('/resume', function(req, res, next) {
 			current_items: result.current_items,
 			current_age: result.current_age,
 			current_region: result.current_region,
+			current_subregion: result.current_subregion,
 			checked_locations: result.checked_locations,
 			known_hints: result.known_hints,
 			known_medallions: result.known_medallions,
@@ -224,6 +227,20 @@ router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next
 	});
 });
 
+router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (simHelper.canCheckLocation(result, req.params["entrance"])) {
+			result.current_region = simHelper.getParentRegion(req.params["entrance"]);
+			result.current_subregion = req.params["entrance"];
+			result.save();
+			res.send({region: result.current_region, subregion: result.current_subregion});
+		}
+		else {
+			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.entrance));
+		}
+	});
+})
+
 router.get('/testallrules', function (req, res, next) {
 	playthroughModel.findOne({ _id: "5edd858f985c1a72d9ea49bf" }, function (err, result) {
 		try {
@@ -235,10 +252,17 @@ router.get('/testallrules', function (req, res, next) {
 	});
 });
 
-router.get('/getlocations/:playthroughId/:region', function(req, res, next) {
+router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		var locs = simHelper.getLocations(result, req.params["region"]);
 		res.send(locs);
+	});
+})
+
+router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		var entrances = simHelper.getEntrances(result, req.params["region"]);
+		res.send(entrances);
 	});
 })
 

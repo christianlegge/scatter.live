@@ -3755,43 +3755,4 @@ var subregions = {
 	'Ganons Castle': ['Ganons Castle Tower'],
 };
 
-var defaultAreas = {
-	"Kokiri Forest": "Kokiri Forest",
-	"Lost Woods": "Lost Woods",
-	"Sacred Forest Meadow": "Sacred Forest Meadow",
-	"Hyrule Field": "Hyrule Field",
-	"Lake Hylia": "Lake Hylia",
-	"Gerudo Valley": "Gerudo Valley",
-	"Gerudo Fortress": "Gerudo Fortress",
-	"Haunted Wasteland": "Haunted Wasteland Near Fortress",
-	"Desert Colossus": "Desert Colossus",
-	"Market": "Castle Town",
-	"Temple of Time": "Temple of Time",
-	"Hyrule Castle": "Hyrule Castle Grounds",
-	"Outside Ganons Castle": "Ganons Castle Grounds",
-	"Kakariko Village": "Kakariko Village",
-	"Graveyard": "Graveyard",
-	"Death Mountain Trail": "Death Mountain",
-	"Goron City": "Goron City",
-	"Death Mountain Crater": "Death Mountain Crater Lower Local",
-	"Zora River": "Zora River Front",
-	"Zoras Domain": "Zoras Domain",
-	"Zoras Fountain": "Zoras Fountain",
-	"Lon Lon Ranch": "Lon Lon Ranch",
-	"Ganons Castle": "Ganons Castle Lobby",
-	"Bottom of the Well": "Bottom of the Well",
-	"Deku Tree": "Deku Tree Lobby",
-	"Dodongos Cavern": "Dodongos Cavern Beginning",
-	"Fire Temple": "Fire Temple Lower",
-	"Forest Temple": "Forest Temple Lobby",
-	"Gerudo Training Grounds": "Gerudo Training Grounds Lobby",
-	"Ice Cavern": "Ice Cavern Beginning",
-	"Jabu Jabus Belly": "Jabu Jabus Belly Beginning",
-	"Shadow Temple": "Shadow Temple Entryway",
-	"Spirit Temple": "Spirit Temple Lobby",
-	"Water Temple": "Water Temple Lobby"
-
-}
-
 module.exports = logic;
-module.exports.defaultAreas = defaultAreas;

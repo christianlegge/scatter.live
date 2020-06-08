@@ -901,7 +901,7 @@ function buildRule(save_file, region, location) {
 		return "is_child";
 	}
 	var paths = [];
-	var first = logic.defaultAreas[region];
+	var first = save_file.current_subregion;
 
 	var subregions = logic[region];
 	if (save_file["dungeons"].has(region)) {
@@ -919,13 +919,16 @@ function buildRule(save_file, region, location) {
 		path[ind] = node;
 		ind++;
 
-		if (("locations" in subregions[node] && location in subregions[node]["locations"]) || node == location) {
+		if (("locations" in subregions[node] && location in subregions[node]["locations"]) || ("exits" in subregions[node] && location in subregions[node]["exits"]) || node == location) {
 			thisPath = [];
 			for (var i = 0; i < ind-1; i++) {
 				thisPath.push(subregions[path[i]]["exits"][path[i+1]]);
 			}
 			if ("locations" in subregions[node] && location in subregions[node]["locations"]) {
 				thisPath.push(subregions[node]["locations"][location]);
+			}
+			if ("exits" in subregions[node] && location in subregions[node]["exits"]) {
+				thisPath.push(subregions[node]["exits"][location]);
 			}
 			if (thisPath.length == 0) {
 				thisPath.push("True");
@@ -960,6 +963,19 @@ function canCheckLocation(save_file, location) {
 }
 
 function testAllRules(save_file) {
+	var subsobj = {};
+	for (region in logic) {
+		var subs = [];
+		var subregions = logic[region];
+		if ("vanilla" in logic[region]) {
+			subregions = logic[region]["vanilla"];
+		}
+		for (subregion in subregions) {
+			subs.push(subregion);
+		}
+		subsobj[region] = subs;
+	}
+	return JSON.stringify(subsobj, null, '\t');
 	var eventsRules = [];
 	for (region in logic) {
 		if (region == "defaultAreas") {
@@ -1020,6 +1036,64 @@ function getLocations(save_file, region) {
 	return all_locs.filter(x => Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy"));
 }
 
+function getEntrances(save_file, region) {
+	var all_entrances = [];
+	var subregions = logic[region];
+	if (save_file["dungeons"].has(region)) {
+		subregions = logic[region][save_file["dungeons"].get(region)];
+	}
+	for (subregion in subregions) {
+		if (subregion == "Root Exits") {
+			continue;
+		}
+		if ("exits" in subregions[subregion]) {
+			all_entrances = all_entrances.concat(Object.keys(subregions[subregion]["exits"]));
+		}
+	}
+	var entrances = [...new Set(all_entrances.filter(x => !(x in subregions)))];
+	return entrances;
+}
+
+function getParentRegion(subregion) {
+	var subregions = {
+		"Kokiri Forest": ["Root", "Root Exits", "Kokiri Forest", "Outside Deku Tree", "Links House", "Mido House", "Saria House", "House of Twins", "Know It All House", "Kokiri Shop", "Kokiri Forest Storms Grotto"],
+		"Lost Woods": ["Lost Woods Forest Exit", "Lost Woods", "Lost Woods Beyond Mido", "Lost Woods Bridge From Forest", "Lost Woods Bridge", "Lost Woods Generic Grotto", "Deku Theater", "Lost Woods Sales Grotto"],
+		"Sacred Forest Meadow": ["Sacred Forest Meadow Entryway", "Sacred Forest Meadow", "Meadow Fairy Grotto", "Meadow Storms Grotto", "Front of Meadow Grotto"],
+		"Hyrule Field": ["Hyrule Field", "Remote Southern Grotto", "Field Near Lake Outside Fence Grotto", "Field Near Lake Inside Fence Grotto", "Field Valley Grotto", "Field West Castle Town Grotto", "Field Far West Castle Town Grotto", "Field Kakariko Grotto", "Field North Lon Lon Grotto"],
+		"Lake Hylia": ["Lake Hylia", "Lake Hylia Owl Flight", "Lake Hylia Lab", "Fishing Hole", "Lake Hylia Grotto"],
+		"Gerudo Valley": ["Gerudo Valley", "Gerudo Valley Stream", "Gerudo Valley Crate Ledge", "Gerudo Valley Far Side", "Carpenter Tent", "Gerudo Valley Octorok Grotto", "Gerudo Valley Storms Grotto"],
+		"Gerudo Fortress": ["Gerudo Fortress", "Gerudo Fortress Outside Gate", "Gerudo Fortress Storms Grotto"],
+		"Haunted Wasteland": ["Haunted Wasteland Near Fortress", "Haunted Wasteland", "Haunted Wasteland Near Colossus"],
+		"Desert Colossus": ["Desert Colossus", "Colossus Fairy", "Desert Colossus Grotto"],
+		"Market": ["Castle Town Entrance", "Castle Town", "Castle Town Rupee Room", "Castle Town Bazaar", "Castle Town Mask Shop", "Castle Town Shooting Gallery", "Castle Town Bombchu Bowling", "Castle Town Potion Shop", "Castle Town Treasure Chest Game", "Castle Town Bombchu Shop", "Castle Town Dog Lady", "Castle Town Man in Green House"],
+		"Temple of Time": ["Temple of Time Exterior", "Temple of Time", "Beyond Door of Time"],
+		"Hyrule Castle": ["Castle Grounds", "Hyrule Castle Grounds", "Hyrule Castle Garden", "Hyrule Castle Fairy", "Castle Storms Grotto"],
+		"Outside Ganons Castle": ["Ganons Castle Grounds", "Ganons Castle Fairy"],
+		"Kakariko Village": ["Kakariko Village", "Kakariko Impa Ledge", "Kakariko Rooftop", "Kakariko Village Backyard", "Carpenter Boss House", "House of Skulltula", "Impas House", "Impas House Back", "Impas House Near Cow", "Windmill", "Kakariko Bazaar", "Kakariko Shooting Gallery", "Kakariko Potion Shop Front", "Kakariko Potion Shop Back", "Odd Medicine Building", "Kakariko Village Behind Gate", "Kakariko Bombable Grotto", "Kakariko Back Grotto"],
+		"Graveyard": ["Graveyard", "Shield Grave", "Heart Piece Grave", "Composer Grave", "Dampes Grave", "Dampes House", "Shadow Temple Warp Region"],
+		"Death Mountain Trail": ["Death Mountain", "Death Mountain Summit", "Death Mountain Summit Owl Flight", "Dodongos Cavern Entryway", "Mountain Summit Fairy", "Mountain Bombable Grotto", "Mountain Storms Grotto"],
+		"Goron City": ["Goron City", "Goron City Woods Warp", "Darunias Chamber", "Goron Shop", "Goron City Grotto"],
+		"Death Mountain Crater": ["Death Mountain Crater Upper Nearby", "Death Mountain Crater Upper Local", "Death Mountain Crater Ladder Area Nearby", "Death Mountain Crater Lower Nearby", "Death Mountain Crater Lower Local", "Death Mountain Crater Central Nearby", "Death Mountain Crater Central Local", "Fire Temple Entrance", "Crater Fairy", "Top of Crater Grotto", "DMC Hammer Grotto"],
+		"Zora River": ["Zora River Front", "Zora River", "Zora River Behind Waterfall", "Zora River Plateau Open Grotto", "Zora River Plateau Bombable Grotto", "Zora River Storms Grotto"],
+		"Zoras Domain": ["Zoras Domain", "Zoras Domain Behind King Zora", "Zora Shop", "Zoras Domain Storms Grotto"],
+		"Zoras Fountain": ["Zoras Fountain", "Zoras Fountain Fairy"],
+		"Lon Lon Ranch": ["Lon Lon Ranch", "Talon House", "Ingo Barn", "Lon Lon Corner Tower", "Lon Lon Grotto"],
+		"Ganons Castle": ["Ganons Castle Tower", "Ganons Castle Lobby", "Ganons Castle Deku Scrubs", "Ganons Castle Forest Trial", "Ganons Castle Fire Trial", "Ganons Castle Water Trial", "Ganons Castle Shadow Trial", "Ganons Castle Spirit Trial", "Ganons Castle Light Trial"],
+		"Bottom of the Well": ["Bottom of the Well", "Bottom of the Well Main Area"],
+		"Deku Tree": ["Deku Tree Lobby", "Deku Tree Slingshot Room", "Deku Tree Boss Room"],
+		"Dodongos Cavern": ["Dodongos Cavern Beginning", "Dodongos Cavern Lobby", "Dodongos Cavern Climb", "Dodongos Cavern Far Bridge", "Dodongos Cavern Boss Area"],
+		"Fire Temple": ["Fire Temple Lower", "Fire Temple Big Lava Room", "Fire Temple Middle", "Fire Temple Upper"],
+		"Forest Temple": ["Forest Temple Lobby", "Forest Temple NW Outdoors", "Forest Temple NE Outdoors", "Forest Temple Outdoors High Balconies", "Forest Temple Falling Room", "Forest Temple Block Push Room", "Forest Temple Straightened Hall", "Forest Temple Outside Upper Ledge", "Forest Temple Bow Region", "Forest Temple Boss Region"],
+		"Gerudo Training Grounds": ["Gerudo Training Grounds Lobby", "Gerudo Training Grounds Central Maze", "Gerudo Training Grounds Central Maze Right", "Gerudo Training Grounds Lava Room", "Gerudo Training Grounds Hammer Room", "Gerudo Training Grounds Eye Statue Lower", "Gerudo Training Grounds Eye Statue Upper", "Gerudo Training Grounds Heavy Block Room", "Gerudo Training Grounds Like Like Room"],
+		"Ice Cavern": ["Ice Cavern Beginning", "Ice Cavern"],
+		"Jabu Jabus Belly": ["Jabu Jabus Belly Beginning", "Jabu Jabus Belly Main", "Jabu Jabus Belly Depths", "Jabu Jabus Belly Boss Area"],
+		"Shadow Temple": ["Shadow Temple Entryway", "Shadow Temple Beginning", "Shadow Temple First Beamos", "Shadow Temple Huge Pit", "Shadow Temple Wind Tunnel", "Shadow Temple Beyond Boat"],
+		"Spirit Temple": ["Spirit Temple Lobby", "Child Spirit Temple", "Child Spirit Temple Climb", "Early Adult Spirit Temple", "Spirit Temple Central Chamber", "Spirit Temple Outdoor Hands", "Spirit Temple Beyond Central Locked Door", "Spirit Temple Beyond Final Locked Door"],
+		"Water Temple": ["Water Temple Lobby", "Water Temple Highest Water Level", "Water Temple Dive", "Water Temple North Basement", "Water Temple Cracked Wall", "Water Temple Dragon Statue", "Water Temple Middle Water Level", "Water Temple Dark Link Region"]
+	};
+	return Object.keys(subregions).filter(x => subregions[x].includes(subregion))[0];
+}
+
 function parseHint(save_file, hint) {
 	var hintLoc = [];
 	var hintItem = [];
@@ -1058,6 +1132,8 @@ function getHint(save_file, stone) {
 
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
+module.exports.getEntrances = getEntrances;
 module.exports.buildRule = buildRule;
 module.exports.testAllRules = testAllRules;
 module.exports.getHint = getHint;
+module.exports.getParentRegion = getParentRegion;

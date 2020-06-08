@@ -12,6 +12,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	hash: Array,
 	current_age: String,
 	current_region: String,
+	current_subregion: String,
 	known_medallions: Map,
 	settings: Map,
 	dungeons: Map,

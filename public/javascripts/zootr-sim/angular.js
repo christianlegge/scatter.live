@@ -11,6 +11,9 @@ app.filter('removeSpaces', [function() {
 
 app.filter('reverseObj', function() {
 	return function(items) {
+		if (!items) {
+			return [];
+		}
 		return Object.keys(items).reverse();
 	};
 });
@@ -120,7 +123,11 @@ app.controller('simController', function($scope, $http) {
 	}
 	
 	$scope.getAvailableEntrances = function() {
-		return $scope.current_age == 'child' ? entrancesByRegionChild[$scope.current_region] : entrancesByRegionAdult[$scope.current_region];
+		$http.get(`/zootr-sim/getentrances/${$scope.playthroughId}/${$scope.current_region}`).then(function (response) {
+			$scope.available_entrances = response.data;
+		}, function (error) {
+			console.error(error);
+		});
 	};
 
 	$scope.checkingLocation = false;
@@ -347,6 +354,31 @@ $scope.hasBossKey = function(dungeon) {
 };
 	
 	$scope.takeEntrance = function(entrance) {
+		if (!$scope.takingEntrance) {
+			$scope.takingEntrance = true;
+			$http.get(`/zootr-sim/takeentrance/${$scope.playthroughId}/${entrance}`).then(function(response) {
+				$scope.current_region = response.data.region;
+				$scope.current_subregion = response.data.subregion;
+				$scope.getAvailableLocations();
+				$scope.getAvailableEntrances();
+				$scope.takingEntrance = false;
+			}, function(err) {
+				if (err.status == 403) {
+					$scope.headline = "Can't access that!";
+					console.error(`Logic required: ${err.data}`);
+					var el = document.getElementById(entrance);
+					el.classList.add('logicfailed-anim');
+					el.style.animation = 'none';
+					el.offsetHeight;
+					el.style.animation = null;
+				}
+				else {
+					console.error(err);
+				}
+				$scope.takingEntrance = false;
+			})
+		}
+		return;
 		$scope.actions.push('Entrance:' + $scope.current_region + ':' + entrance);
 		if (entrance == 'Pull Master Sword') {
 			$scope.currentAdult++;
@@ -378,6 +410,7 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.current_region = entrance;
 		}
 		$scope.getAvailableLocations();
+		$scope.getAvailableEntrances();
 		$http.get(`/zootr-sim/updateregion/${$scope.playthroughId}/${$scope.current_region}/${$scope.current_age}`);
 	};
 	
@@ -775,12 +808,14 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.checked_locations = data["checked_locations"];
 		$scope.current_age = data["current_age"];
 		$scope.current_region = data["current_region"];
+		$scope.current_subregion = data["current_subregion"];
 		$scope.known_medallions = data["known_medallions"];
 		$scope.known_hints = data["known_hints"];
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);
 		$scope.getAvailableLocations();
+		$scope.getAvailableEntrances();
 	}
 	
 	$scope.fetchSeed = function() {

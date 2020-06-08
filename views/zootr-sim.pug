@@ -90,14 +90,14 @@ html
 					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && windRegionChild != '') || (current_age == 'adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{current_age == 'child' ? windRegionChild : windRegionAdult}})
 				.main.current
 					.currentinner
-						p Current Region: {{current_region}} [{{current_age}}]
+						p Current Region: {{current_region}} ({{current_subregion}}) [{{current_age}}]
 						img(ng-repeat-start="loc in available_locations", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !hasPeeked(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false").peekicon
 						a(ng-if="!checked_locations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
 							br
 						span(ng-repeat-end,ng-if="checked_locations.includes(loc)", class="checked") {{ loc }}
 							br
 						br
-						a(ng-repeat="entrance in getAvailableEntrances()",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
+						a(ng-repeat="entrance in available_entrances",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
 							br
 						p(ng-if="collected_warps.length > 0") WARPS 
 						a(ng-repeat="warp in collected_warps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}

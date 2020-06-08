@@ -108,6 +108,7 @@ function parseLog(logfile) {
 		settings: logfile["settings"],
 		dungeons: logfile["dungeons"],
 		trials: logfile["trials"],
+		bombchu_count: 0,
 	});
 	if (!doc.current_age) {
 		doc.current_age = "child";
@@ -127,6 +128,7 @@ function parseLog(logfile) {
 		checked_locations: ["Links Pocket"],
 		known_hints: {},
 		known_medallions: doc.known_medallions,
+		bombchu_count: 0,
 	};
 }
 
@@ -156,6 +158,7 @@ router.get('/resume', function(req, res, next) {
 			checked_locations: result.checked_locations,
 			known_hints: result.known_hints,
 			known_medallions: result.known_medallions,
+			bombchu_count: result.bombchu_count,
 		};
 		res.send(info);
 	});
@@ -198,8 +201,17 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
 				result.known_medallions.set(result.current_region, item);
 			}
+			if (item.includes("Bombchu")) {
+				result.bombchu_count += parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10);
+				if (result.settings.get("bombchus_in_logic")) {
+					result.bombchu_count += 10000;
+				}
+			}
+			if (simHelper.needChus(result, req.params.location)) {
+				result.bombchu_count--;
+			}
 			result.save();
-			res.send({item: item, known_medallions: result.known_medallions});
+			res.send({item: item, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count});
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));

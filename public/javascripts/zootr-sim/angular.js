@@ -139,16 +139,6 @@ app.controller('simController', function($scope, $http) {
 
 	$scope.checkingLocation = false;
 	
-	$scope.countChus = function() {
-		var ownedChus = $scope.current_items.filter(item => item.includes('Bombchu'));
-		return ownedChus.map(item => parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10)).reduce((a,b) => a + b, 0);
-	};
-	
-	$scope.useChu = function() {
-		$scope.usedChus++;
-		$scope.updateForage();
-	};
-	
 	$scope.settingsPresets = {
 		'Settings Presets': '',
 		'Default / Beginner': 'AJCNG32ENSAAZNBAAVLAAAAAEBAASHSWAA',
@@ -200,6 +190,7 @@ app.controller('simController', function($scope, $http) {
 					$scope.current_items.push(response.data.item);
 					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 					$scope.known_medallions = response.data.known_medallions;
+					$scope.bombchu_count = response.data.bombchu_count;
 					$scope.checkingLocation = false;
 				}
 
@@ -861,6 +852,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.current_subregion = data["current_subregion"];
 		$scope.known_medallions = data["known_medallions"];
 		$scope.known_hints = data["known_hints"];
+		$scope.bombchu_count = data["bombchu_count"];
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);

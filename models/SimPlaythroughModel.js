@@ -17,6 +17,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	settings: Map,
 	dungeons: Map,
 	trials: Map,
+	bombchu_count: Number,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

@@ -558,7 +558,7 @@ function parseLogicRule(save_file, rule) {
 			(x == "either" && (logicEvaluation.has("Slingshot") || logicEvaluation.Boomerang() || logicEvaluation.Bow() || logicEvaluation.has("Progressive Hookshot"))),
 		has: x => items.includes(x.replace(/_/g, " ")),
 		has_explosives: () => logicEvaluation.has("Bomb Bag") || logicEvaluation.has_bombchus(),
-		has_bombchus: () => items.filter(x => x.includes("Bombchu")).length > 0,
+		has_bombchus: () => save_file.bombchu_count > 0,
 		has_all_stones: () => logicEvaluation.has("Kokiri Emerald") && logicEvaluation.has("Goron Ruby") && logicEvaluation.has("Zora Sapphire"),
 		has_all_medallions: () => logicEvaluation.has("Light Medallion") && logicEvaluation.has("Forest Medallion") && logicEvaluation.has("Fire Medallion") && logicEvaluation.has("Water Medallion") && logicEvaluation.has("Spirit Medallion") && logicEvaluation.has("Shadow Medallion"),
 		Sticks: () => true,
@@ -1156,6 +1156,19 @@ function getHint(save_file, stone) {
 	return {hint_text: hint_text, hint: parseHint(save_file, hint_text)};
 }
 
+function needChus(save_file, location) {
+	var initialCount = save_file.bombchu_count;
+	if (canCheckLocation(save_file, location)) {
+		save_file.bombchu_count = 0;
+		if (!canCheckLocation(save_file, location)) {
+			save_file.bombchu_count = initialCount;
+			return true;
+		}
+	}
+	save_file.bombchu_count = initialCount;
+	return false;
+}
+
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
 module.exports.getEntrances = getEntrances;
@@ -1164,3 +1177,4 @@ module.exports.testAllRules = testAllRules;
 module.exports.getHint = getHint;
 module.exports.getParentRegion = getParentRegion;
 module.exports.checkPedestal = checkPedestal;
+module.exports.needChus = needChus;

@@ -177,8 +177,11 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			}
 			result.current_items.push(item);
 			result.checked_locations.push(req.params["location"]);
+			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
+				result.known_medallions.set(result.current_region, item);
+			}
 			result.save();
-			res.send(item);
+			res.send({item: item, known_medallions: result.known_medallions});
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));

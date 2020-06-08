@@ -161,10 +161,11 @@ app.controller('simController', function($scope, $http) {
 		if (!$scope.checkingLocation) {
 			$scope.checkingLocation = true;
 			$http.get(`/zootr-sim/checklocation/${$scope.playthroughId}/${loc}`).then(function(response) {
-				$scope.headline = `${loc}: ${response.data}`;
+				$scope.headline = `${loc}: ${response.data.item}`;
 				$scope.checked_locations.push(loc);
-				$scope.current_items.push(response.data);
+				$scope.current_items.push(response.data.item);
 				$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
+				$scope.known_medallions = response.data.known_medallions;
 				$scope.checkingLocation = false;
 			}, function(error) {
 				if (error.status == 403) {
@@ -409,9 +410,11 @@ $scope.hasBossKey = function(dungeon) {
 				'Shadow Medallion': 'shadowspirit.png',
 				'Spirit Medallion': 'shadowspirit.png',
 				'Light Medallion': 'light-small.png',
-				'???': 'unknown-small.png' 
 			};
 			return medToImage[med];
+		}
+		else if (!["Bottom of the Well", "Gerudo Fortress", "Gerudo Training Grounds", "Ganons Castle"].includes(dungeon)) {
+			return 'unknown-small.png';
 		}
 		else {
 			return '';

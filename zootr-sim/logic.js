@@ -759,7 +759,7 @@ var logic = {
 				"Sell Big Poe": "is_adult and Bottle_with_Big_Poe"
 			},
 			"locations": {
-				"10 Big Poes": " is_adult",
+				"10 Big Poes": " is_adult and has_bottle",
 				"GS Castle Market Guard House": "is_child"
 			},
 			"exits": {

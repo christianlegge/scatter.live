@@ -222,7 +222,7 @@ router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next
 });
 
 router.get('/testallrules', function (req, res, next) {
-	playthroughModel.findOne({ _id: "5edd4aae9a4af366f4600dbb" }, function (err, result) {
+	playthroughModel.findOne({ _id: "5edd858f985c1a72d9ea49bf" }, function (err, result) {
 		try {
 			res.send(simHelper.testAllRules(result));
 		}

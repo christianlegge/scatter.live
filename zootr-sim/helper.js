@@ -656,44 +656,45 @@ function parseLogicRule(save_file, rule) {
 		open_zora_fountain: () => settings.zora_fountain == "open",
 		Fish: () => logicEvaluation.has_bottle(),
 		skipped_trial: (x) => save_file.trials.get(x) == "inactive",
-		"Showed Mido Sword & Shield": () => parseLogicRule(save_file, "open_forest or (is_child and Kokiri_Sword and has(Deku_Shield))"),
-		"Odd Mushroom Access": () => parseLogicRule(save_file, "is_adult and ('Cojiro Access' or Cojiro)"),
-		"Poachers Saw Access": () => parseLogicRule(save_file, "is_adult and 'Odd Potion Access'"),
-		"Bonooru": () => parseLogicRule(save_file, "is_child and Ocarina"),
-		"Eyedrops Access": () => parseLogicRule(save_file, " is_adult and ('Eyeball Frog Access' or (Eyeball_Frog and disable_trade_revert))"),
-		"Broken Sword Access": () => parseLogicRule(save_file, "is_adult and ('Poachers Saw Access' or Poachers_Saw)"),
-		"Carpenter Rescue": () => parseLogicRule(save_file, "can_finish_GerudoFortress"),
-		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, "is_adult and Gerudo_Membership_Card"),
-		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, " is_adult and Gerudo_Membership_Card and (shuffle_gerudo_card or shuffle_overworld_entrances or shuffle_special_indoor_entrances)"),
-		"Sell Big Poe": () => parseLogicRule(save_file, "is_adult and Bottle_with_Big_Poe"),
-		"Skull Mask": () => parseLogicRule(save_file, "( is_child and Zeldas_Letter)"),
-		"Mask of Truth": () => parseLogicRule(save_file, "'Skull Mask' and ( is_child and can_play(Sarias_Song)) and ( is_child and at_day) and ( is_child and has_all_stones)"),
-		"Cojiro Access": () => parseLogicRule(save_file, "is_adult and 'Wake Up Adult Talon'"),
-		"Kakariko Village Gate Open": () => parseLogicRule(save_file, "is_child and Zeldas_Letter"),
-		"Wake Up Adult Talon": () => parseLogicRule(save_file, "is_adult and (Pocket_Egg or Pocket_Cucco)"),
-		"Drain Well": () => parseLogicRule(save_file, "is_child and can_play(Song_of_Storms)"),
-		"Odd Potion Access": () => parseLogicRule(save_file, " is_adult and has(Odd_Mushroom)"),
-		"Prescription Access": () => parseLogicRule(save_file, "is_adult and ('Broken Sword Access' or Broken_Sword)"),
-		"Goron City Child Fire": () => parseLogicRule(save_file, "is_child and can_use(Dins_Fire)"),
-		"Goron City Woods Warp Open": () => parseLogicRule(save_file, " can_blast_or_smash or can_use(Dins_Fire) or can_use(Bow) or Progressive_Strength_Upgrade or 'Goron City Child Fire'"),
-		"Stop Link the Goron": () => parseLogicRule(save_file, " is_adult and (Progressive_Strength_Upgrade or has_explosives or Bow or (logic_link_goron_dins and can_use(Dins_Fire)))"),
-		"Goron City Woods Warp Open": () => parseLogicRule(save_file, "can_blast_or_smash or can_use(Dins_Fire)"),
-		"Goron City Child Fire": () => parseLogicRule(save_file, "can_use(Sticks)"),
-		"Zora Thawed": () => parseLogicRule(save_file, "is_adult and Blue_Fire"),
-		"Eyeball Frog Access": () => parseLogicRule(save_file, " is_adult and 'Zora Thawed' and (Eyedrops or Eyeball_Frog or Prescription or 'Prescription Access')"),
-		"Epona": () => parseLogicRule(save_file, "can_play(Eponas_Song) and is_adult and at_day"),
-		"Links Cow": () => parseLogicRule(save_file, "can_play(Eponas_Song) and is_adult and at_day"),
-		"Forest Trial Clear": () => parseLogicRule(save_file, "can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire)"),
-		"Fire Trial Clear": () => parseLogicRule(save_file, " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot)"),
-		"Water Trial Clear": () => parseLogicRule(save_file, "Blue_Fire and Hammer and can_use(Light_Arrows)"),
-		"Shadow Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens))))"),
-		"Spirit Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot)"),
-		"Light Trial Clear": () => parseLogicRule(save_file, " can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens"),
-		"Deku Tree Clear": () => parseLogicRule(save_file, " (has_shield) and (is_adult or Kokiri_Sword or Sticks)"),
-		"Forest Temple Amy and Meg": () => parseLogicRule(save_file, "can_use(Bow)"),
-		"Forest Temple Jo and Beth": () => parseLogicRule(save_file, "can_use(Bow)"),
-		"Child Water Temple": () => parseLogicRule(save_file, "is_child"),
-		"Water Temple Clear": () => parseLogicRule(save_file, "Boss_Key_Water_Temple and can_use(Longshot)"),
+		can_reach: (x) => parseLogicRule(save_file, buildRule(save_file, save_file["current_region"], x)),
+		"Showed Mido Sword & Shield": () => parseLogicRule(save_file, "can_reach('Kokiri Forest') and (open_forest or (is_child and Kokiri_Sword and has(Deku_Shield)))"),
+		"Odd Mushroom Access": () => parseLogicRule(save_file, "can_reach('Lost Woods') and (is_adult and ('Cojiro Access' or Cojiro))"),
+		"Poachers Saw Access": () => parseLogicRule(save_file, "can_reach('Lost Woods') and (is_adult and 'Odd Potion Access')"),
+		"Bonooru": () => parseLogicRule(save_file, "can_reach('Lake Hylia') and (is_child and Ocarina)"),
+		"Eyedrops Access": () => parseLogicRule(save_file, "can_reach('Lake Hylia Lab') and ( is_adult and ('Eyeball Frog Access' or (Eyeball_Frog and disable_trade_revert)))"),
+		"Broken Sword Access": () => parseLogicRule(save_file, "can_reach('Gerudo Valley Far Side') and (is_adult and ('Poachers Saw Access' or Poachers_Saw))"),
+		"Carpenter Rescue": () => parseLogicRule(save_file, "can_reach('Gerudo Fortress') and (can_finish_GerudoFortress)"),
+		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, "can_reach('Gerudo Fortress') and (is_adult and Gerudo_Membership_Card)"),
+		"Gerudo Fortress Gate Open": () => parseLogicRule(save_file, "can_reach('Gerudo Fortress Outside Gate') and ( is_adult and Gerudo_Membership_Card and (shuffle_gerudo_card or shuffle_overworld_entrances or shuffle_special_indoor_entrances))"),
+		"Sell Big Poe": () => parseLogicRule(save_file, "can_reach('Castle Town Rupee Room') and (is_adult and Bottle_with_Big_Poe)"),
+		"Skull Mask": () => parseLogicRule(save_file, "can_reach('Castle Town Mask Shop') and (( is_child and Zeldas_Letter))"),
+		"Mask of Truth": () => parseLogicRule(save_file, "can_reach('Castle Town Mask Shop') and ('Skull Mask' and ( is_child and can_play(Sarias_Song)) and ( is_child and at_day) and ( is_child and has_all_stones))"),
+		"Cojiro Access": () => parseLogicRule(save_file, "can_reach('Kakariko Village') and (is_adult and 'Wake Up Adult Talon')"),
+		"Kakariko Village Gate Open": () => parseLogicRule(save_file, "can_reach('Kakariko Village') and (is_child and Zeldas_Letter)"),
+		"Wake Up Adult Talon": () => parseLogicRule(save_file, "can_reach('Carpenter Boss House') and (is_adult and (Pocket_Egg or Pocket_Cucco))"),
+		"Drain Well": () => parseLogicRule(save_file, "can_reach('Windmill') and (is_child and can_play(Song_of_Storms))"),
+		"Odd Potion Access": () => parseLogicRule(save_file, "can_reach('Odd Medicine Building') and ( is_adult and has(Odd_Mushroom))"),
+		"Prescription Access": () => parseLogicRule(save_file, "can_reach('Death Mountain Summit') and (is_adult and ('Broken Sword Access' or Broken_Sword))"),
+		"Goron City Child Fire": () => parseLogicRule(save_file, "can_reach('Goron City') and (is_child and can_use(Dins_Fire))"),
+		"Goron City Woods Warp Open": () => parseLogicRule(save_file, "can_reach('Goron City') and ( can_blast_or_smash or can_use(Dins_Fire) or can_use(Bow) or Progressive_Strength_Upgrade or 'Goron City Child Fire')"),
+		"Stop Link the Goron": () => parseLogicRule(save_file, "can_reach('Goron City') and ( is_adult and (Progressive_Strength_Upgrade or has_explosives or Bow or (logic_link_goron_dins and can_use(Dins_Fire))))"),
+		"Goron City Woods Warp Open": () => parseLogicRule(save_file, "can_reach('Goron City Woods Warp') and (can_blast_or_smash or can_use(Dins_Fire))"),
+		"Goron City Child Fire": () => parseLogicRule(save_file, "can_reach('Darunias Chamber') and (can_use(Sticks))"),
+		"Zora Thawed": () => parseLogicRule(save_file, "can_reach('Zoras Domain') and (is_adult and Blue_Fire)"),
+		"Eyeball Frog Access": () => parseLogicRule(save_file, "can_reach('Zoras Domain') and ( is_adult and 'Zora Thawed' and (Eyedrops or Eyeball_Frog or Prescription or 'Prescription Access'))"),
+		"Epona": () => parseLogicRule(save_file, "can_reach('Lon Lon Ranch') and (can_play(Eponas_Song) and is_adult and at_day)"),
+		"Links Cow": () => parseLogicRule(save_file, "can_reach('Lon Lon Ranch') and (can_play(Eponas_Song) and is_adult and at_day)"),
+		"Forest Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Forest Trial') and (can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire))"),
+		"Fire Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Fire Trial') and ( can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot))"),
+		"Water Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Water Trial') and (Blue_Fire and Hammer and can_use(Light_Arrows))"),
+		"Shadow Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Shadow Trial') and ( can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens)))))"),
+		"Spirit Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Spirit Trial') and ( can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot))"),
+		"Light Trial Clear": () => parseLogicRule(save_file, "can_reach('Ganons Castle Light Trial') and ( can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens)"),
+		"Deku Tree Clear": () => parseLogicRule(save_file, "can_reach('Deku Tree Boss Room') and ( (has_shield) and (is_adult or Kokiri_Sword or Sticks))"),
+		"Forest Temple Amy and Meg": () => parseLogicRule(save_file, "can_reach('Forest Temple Falling Room') and (can_use(Bow))"),
+		"Forest Temple Jo and Beth": () => parseLogicRule(save_file, "can_reach('Forest Temple Bow Region') and (can_use(Bow))"),
+		"Child Water Temple": () => parseLogicRule(save_file, "can_reach('Water Temple Lobby') and (is_child)"),
+		"Water Temple Clear": () => parseLogicRule(save_file, "can_reach('Water Temple Highest Water Level') and (Boss_Key_Water_Temple and can_use(Longshot))"),
 	}
 
 	rule = rule.trim();
@@ -914,20 +915,27 @@ function buildRule(save_file, region, location) {
 		path[ind] = node;
 		ind++;
 
-		if ("locations" in subregions[node] && location in subregions[node]["locations"]) {
+		if (("locations" in subregions[node] && location in subregions[node]["locations"]) || node == location) {
 			thisPath = [];
 			for (var i = 0; i < ind-1; i++) {
 				thisPath.push(subregions[path[i]]["exits"][path[i+1]]);
 			}
-			thisPath.push(subregions[node]["locations"][location]);
+			if ("locations" in subregions[node] && location in subregions[node]["locations"]) {
+				thisPath.push(subregions[node]["locations"][location]);
+			}
+			if (thisPath.length == 0) {
+				thisPath.push("True");
+			}
 			paths.push(`(${thisPath.join(") and (")})`);
 		}
 		else {
-			Object.keys(subregions[node]["exits"]).filter(x => x in subregions).forEach(function(exit) {
-				if (!visited[exit]) {
-					findPaths(exit, ind);
-				}
-			});
+			if ("exits" in subregions[node]) {
+				Object.keys(subregions[node]["exits"]).filter(x => x in subregions).forEach(function(exit) {
+					if (!visited[exit]) {
+						findPaths(exit, ind);
+					}
+				});
+			}
 		}
 
 		ind--;
@@ -954,15 +962,10 @@ function testAllRules(save_file) {
 		}
 		var subregions = logic[region];
 		if ("vanilla" in logic[region]) {
-			subregions = logic[region]["mq"];
+			subregions = logic[region]["vanilla"];
 		}
-		else {
-			continue;
-		}
-		console.log(region);
 		for (subregion in subregions) {
-			console.log(subregion);
-			if ("exits" in subregions[subregion]) {
+			/*if ("exits" in subregions[subregion]) {
 				for (exit in subregions[subregion]["exits"]) {
 					try {
 						parseLogicRule(save_file, subregions[subregion]["exits"][exit]);
@@ -981,9 +984,20 @@ function testAllRules(save_file) {
 						return err;
 					}
 				}
+			}*/
+			if ("events" in subregions[subregion]) {
+				for (event in subregions[subregion]["events"]) {
+					try {
+						eventsRules.push(`"${event}": () => parseLogicRule(save_file, "can_reach(${subregion}) and (${subregions[subregion]["events"][event]})"),`);
+					}
+					catch (err) {
+						return err;
+					}
+				}
 			}
 		}
 	}
+	return eventsRules.join('\n');
 	return "Success";
 }
 

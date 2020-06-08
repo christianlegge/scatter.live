@@ -9,12 +9,19 @@ app.filter('removeSpaces', [function() {
 	};
 }]);
 
-app.filter('reverseObj', function() {
+app.filter('orderHints', function() {
 	return function(items) {
 		if (!items) {
 			return [];
 		}
-		return Object.keys(items).reverse();
+		var retval = [];
+		if ("Way of the Hero" in items) {
+			retval.push("Way of the Hero");
+		}
+		if ("Foolish Choice" in items) {
+			retval.push("Foolish Choice");
+		}
+		return retval.concat(Object.keys(items).filter(x => x != "Way of the Hero" && x != "Foolish Choice").reverse());
 	};
 });
 
@@ -168,11 +175,13 @@ app.controller('simController', function($scope, $http) {
 		if (!$scope.checkingLocation) {
 			$scope.checkingLocation = true;
 			var el = document.getElementById(loc);
-			el.classList.remove('logicfailed-anim');
-			el.classList.add('loadinglink');
-			el.style.animation = 'none';
-			el.offsetHeight;
-			el.style.animation = null;
+			if (el) {
+				el.classList.remove('logicfailed-anim');
+				el.classList.add('loadinglink');
+				el.style.animation = 'none';
+				el.offsetHeight;
+				el.style.animation = null;
+			}
 			$http.get(`/zootr-sim/checklocation/${$scope.playthroughId}/${loc}`).then(function(response) {
 				if (loc == "Check Pedestal") {
 					if ($scope.current_age == "adult") {
@@ -195,20 +204,26 @@ app.controller('simController', function($scope, $http) {
 				}
 
 				var el = document.getElementById(loc);
-				el.classList.remove('loadinglink');
+				if (el) {
+					el.classList.remove('loadinglink');
+				}
 			}, function(error) {
+				var el = document.getElementById(loc);
 				if (error.status == 403) {
 					console.error(`Logic required: ${error.data}`);
 					$scope.headline = `Can't access that!`;
-					var el = document.getElementById(loc);
-					el.classList.remove('loadinglink');
-					el.classList.add('logicfailed-anim');
-					el.style.animation = 'none';
-					el.offsetHeight;
-					el.style.animation = null;
+					if (el) {
+						el.classList.add('logicfailed-anim');
+						el.style.animation = 'none';
+						el.offsetHeight;
+						el.style.animation = null;
+					}
 				}
 				else {
 					console.error(error);
+				}
+				if (el) {
+					el.classList.remove('loadinglink');
 				}
 				$scope.checkingLocation = false;
 			}).catch(function(error) {

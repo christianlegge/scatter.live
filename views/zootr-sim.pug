@@ -117,7 +117,7 @@ html
 					table.hint-table
 						tr
 							th(colspan="2") KNOWN HINTS
-						tr(ng-repeat="loc in known_hints | reverseObj")
+						tr(ng-repeat="loc in known_hints | orderHints")
 							td.hint-loc {{loc}}
 							td.hint-item {{known_hints[loc].join(', ')}}
 					br

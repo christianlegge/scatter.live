@@ -196,6 +196,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (!(req.params["location"] in result.locations) && req.params["location"] == "Gift from Saria") {
 				item = "Ocarina";
 			}
+			if (req.params.location == "Impa at Castle") {
+				result.current_items.push("Zeldas Letter");
+			}
 			result.current_items.push(item);
 			result.checked_locations.push(req.params["location"]);
 			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {

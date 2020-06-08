@@ -839,6 +839,9 @@ function parseLogicRule(save_file, rule) {
 		var comma = getChar();
 		whitespace();
 		var num = parseInt(getNum());
+		if (item.startsWith("Small_Key") || item.startsWith("Boss_Key")) {
+			return true;
+		}
 		return items.filter(x => x == item.replace(/_/g, " ")).length >= num;
 	}
 
@@ -889,7 +892,8 @@ function parseLogicRule(save_file, rule) {
 		}
 	}
 
-	return expression();
+	var val = expression();
+	return val;
 }
 
 function buildRule(save_file, region, location) {
@@ -946,7 +950,8 @@ function buildRule(save_file, region, location) {
 	if (paths.length == 0) {
 		return "False";
 	}
-	return "(" + paths.join(") or (") + ")";
+	var rule = "(" + paths.join(") or (") + ")";
+	return rule;
 }
 
 function canCheckLocation(save_file, location) {

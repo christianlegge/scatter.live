@@ -463,6 +463,10 @@ div.startright input {
 	100% {opacity: 0;}
 }
 
+.loadinglink {
+	animation: 1s ease 0s infinite fadeoutin;
+}
+
 .generating {
 	animation: 1s ease 0s infinite fadeoutin;
 	font-size: 2em;

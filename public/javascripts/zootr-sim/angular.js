@@ -167,6 +167,12 @@ app.controller('simController', function($scope, $http) {
 	$scope.checkLocation = function(loc) {
 		if (!$scope.checkingLocation) {
 			$scope.checkingLocation = true;
+			var el = document.getElementById(loc);
+			el.classList.remove('logicfailed-anim');
+			el.classList.add('loadinglink');
+			el.style.animation = 'none';
+			el.offsetHeight;
+			el.style.animation = null;
 			$http.get(`/zootr-sim/checklocation/${$scope.playthroughId}/${loc}`).then(function(response) {
 				if (loc == "Check Pedestal") {
 					if ($scope.current_age == "adult") {
@@ -187,11 +193,15 @@ app.controller('simController', function($scope, $http) {
 					$scope.known_medallions = response.data.known_medallions;
 					$scope.checkingLocation = false;
 				}
+
+				var el = document.getElementById(loc);
+				el.classList.remove('loadinglink');
 			}, function(error) {
 				if (error.status == 403) {
 					console.error(`Logic required: ${error.data}`);
 					$scope.headline = `Can't access that!`;
 					var el = document.getElementById(loc);
+					el.classList.remove('loadinglink');
 					el.classList.add('logicfailed-anim');
 					el.style.animation = 'none';
 					el.offsetHeight;
@@ -369,6 +379,12 @@ $scope.hasBossKey = function(dungeon) {
 	$scope.takeEntrance = function(entrance) {
 		if (!$scope.takingEntrance) {
 			$scope.takingEntrance = true;
+			var el = document.getElementById(entrance);
+			el.classList.remove('logicfailed-anim');
+			el.classList.add('loadinglink');
+			el.style.animation = 'none';
+			el.offsetHeight;
+			el.style.animation = null;
 			$http.get(`/zootr-sim/takeentrance/${$scope.playthroughId}/${entrance}`).then(function(response) {
 				$scope.current_region = response.data.region;
 				$scope.current_subregion = response.data.subregion;
@@ -377,12 +393,15 @@ $scope.hasBossKey = function(dungeon) {
 				}
 				$scope.getAvailableLocations();
 				$scope.getAvailableEntrances();
+				var el = document.getElementById(entrance);
+				el.classList.remove('loadinglink');
 				$scope.takingEntrance = false;
 			}, function(err) {
 				if (err.status == 403) {
 					$scope.headline = "Can't access that!";
 					console.error(`Logic required: ${err.data}`);
 					var el = document.getElementById(entrance);
+					el.classList.remove('loadinglink');
 					el.classList.add('logicfailed-anim');
 					el.style.animation = 'none';
 					el.offsetHeight;

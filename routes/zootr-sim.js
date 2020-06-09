@@ -119,6 +119,7 @@ function parseLog(logfile) {
 	doc.save();
 	return {
 		id: doc._id,
+		start_time: doc.start_time,
 		hash: logfile["file_hash"],
 		locations: Object.keys(logfile["locations"]),
 		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
@@ -159,6 +160,9 @@ router.get('/resume', function(req, res, next) {
 			known_hints: result.known_hints,
 			known_medallions: result.known_medallions,
 			bombchu_count: result.bombchu_count,
+			start_time: result.start_time,
+			playtime: result.playtime,
+			finished: result.finished,
 		};
 		res.send(info);
 	});
@@ -184,6 +188,13 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.current_age = result.current_age == "child" ? "adult" : "child";
 				result.save();
 				res.send(result.current_age);
+				return;
+			}
+			else if (req.params.location == "Ganon") {
+				result.finished = true;
+				result.playtime = Date.now() - result.start_time;
+				result.save();
+				res.send({finished: true, playtime: result.playtime});
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);

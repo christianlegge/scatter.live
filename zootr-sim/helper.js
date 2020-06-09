@@ -645,15 +645,15 @@ function parseLogicRule(save_file, rule) {
 		shuffle_overworld_entrances: () => settings.get("entrance_shuffle") == "all",
 		open_door_of_time: () => settings.get("open_door_of_time"),
 		Weird_Egg: () => logicEvaluation.has("Weird Egg"),
-		shuffle_weird_egg: () => settings.shuffle_weird_egg,
-		can_build_rainbow_bridge: () => (settings.bridge == "open") ||
-										(settings.bridge == "vanilla" && logicEvaluation.has("Shadow Medallion") && logicEvaluation.has("Spirit Medallion") && logicEvaluation.has("Light Arrows")) ||
-										(settings.bridge == "stones" && logicEvaluation.has_all_stones()) ||
-										(settings.bridge == "medallions" && logicEvaluation.has_all_medallions()) ||
-										(settings.bridge == "dungeons" && logicEvaluation.has_all_stones() && logicEvaluation.has_all_medallions()) ||
-										(settings.bridge == "tokens" && items.filter(x => x == "Gold Skulltula Token").length >= 100),
+		shuffle_weird_egg: () => settings.get("shuffle_weird_egg"),
+		can_build_rainbow_bridge: () => (settings.get("bridge") == "open") ||
+										(settings.get("bridge") == "vanilla" && logicEvaluation.has("Shadow Medallion") && logicEvaluation.has("Spirit Medallion") && logicEvaluation.has("Light Arrows")) ||
+										(settings.get("bridge") == "stones" && logicEvaluation.has_all_stones()) ||
+										(settings.get("bridge") == "medallions" && logicEvaluation.has_all_medallions()) ||
+										(settings.get("bridge") == "dungeons" && logicEvaluation.has_all_stones() && logicEvaluation.has_all_medallions()) ||
+										(settings.get("bridge") == "tokens" && items.filter(x => x == "Gold Skulltula Token").length >= 100),
 		Deliver_Letter: () => logicEvaluation.has("Bottle with Letter"),
-		open_zora_fountain: () => settings.zora_fountain == "open",
+		open_zora_fountain: () => settings.get("zora_fountain") == "open",
 		Fish: () => logicEvaluation.has_bottle(),
 		skipped_trial: (x) => save_file.trials.get(x) == "inactive",
 		can_reach: (x) => parseLogicRule(save_file, buildRule(save_file, save_file["current_region"], x)),
@@ -1019,7 +1019,7 @@ function testAllRules(save_file) {
 	return "Success";
 }
 
-var location_exceptions = ["Master Sword Pedestal", "Check Pedestal"]
+var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Ganon"];
 
 function getLocations(save_file, region) {
 	var all_locs = [];

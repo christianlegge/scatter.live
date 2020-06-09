@@ -68,6 +68,8 @@ html
 				br
 				| {{spoiler}}
 			span(ng-show="playing && !finished")
+				span {{(now - start_time) | formatDuration}}
+				br
 				.headline {{headline}}
 				br
 				.main.tracker
@@ -158,6 +160,8 @@ html
 				h1 Congratulations!
 				span Total checks made:
 				h1(style="margin-top:0") {{numChecksMade}}/{{totalChecks}}
+				span Playtime:
+				h1(style="margin-top:0") {{playtime | formatDuration}}
 				h2 Route
 				.routecontainer
 					.route.main {{route}}

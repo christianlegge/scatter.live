@@ -6,6 +6,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	checked_locations: Array,
 	current_items: Array,
 	start_time: Number,
+	playtime: Number,
 	hints: Map,
 	known_hints: Map,
 	entrances: Map,
@@ -18,6 +19,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	dungeons: Map,
 	trials: Map,
 	bombchu_count: Number,
+	finished: false,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

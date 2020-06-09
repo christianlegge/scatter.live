@@ -25,6 +25,16 @@ app.filter('orderHints', function() {
 	};
 });
 
+app.filter('formatDuration', function () {
+	return function (ms) {
+		var totalsecs = ms/1000;
+		var secs = Math.floor(totalsecs % 60);
+		var min = Math.floor((totalsecs / 60) % 60);
+		var hours = Math.floor(totalsecs / 3600);
+		return `${hours}:${min.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	};
+});
+
 app.directive('customOnChange', function() {
 	return {
 		restrict: 'A',
@@ -38,7 +48,7 @@ app.directive('customOnChange', function() {
 	};
 });
 
-app.controller('simController', function($scope, $http) {
+app.controller('simController', function($scope, $http, $interval) {
 	
 	$scope.darkModeOn = false;
 	
@@ -114,6 +124,9 @@ app.controller('simController', function($scope, $http) {
 	}
 	
 	$scope.init();
+
+	$scope.now = Date.now();
+	$interval(() => $scope.now = Date.now(), 1000);
 	
 	$scope.getAvailableLocations = function() {
 		if (!$scope.playing) {
@@ -182,6 +195,11 @@ app.controller('simController', function($scope, $http) {
 				}
 				else if (loc == "Master Sword Pedestal") {
 					$scope.current_age = response.data;
+					$scope.checkingLocation = false;
+				}
+				else if (loc == "Ganon") {
+					$scope.finished = response.data.finished;
+					$scope.playtime = response.data.playtime;
 					$scope.checkingLocation = false;
 				}
 				else {
@@ -846,6 +864,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.locations = data["locations"];
 		$scope.current_items = data["current_items"];
 		$scope.fsHash = data["hash"];
+		$scope.start_time = data["start_time"];
 		$scope.playthroughId = data["id"];
 		$scope.checked_locations = data["checked_locations"];
 		$scope.current_age = data["current_age"];
@@ -854,6 +873,8 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.known_medallions = data["known_medallions"];
 		$scope.known_hints = data["known_hints"];
 		$scope.bombchu_count = data["bombchu_count"];
+		$scope.finished = data["finished"];
+		$scope.playtime = data["playtime"];
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);

@@ -188,6 +188,7 @@ app.controller('simController', function($scope, $http) {
 					$scope.headline = `${loc}: ${response.data.item}`;
 					$scope.checked_locations.push(loc);
 					$scope.current_items.push(response.data.item);
+					$scope.current_subregion = response.data.subregion;
 					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 					$scope.known_medallions = response.data.known_medallions;
 					$scope.bombchu_count = response.data.bombchu_count;
@@ -927,6 +928,8 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.headline = response.data.text;
 				$scope.known_hints = response.data.known_hints;
 				$scope.checked_locations.push(stone);
+				$scope.current_subregion = response.data.subregion;
+				$scope.bombchu_count = response.data.bombchu_count;
 				$scope.checkingLocation = false;
 			}, function(error) {
 				if (error.status == 403) {

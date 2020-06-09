@@ -1120,6 +1120,24 @@ function getParentRegion(subregion) {
 	return Object.keys(subregions).filter(x => subregions[x].includes(subregion))[0];
 }
 
+function subregionFromLocation(location) {
+	var dungeonVariant = location.includes("MQ") ? "mq" : "vanilla";
+	for (region in logic) {
+		var subregions = logic[region];
+		if (dungeonVariant in logic[region]) {
+			subregions = logic[region][dungeonVariant];
+		}
+		for (subregion in subregions) {
+			if ("locations" in subregions[subregion]) {
+				if (location in subregions[subregion]["locations"]) {
+					return subregion;
+				}
+			}
+		}
+	}
+	throw `Subregion for location ${location} not found.`;
+}
+
 function parseHint(save_file, hint) {
 	var hintLoc = [];
 	var hintItem = [];
@@ -1178,3 +1196,4 @@ module.exports.getHint = getHint;
 module.exports.getParentRegion = getParentRegion;
 module.exports.checkPedestal = checkPedestal;
 module.exports.needChus = needChus;
+module.exports.subregionFromLocation = subregionFromLocation;

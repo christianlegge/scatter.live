@@ -187,6 +187,8 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);
+			var subregion = simHelper.subregionFromLocation(req.params.location);
+			result.current_subregion = subregion;
 			if (typeof item == "object") {
 				item = item["item"];
 			}
@@ -214,7 +216,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.bombchu_count--;
 			}
 			result.save();
-			res.send({item: item, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count});
+			res.send({item: item, subregion: subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count});
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
@@ -230,6 +232,8 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 		}
 		if (simHelper.canCheckLocation(result, req.params["stone"])) {
 			var hint = simHelper.getHint(result, req.params["stone"]);
+			var subregion = simHelper.subregionFromLocation(req.params.stone);
+			result.current_subregion = subregion;
 			if (result.known_hints.has(hint.hint[0])) {
 				var arr = result.known_hints.get(hint.hint[0]);
 				arr.push(hint.hint[1]);
@@ -238,9 +242,12 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 			else {
 				result.known_hints.set(hint.hint[0], [hint.hint[1]]);
 			}
+			if (simHelper.needChus(result, req.params.stone)) {
+				result.bombchu_count--;
+			}
 			result.checked_locations.push(req.params["stone"]);
 			result.save();
-			res.send({ text: hint.hint_text, known_hints: result.known_hints });
+			res.send({ text: hint.hint_text, subregion: subregion, bombchu_count: result.bombchu_count, known_hints: result.known_hints });
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.stone));

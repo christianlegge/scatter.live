@@ -50,80 +50,8 @@ app.directive('customOnChange', function() {
 
 app.controller('simController', function($scope, $http, $interval) {
 	
-	$scope.darkModeOn = false;
-	
-	$scope.init = function() {
-		$scope.isShopsanity = false;
-		
-		$scope.currentSpoilerLog = '';
-		
-		$scope.checkedHints = [];
-		
-		$scope.knownHints = {};
-
-		$scope.peekedLocations = [];
-		
-		$scope.allLocations = {};
-		
-		$scope.fsHash = [];
-		
-		$scope.checkedLocations = [];
-		
-		$scope.current_items = [];
-
-		$scope.windRegionChild = "";
-
-		$scope.windRegionAdult = "";
-		
-		$scope.medallions = {};
-		
-		$scope.current_region = 'Root';
-		$scope.current_age = 'child';
-		
-		$scope.known_medallions = {
-			'Deku Tree': '???',
-			'Dodongos Cavern': '???',
-			'Jabu Jabus Belly': '???',
-			'Forest Temple': '???',
-			'Fire Temple': '???',
-			'Water Temple': '???',
-			'Shadow Temple': '???',
-			'Spirit Temple': '???',
-			'Free': '???',
-		};
-		
-		$scope.numChecksMade = 0;
-		
-		$scope.totalChecks = 0;
-		
-		$scope.gossipHints = {};
-		
-		$scope.itemCounts = {};
-		
-		$scope.usedChus = 0;
-		
-		$scope.collectedWarps = [];
-		
-		$scope.finished = false;
-		
-		$scope.route = '';
-		
-		$scope.currentChild = 1;
-		
-		$scope.currentAdult = 0;
-		
-		$scope.playing = false;
-		
-		$scope.disableUndo = true;
-		
-		$scope.copying = false;
-		
-		$scope.shopContents = {};
-		
-		$scope.actions = [];
-	}
-	
-	$scope.init();
+	$scope.known_medallions = {};
+	$scope.current_items = [];
 
 	$scope.now = Date.now();
 	$interval(() => $scope.now = Date.now(), 1000);
@@ -650,8 +578,6 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.playthroughId = null;
 		$scope.headline = "";
 		localforage.setItem("playthroughId", null);
-		$scope.init();
-		$scope.updateForage();
 	};
 	
 	$scope.countItem = function(item) {
@@ -1073,18 +999,6 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.itemCounts[item]++;
 		$scope.updateForage();
 	};
-	
-	//var forageItems = ['playthroughId', 'locations', 'windRegionChild', 'windRegionAdult', 'peekedLocations', 'currentSeed', 'isShopsanity', 'shopContents', 'currentSpoilerLog', 'checkedHints', 'knownHints', 'allLocations', 'fsHash', 'checkedLocations', 'current_items', 'medallions', 'currentRegion', 'currentAge', 'known_medallions', 'numChecksMade', 'totalChecks', 'gossipHints', 'itemCounts', 'usedChus', 'collectedWarps', 'finished', 'route', 'currentChild', 'currentAdult', 'playing', 'disableUndo', 'darkModeOn', 'actions']
-	/*
-	$scope.updateForage = function() {
-		forageItems.forEach(function(item) {
-			localforage.setItem(item, $scope[item]);
-		});
-		localforage.setItem('playing', $scope.playing);
-		localforage.setItem('fsHash', $scope.fsHash);
-	}*/
-
-	$scope.updateForage = function() {};
 
 	localforage.getItem("playthroughId").then(function(result) {
 		if (result) {
@@ -1092,16 +1006,11 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	});
 
-	/*Promise.all(
-		forageItems.map(x => localforage.getItem(x))
-	).then(function(results) {
-		for (var i = 0; i < forageItems.length; i++) {
-			if (results[i] != null && results[i] != undefined) {
-				$scope[forageItems[i]] = results[i];
-			}
+	localforage.getItem("darkModeOn").then(function (result) {
+		if (result) {
+			$scope.darkModeOn = result;
 		}
-		$scope.$apply();
-	});*/
+	});
 });
 
 var shopItemImages = {

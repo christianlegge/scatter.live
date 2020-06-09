@@ -1904,6 +1904,9 @@ var logic = {
 			"Ganons Castle Forest Trial": {
 				"region_name": "Ganons Castle Forest Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Forest Trial Clear": "can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire)"
 				},
@@ -1914,6 +1917,9 @@ var logic = {
 			"Ganons Castle Fire Trial": {
 				"region_name": "Ganons Castle Fire Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Fire Trial Clear": " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot)"
 				}
@@ -1921,6 +1927,9 @@ var logic = {
 			"Ganons Castle Water Trial": {
 				"region_name": "Ganons Castle Water Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Water Trial Clear": "Blue_Fire and Hammer and can_use(Light_Arrows)"
 				},
@@ -1934,6 +1943,9 @@ var logic = {
 			"Ganons Castle Shadow Trial": {
 				"region_name": "Ganons Castle Shadow Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Shadow Trial Clear": " can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens))))"
 				},
@@ -1945,6 +1957,9 @@ var logic = {
 			"Ganons Castle Spirit Trial": {
 				"region_name": "Ganons Castle Spirit Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Spirit Trial Clear": " can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot)"
 				},
@@ -1957,6 +1972,9 @@ var logic = {
 			"Ganons Castle Light Trial": {
 				"region_name": "Ganons Castle Light Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Light Trial Clear": " can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens"
 				},
@@ -2003,6 +2021,9 @@ var logic = {
 			"Ganons Castle Forest Trial": {
 				"region_name": "Ganons Castle Forest Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Forest Trial Clear": "can_use(Light_Arrows) and can_play(Song_of_Time)"
 				},
@@ -2015,6 +2036,9 @@ var logic = {
 			"Ganons Castle Fire Trial": {
 				"region_name": "Ganons Castle Fire Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Fire Trial Clear": " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and (can_use(Longshot) or Hover_Boots)"
 				}
@@ -2022,6 +2046,9 @@ var logic = {
 			"Ganons Castle Water Trial": {
 				"region_name": "Ganons Castle Water Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Water Trial Clear": " Blue_Fire and can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3)"
 				},
@@ -2033,6 +2060,9 @@ var logic = {
 			"Ganons Castle Shadow Trial": {
 				"region_name": "Ganons Castle Shadow Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Shadow Trial Clear": " can_use(Light_Arrows) and can_see_with_lens and (Hover_Boots or (Progressive_Hookshot and (has_fire_source or logic_shadow_trial_mq)))"
 				},
@@ -2044,6 +2074,9 @@ var logic = {
 			"Ganons Castle Spirit Trial": {
 				"region_name": "Ganons Castle Spirit Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Spirit Trial Clear": " can_use(Light_Arrows) and Hammer and has_bombchus and Fire_Arrows and Mirror_Shield"
 				},
@@ -2060,6 +2093,9 @@ var logic = {
 			"Ganons Castle Light Trial": {
 				"region_name": "Ganons Castle Light Trial",
 				"dungeon": "Ganons Castle",
+				"exits": {
+					"Ganons Castle Lobby": "True"
+				},
 				"events": {
 					"Light Trial Clear": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens"
 				},

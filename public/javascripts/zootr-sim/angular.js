@@ -48,8 +48,14 @@ app.directive('customOnChange', function() {
 	};
 });
 
-app.controller('simController', function($scope, $http, $interval) {
-	
+app.controller('simController', ['$scope', '$http', '$interval', '$document', function($scope, $http, $interval, $document) {
+
+	$document[0].onclick = function(event) {
+		if (event.target.id != "reset" && !document.getElementsByClassName("modal-content")[0].contains(event.target)) {
+			$scope.show_modal(false);
+		}
+	};
+
 	$scope.known_medallions = {};
 	$scope.current_items = [];
 
@@ -576,10 +582,23 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	}
 
+	$scope.show_modal = function(show) {
+		var el = document.getElementsByClassName("modal")[0];
+		if (show) {
+			el.classList.remove("hidden");
+		}
+		else {
+			el.classList.add("hidden");
+		}
+	}
+
 	$scope.throwAway = function(item) {
+		$http.get(`/zootr-sim/throwaway/${$scope.playthroughId}`);
 		$scope.playthroughId = null;
 		$scope.headline = "";
 		$scope.playing = false;
+		$scope.finished = false;
+		$scope.show_modal(false);
 		localforage.setItem("playthroughId", null);
 	};
 	
@@ -1031,7 +1050,7 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.darkModeOn = result;
 		}
 	});
-});
+}]);
 
 var shopItemImages = {
 	'Arrows (5)': 'arrows5.png',

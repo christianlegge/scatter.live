@@ -252,6 +252,12 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 	});
 });
 
+router.get('/throwaway/:playthroughId', function(req, res, next) {
+	playthroughModel.deleteOne({_id: req.params.playthroughId}, function(err, result) {
+		res.sendStatus(200);
+	});
+});
+
 router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		if (result.checked_locations.includes(req.params["stone"])) {

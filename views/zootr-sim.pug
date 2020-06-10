@@ -154,7 +154,7 @@ html
 							br
 				br
 				br
-				a.button#reset(ng-click="throwAway()")
+				a.button#reset(ng-click="show_modal(true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")
 				h1 Congratulations!
@@ -182,8 +182,7 @@ html
 						span(ng-show="copying")#copied.copied-anim Copied!
 				br 
 				br 
-				a(ng-click="throwAway()").button#reset Another one
-				a(ng-click="finished = false").button#unend Take me back
+				a(ng-click="throwAway()").button#reset Finish
 			p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
 			div(ng-show="!playing").loadfromid
 				p Load from Playthrough ID
@@ -198,6 +197,13 @@ html
 			a(href="https://github.com/scatter-dev/scatter.live/issues/new?title=[zootr-sim]") Report an Issue
 			|  | 
 			a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
+	
+		div.modal.hidden
+			div.modal-content
+				p Really throw the seed away?
+				p You won't be able to get it back!
+				a.button#reset(ng-click="throwAway()")
+					| Get it outta here
 		+jquery
 		+localforage
 		+filesaver

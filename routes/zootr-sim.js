@@ -4,7 +4,8 @@ var request = require('request');
 var uuid = require('uuid');
 var simHelper = require("../zootr-sim/helper.js");
 var router = express.Router();
-var playthroughModel = require('../models/SimPlaythroughModel.js')
+var playthroughModel = require('../models/SimPlaythroughModel.js');
+var leaderboardModel = require('../models/SimLeaderboardModel.js');
 
 var meta = {
 	title: "ZOoTR Sim",
@@ -14,6 +15,17 @@ var meta = {
 	type: "website",
 	card: "summary",
 };
+
+function submitToLeaderboard(playthrough) {
+	var lb = new leaderboardModel({
+		_id: playthrough._id,
+		checked_locations: playthrough.num_checks_made,
+		total_locations: playthrough.total_checks,
+		settings: playthrough.settings,
+		finish_date: playthrough.start_time + playthrough.playtime,
+	});
+	lb.save();
+}
 
 function parseLog(logfile) {
 	if (typeof logfile == 'string') {
@@ -163,6 +175,8 @@ router.get('/resume', function(req, res, next) {
 			start_time: result.start_time,
 			playtime: result.playtime,
 			finished: result.finished,
+			num_checks_made: result.num_checks_made,
+			total_checks: result.total_checks,
 		};
 		res.send(info);
 	});
@@ -193,8 +207,11 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			else if (req.params.location == "Ganon") {
 				result.finished = true;
 				result.playtime = Date.now() - result.start_time;
+				result.num_checks_made = result.checked_locations.length;
+				result.total_checks = Array.from(result.locations.keys()).length;
 				result.save();
-				res.send({finished: true, playtime: result.playtime});
+				submitToLeaderboard(result);
+				res.send({ finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);
@@ -272,6 +289,19 @@ router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next
 		result.current_age = req.params["age"];
 		result.save();
 		res.sendStatus(200);
+	});
+});
+
+router.get('/submitname/:playthroughId/:name', function (req, res, next) {
+	leaderboardModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (!result.name) {
+			result.name = req.params.name;
+			result.save();
+			res.sendStatus(200);
+		}
+		else {
+			res.sendStatus(403);
+		}
 	});
 });
 

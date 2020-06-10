@@ -128,6 +128,8 @@ app.controller('simController', function($scope, $http, $interval) {
 				else if (loc == "Ganon") {
 					$scope.finished = response.data.finished;
 					$scope.playtime = response.data.playtime;
+					$scope.num_checks_made = response.data.num_checks_made;
+					$scope.total_checks = response.data.total_checks;
 					$scope.checkingLocation = false;
 				}
 				else {
@@ -585,6 +587,21 @@ $scope.hasBossKey = function(dungeon) {
 		return 0;
 	};
 
+	$scope.submitToLb = function(name) {
+		if (!$scope.submitting) {
+			$scope.submitting = true;
+			$http.get(`/zootr-sim/submitname/${$scope.playthroughId}/${name}`).then(function(response) {
+				$scope.submitting = false;
+				$scope.submitted = true;
+			}, function(error) {
+				if (error.status == 403) {
+					$scope.lb_error = "Run already named!";
+				}
+				$scope.submitting = false;
+			});
+		}
+	};
+
 	$scope.setWind = function() {
 		if ($scope.current_age == "child") {
 			$scope.windRegionChild = $scope.current_region;
@@ -802,6 +819,8 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.bombchu_count = data["bombchu_count"];
 		$scope.finished = data["finished"];
 		$scope.playtime = data["playtime"];
+		$scope.num_checks_made = data["num_checks_made"];
+		$scope.total_checks = data["total_checks"];
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);

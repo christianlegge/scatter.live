@@ -20,6 +20,8 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	trials: Map,
 	bombchu_count: Number,
 	finished: false,
+	num_checks_made: Number,
+	total_checks: Number,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

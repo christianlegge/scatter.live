@@ -959,6 +959,60 @@ function canCheckLocation(save_file, location) {
 	return parseLogicRule(save_file, rule);
 }
 
+function isEssentialItem(item) {
+	var child_trade = ["Weird Egg", "Chicken", "Zeldas Letter", "Keaton Mask", "Skull Mask", "Spooky Mask", "Bunny Hood", "Mask of Truth"];
+	var adult_trade = ["Pocket Egg", "Pocket Cucco", "Cojiro", "Odd Mushroom", "Poachers Saw", "Broken Sword", "Prescription", "Eyeball Frog", "Eyedrops", "Claim Check"];
+	var essential_items = [
+		"Kokiri Emerald",
+		"Goron Ruby",
+		"Zora Sapphire",
+		"Light Medallion",
+		"Forest Medallion",
+		"Fire Medallion",
+		"Water Medallion",
+		"Spirit Medallion",
+		"Shadow Medallion",
+		"Zeldas Lullaby",
+		"Eponas Song",
+		"Sarias Song",
+		"Song of Time",
+		"Suns Song",
+		"Song of Storms",
+		"Minuet of Forest",
+		"Bolero of Fire",
+		"Serenade of Water",
+		"Requiem of Spirit",
+		"Nocturne of Shadow",
+		"Prelude of Light",
+		"Progressive Strength Upgrade",
+		"Progressive Scale",
+		"Kokiri Sword",
+		"Deku Shield",
+		"Hylian Shield",
+		"Mirror Shield",
+		"Goron Tunic",
+		"Zora Tunic",
+		"Iron Boots",
+		"Hover Boots",
+		"Slingshot",
+		"Boomerang",
+		"Lens of Truth",
+		"Bomb Bag",
+		"Magic Bean Pack",
+		"Bow",
+		"Progressive Hookshot",
+		"Hammer",
+		"Fire Arrows",
+		"Light Arrows",
+		"Dins Fire",
+		"Farores Wind",
+		"Nayrus Love",
+		"Gerudo Membership Card",
+	]
+	essential_items = essential_items.concat(child_trade).concat(adult_trade);
+	return essential_items.includes(item) || item.includes("Bombchu") || item.includes("Ocarina") || item.includes("Bottle");
+}
+
 function testAllRules(save_file) {
 	var subsobj = {};
 	for (region in logic) {
@@ -1197,3 +1251,4 @@ module.exports.getParentRegion = getParentRegion;
 module.exports.checkPedestal = checkPedestal;
 module.exports.needChus = needChus;
 module.exports.subregionFromLocation = subregionFromLocation;
+module.exports.isEssentialItem = isEssentialItem;

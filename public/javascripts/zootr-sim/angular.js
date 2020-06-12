@@ -136,6 +136,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.playtime = response.data.playtime;
 					$scope.num_checks_made = response.data.num_checks_made;
 					$scope.total_checks = response.data.total_checks;
+					$scope.route = response.data.route.join("\n");
 					$scope.checkingLocation = false;
 				}
 				else {
@@ -322,7 +323,7 @@ $scope.copyRoute = function() {
 
 $scope.saveRoute = function() {
 	var blob = new Blob([$scope.route.replace(/(?:\r\n|\r|\n)/g, '\r\n')], {type: "text/plain;charset=utf-8"});
-	window.saveAs(blob, $scope.currentSeed + "-route.txt");
+	window.saveAs(blob, $scope.playthroughId + "-route.txt");
 };
 
 $scope.hasBossKey = function(dungeon) {
@@ -840,6 +841,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.playtime = data["playtime"];
 		$scope.num_checks_made = data["num_checks_made"];
 		$scope.total_checks = data["total_checks"];
+		$scope.route = "route" in data ? data["route"].join("\n") : "";
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);

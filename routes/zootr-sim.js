@@ -121,10 +121,12 @@ function parseLog(logfile) {
 		dungeons: logfile["dungeons"],
 		trials: logfile["trials"],
 		bombchu_count: 0,
+		route: [],
 	});
 	if (!doc.current_age) {
 		doc.current_age = "child";
 	}
+	doc.route.push(doc.current_age.toUpperCase() + " 1");
 	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
 	doc.current_subregion = doc.current_age == "child" ? "Links House" : "Temple of Time";
 	doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
@@ -173,6 +175,7 @@ router.get('/resume', function(req, res, next) {
 			known_medallions: result.known_medallions,
 			bombchu_count: result.bombchu_count,
 			start_time: result.start_time,
+			route: result.route,
 			playtime: result.playtime,
 			finished: result.finished,
 			num_checks_made: result.num_checks_made,
@@ -200,6 +203,13 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			}
 			else if (req.params["location"] == "Master Sword Pedestal") {
 				result.current_age = result.current_age == "child" ? "adult" : "child";
+				result.route.push("");
+				if (result.current_age == "child") {
+					result.route.push(`CHILD ${result.route.filter(x => x.includes("CHILD")).length + 1}`);
+				}
+				else {
+					result.route.push(`ADULT ${result.route.filter(x => x.includes("ADULT")).length + 1}`);
+				}
 				result.save();
 				res.send(result.current_age);
 				return;
@@ -211,7 +221,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.total_checks = Array.from(result.locations.keys()).length;
 				result.save();
 				submitToLeaderboard(result);
-				res.send({ finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
+				res.send({ route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);
@@ -229,6 +239,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (req.params.location == "Impa at Castle") {
 				result.current_items.push("Zeldas Letter");
 			}
+			result.route.push(`${req.params.location}${simHelper.isEssentialItem(item) ? " (" + item + ")" : ""}`);
 			result.current_items.push(item);
 			result.checked_locations.push(req.params["location"]);
 			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
@@ -408,6 +419,7 @@ router.post('/uploadlog', function(req, res, next) {
 		res.send(parseLog(req["body"]));
 	}
 	catch (e) {
+		console.log(e);
 		res.send(e, status=400);
 	}
 });

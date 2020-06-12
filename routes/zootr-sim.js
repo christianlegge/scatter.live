@@ -226,6 +226,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			}
 			var item = result.locations.get(req.params["location"]);
 			var subregion = simHelper.subregionFromLocation(req.params.location);
+			
 			result.current_subregion = subregion;
 			if (typeof item == "object") {
 				item = item["item"];
@@ -254,8 +255,17 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (simHelper.needChus(result, req.params.location)) {
 				result.bombchu_count--;
 			}
+
+			var response_obj = { item: item, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
+			if (req.params.location in simHelper.region_changing_checks) {
+				result.current_region = simHelper.region_changing_checks[req.params.location][0];
+				response_obj.region = result.current_region;
+				result.current_subregion = simHelper.region_changing_checks[req.params.location][1];
+				response_obj.subregion = result.current_subregion;
+				response_obj.region_changed = true;
+			}
 			result.save();
-			res.send({item: item, subregion: subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count});
+			res.send(response_obj);
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
@@ -419,7 +429,7 @@ router.post('/uploadlog', function(req, res, next) {
 		res.send(parseLog(req["body"]));
 	}
 	catch (e) {
-		console.log(e);
+		console.error(e);
 		res.send(e, status=400);
 	}
 });

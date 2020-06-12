@@ -143,10 +143,15 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.headline = `${loc}: ${response.data.item}`;
 					$scope.checked_locations.push(loc);
 					$scope.current_items.push(response.data.item);
+					$scope.current_region = response.data.region;
 					$scope.current_subregion = response.data.subregion;
 					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 					$scope.known_medallions = response.data.known_medallions;
 					$scope.bombchu_count = response.data.bombchu_count;
+					if ("region_changed" in response.data) {
+						$scope.getAvailableEntrances();
+						$scope.getAvailableLocations();
+					}
 					$scope.checkingLocation = false;
 				}
 

@@ -1241,6 +1241,18 @@ function needChus(save_file, location) {
 	return false;
 }
 
+var region_changing_checks = {
+	'Impa at Castle': ['Hyrule Field', 'Hyrule Field'],
+	'Queen Gohma': ['Kokiri Forest', 'Outside Deku Tree'],
+	'King Dodongo': ['Death Mountain Trail', 'Death Mountain'],
+	'Barinade': ['Zoras Fountain', 'Zoras Fountain'],
+	'Phantom Ganon': ['Kokiri Forest', 'Outside Deku Tree'],
+	'Volvagia': ['Death Mountain Crater', 'Death Mountain Crater Central Nearby'],
+	'Morpha': ['Lake Hylia', 'Lake Hylia'],
+	'Bongo Bongo': ['Graveyard', 'Shadow Temple Warp Region'],
+	'Twinrova': ['Desert Colossus', 'Desert Colossus'],
+};
+
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
 module.exports.getEntrances = getEntrances;
@@ -1252,3 +1264,4 @@ module.exports.checkPedestal = checkPedestal;
 module.exports.needChus = needChus;
 module.exports.subregionFromLocation = subregionFromLocation;
 module.exports.isEssentialItem = isEssentialItem;
+module.exports.region_changing_checks = region_changing_checks;

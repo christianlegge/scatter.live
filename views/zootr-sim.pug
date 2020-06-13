@@ -99,7 +99,7 @@ html
 				.main.current
 					.currentinner
 						p Current Region: {{current_region}} ({{current_subregion}}) [{{current_age}}]
-						img(ng-repeat-start="loc in available_locations", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !known_hints.hasOwnProperty(loc)", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false", id="{{loc + 'peek'}}").peekicon
+						img(ng-repeat-start="loc in available_locations", ng-if="(loc.includes('Freestanding') || loc == 'Underwater Bottle') && !(known_hints.hasOwnProperty(loc) || checked_locations.includes(loc))", ng-click="peekAt(loc)" src="images/zootr-sim/eye.png", draggable="false", id="{{loc + 'peek'}}").peekicon
 						a(ng-if="!checked_locations.includes(loc)",ng-click="checkLocation(loc)",id="{{loc}}").location {{loc}}
 							br
 						span(ng-repeat-end,ng-if="checked_locations.includes(loc)", class="checked") {{ loc }}
@@ -166,8 +166,10 @@ html
 				h1 Congratulations!
 				span Total checks made:
 				h1(style="margin-top:0") {{num_checks_made}}/{{total_checks}}
+				h5 You checked fewer locations than {{percentiles.checks}}% of players!
 				span Playtime:
 				h1(style="margin-top:0") {{playtime | formatDuration}}
+				h5 You finished faster than {{percentiles.time}}% of players!
 				span(ng-if="used_logic") Name this run for the leaderboard!
 				br(ng-if="used_logic")
 				div.loadfromid(ng-if="used_logic")

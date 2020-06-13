@@ -31,6 +31,14 @@ function submitToLeaderboard(playthrough) {
 	lb.save();
 }
 
+function getPercentiles(playthrough) {
+	return Promise.all([
+		leaderboardModel.countDocuments().where("playtime").gt(playthrough.playtime),
+		leaderboardModel.countDocuments().where("checked_locations").gt(playthrough.num_checks_made),
+		leaderboardModel.estimatedDocumentCount()
+	]);
+}
+
 function parseLog(logfile, use_logic) {
 	if (typeof logfile == 'string') {
 		logfile = JSON.parse(logfile);
@@ -165,35 +173,39 @@ router.get('/', function(req, res, next) {
 router.get('/resume', function(req, res, next) {
 	var id = req.query.id;
 	playthroughModel.findById(id, function(err, result) {
-		if (err) {
-			res.sendStatus(400);
-			return;
-		}
-		if (result == null) {
-			res.sendStatus(404);
-			return;
-		}
-		var info = {
-			id: result._id,
-			hash: result.hash,
-			locations: Array.from(result.locations.keys()),
-			current_items: result.current_items,
-			current_age: result.current_age,
-			current_region: result.current_region,
-			current_subregion: result.current_subregion,
-			checked_locations: result.checked_locations,
-			known_hints: result.known_hints,
-			known_medallions: result.known_medallions,
-			bombchu_count: result.bombchu_count,
-			start_time: result.start_time,
-			route: result.route,
-			playtime: result.playtime,
-			finished: result.finished,
-			num_checks_made: result.num_checks_made,
-			total_checks: result.total_checks,
-			used_logic: result.use_logic,
-		};
-		res.send(info);
+		getPercentiles(result).then(function(percentiles) {
+			if (err) {
+				res.sendStatus(400);
+				return;
+			}
+			if (result == null) {
+				res.sendStatus(404);
+				return;
+			}
+			var info = {
+				id: result._id,
+				hash: result.hash,
+				locations: Array.from(result.locations.keys()),
+				current_items: result.current_items,
+				current_age: result.current_age,
+				current_region: result.current_region,
+				current_subregion: result.current_subregion,
+				checked_locations: result.checked_locations,
+				known_hints: result.known_hints,
+				known_medallions: result.known_medallions,
+				bombchu_count: result.bombchu_count,
+				start_time: result.start_time,
+				route: result.route,
+				playtime: result.playtime,
+				finished: result.finished,
+				num_checks_made: result.num_checks_made,
+				total_checks: result.total_checks,
+				used_logic: result.use_logic,
+				percentiles: {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)}
+			};
+			res.send(info);
+		});
+		
 	});
 });
 
@@ -235,7 +247,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (result.use_logic) {
 					submitToLeaderboard(result);
 				}
-				res.send({used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
+				getPercentiles(result).then(function(percentiles) {
+					res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
+				});
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);

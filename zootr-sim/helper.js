@@ -951,6 +951,29 @@ function buildRule(save_file, region, location) {
 		return "False";
 	}
 	var rule = "(" + paths.join(") or (") + ")";
+	if (location.includes("Shop Item") || location.includes("Bazaar Item")) {
+		var price = save_file.locations.get(location).price;
+		var wallets;
+		if (price <= 99) {
+			wallets = 0;
+		}
+		else if (price <= 200) {
+			wallets = 1;
+		}
+		else if (price <= 500) {
+			wallets = 2;
+		}
+		else if (price <= 999) {
+			wallets = 3;
+		}
+		else {
+			wallets = 4;
+		}
+		rule = `(${rule}) and (Progressive_Wallet, ${wallets})`;
+		if (save_file.locations.get(location).item.includes("Buy Bombchu")) {
+			rule = `(${rule}) and found_bombchus`;
+		}
+	}
 	return rule;
 }
 
@@ -1008,6 +1031,7 @@ function isEssentialItem(item) {
 		"Farores Wind",
 		"Nayrus Love",
 		"Gerudo Membership Card",
+		"Progressive Wallet"
 	]
 	essential_items = essential_items.concat(child_trade).concat(adult_trade);
 	return essential_items.includes(item) || item.includes("Bombchu") || item.includes("Ocarina") || item.includes("Bottle");
@@ -1086,7 +1110,39 @@ function getLocations(save_file, region) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
 	}
-	return all_locs.filter(x => location_exceptions.includes(x) || Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy"));
+	return all_locs.filter(x => !x.includes("Shop Item") && !x.includes("Bazaar Item") && (location_exceptions.includes(x) || Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy")));
+}
+
+var child_only_shops = ["Kokiri Shop", "Castle Town Bazaar", "Castle Town Potion Shop", "Bombchu Shop"];
+var adult_only_shops = ["Kakariko Bazaar", "Kakariko Potion Shop"];
+
+function getShops(save_file, region) {
+	var all_locs = [];
+	var subregions = logic[region];
+	for (subregion in subregions) {
+		if ("locations" in subregions[subregion]) {
+			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
+		}
+	}
+	var shop_locs = all_locs.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
+	if (shop_locs.length == 0) {
+		return [];
+	}
+	var shop = shop_locs[0].split(" Item ")[0];
+	var shops = {};
+	shop_locs.forEach(function(loc) {
+		var shop = loc.split(" Item ")[0];
+		if (!(shop in shops)) {
+			shops[shop] = {};
+		}
+		shops[shop][loc] = save_file.locations.get(loc);
+	});
+	for (shop in shops) {
+		if ((save_file.current_age == "child" && adult_only_shops.includes(shop)) || (save_file.current_age == "adult" && child_only_shops.includes(shop))) {
+			delete shops[shop];
+		}
+	}
+	return shops;
 }
 
 function getEntrances(save_file, region) {
@@ -1255,6 +1311,7 @@ var region_changing_checks = {
 
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
+module.exports.getShops = getShops;
 module.exports.getEntrances = getEntrances;
 module.exports.buildRule = buildRule;
 module.exports.testAllRules = testAllRules;

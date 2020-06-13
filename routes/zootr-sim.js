@@ -106,6 +106,12 @@ function parseLog(logfile) {
 	}
 
 	*/
+	for (loc in logfile.locations) {
+		if (typeof logfile.locations[loc] == "object") {
+			var newname = logfile.locations[loc].item.split("[")[0].trim();
+			logfile.locations[loc].item = newname;
+		}
+	}
 	var doc = new playthroughModel({
 		locations: logfile["locations"],
 		checked_locations: ["Links Pocket"],
@@ -237,9 +243,15 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (req.params.location == "Impa at Castle") {
 				result.current_items.push("Zeldas Letter");
 			}
+			if (item.startsWith("Buy ")) {
+				item = item.substr(4, item.length - 4);
+			}
+			else {
+				result.checked_locations.push(req.params["location"]);
+			}
 			result.route.push(`${req.params.location}${simHelper.isEssentialItem(item) ? " (" + item + ")" : ""}`);
 			result.current_items.push(item);
-			result.checked_locations.push(req.params["location"]);
+			
 			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
 				result.known_medallions.set(result.current_region, item);
 			}
@@ -254,7 +266,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			}
 			var subregion = simHelper.subregionFromLocation(req.params.location);
 			result.current_subregion = subregion;
-			var response_obj = { item: item, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
+			var response_obj = { item: item, checked_locations: result.checked_locations, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
 			if (req.params.location in simHelper.region_changing_checks) {
 				result.current_region = simHelper.region_changing_checks[req.params.location][0];
 				response_obj.region = result.current_region;
@@ -371,7 +383,8 @@ router.get('/testallrules', function (req, res, next) {
 router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		var locs = simHelper.getLocations(result, req.params["region"]);
-		res.send(locs);
+		var shops = simHelper.getShops(result, req.params.region);
+		res.send({locations: locs, shops: shops});
 	});
 })
 

@@ -62,15 +62,22 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	$scope.now = Date.now();
 	$interval(() => $scope.now = Date.now(), 1000);
 	
+	$scope.is_empty = function(obj) {
+		return Object.keys(obj).length == 0;
+	};
+
 	$scope.getAvailableLocations = function() {
 		if (!$scope.playing) {
 			return [];
 		}
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
-			$scope.available_hints = response.data.filter(x => x.includes("Gossip Stone"));
-			$scope.available_shop_items = response.data.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
-			$scope.available_skulltulas = response.data.filter(x => x.startsWith("GS ") && !$scope.available_shop_items.includes(x));
-			$scope.available_locations = response.data.filter(x => !$scope.available_shop_items.includes(x) && !$scope.available_skulltulas.includes(x) && !$scope.available_hints.includes(x));
+			$scope.available_hints = response.data.locations.filter(x => x.includes("Gossip Stone"));
+			$scope.available_skulltulas = response.data.locations.filter(x => x.startsWith("GS "));
+			$scope.available_locations = response.data.locations.filter(x => !$scope.available_skulltulas.includes(x) && !$scope.available_hints.includes(x));
+			$scope.shops = response.data.shops;
+			if (Object.keys($scope.shops).length > 0) {
+				$scope.current_shop = Object.keys($scope.shops)[0];
+			}
 		}, function(error) {
 			console.error(error);
 		});
@@ -140,8 +147,8 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.checkingLocation = false;
 				}
 				else {
+					$scope.checked_locations = response.data.checked_locations;
 					$scope.headline = `${loc}: ${response.data.item}`;
-					$scope.checked_locations.push(loc);
 					$scope.current_items.push(response.data.item);
 					$scope.current_region = response.data.region;
 					$scope.current_subregion = response.data.subregion;
@@ -804,12 +811,7 @@ $scope.hasBossKey = function(dungeon) {
 	};
 	
 	$scope.setShop = function(shop) {
-		if (shop == 'Kakariko Bazaar' || shop == 'Castle Town Bazaar') {
-			$scope.currentOtherShop = '';
-		}
-		else {
-			$scope.currentOtherShop = shop;
-		}
+		$scope.current_shop = shop;
 	};
 
 	$scope.resumeFromId = function(id) {
@@ -977,6 +979,9 @@ $scope.hasBossKey = function(dungeon) {
 	$scope.playing = false;
 	
 	$scope.getShopImage = function(item) {
+		if (item.startsWith("Buy ")) {
+			item = item.substr(4, item.length - 4);
+		}
 		if (item.includes('Small Key')) {
 			return 'small_key.png';
 		}

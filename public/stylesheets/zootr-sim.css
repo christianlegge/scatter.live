@@ -458,13 +458,23 @@ div.startright input {
 }
 
 @keyframes fadeoutin {
-	0% {opacity: 0;}
-	50% {opacity: 1;}
-	100% {opacity: 0;}
+	0% {opacity: 1;}
+	50% {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+@keyframes fadeoutinshop {
+	0% {color: rgba(238,238,238,1);}
+	50% {color: rgba(238,238,238,0);}
+	100% {color: rgba(238,238,238,1);}
 }
 
 .loadinglink {
 	animation: 1s ease 0s infinite fadeoutin;
+}
+
+.shopgrid .loadinglink {
+	animation: 1s ease 0s infinite fadeoutinshop;
 }
 
 .generating {
@@ -863,6 +873,10 @@ a.useChu {
 	animation: logicfaileddark 1.2s forwards;
 }
 
+.shopgrid .logicfailed-anim {
+	animation: logicfailedshop 1.2s forwards;
+}
+
 @keyframes copied {
 	0% {
 		color:black;
@@ -889,6 +903,11 @@ a.useChu {
 @keyframes logicfaileddark {
 	from { color: red; }
 	to { color: #d2d2d2; }
+}
+
+@keyframes logicfailedshop {
+	from { color: red; }
+	to { color: #eee; }
 }
 
 .playthroughid {

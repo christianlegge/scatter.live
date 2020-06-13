@@ -147,6 +147,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.playtime = response.data.playtime;
 					$scope.num_checks_made = response.data.num_checks_made;
 					$scope.total_checks = response.data.total_checks;
+					$scope.used_logic = response.data.used_logic;
 					$scope.route = response.data.route.join("\n");
 					$scope.checkingLocation = false;
 				}
@@ -867,6 +868,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.finished = data["finished"];
 		$scope.playtime = data["playtime"];
 		$scope.num_checks_made = data["num_checks_made"];
+		$scope.used_logic = data["used_logic"];
 		$scope.total_checks = data["total_checks"];
 		$scope.route = "route" in data ? data["route"].join("\n") : "";
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));

@@ -17,6 +17,9 @@ var meta = {
 };
 
 function submitToLeaderboard(playthrough) {
+	if (!playthrough.use_logic) {
+		return;
+	}
 	var lb = new leaderboardModel({
 		_id: playthrough._id,
 		checked_locations: playthrough.num_checks_made,
@@ -187,6 +190,7 @@ router.get('/resume', function(req, res, next) {
 			finished: result.finished,
 			num_checks_made: result.num_checks_made,
 			total_checks: result.total_checks,
+			used_logic: result.use_logic,
 		};
 		res.send(info);
 	});
@@ -227,8 +231,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.num_checks_made = result.checked_locations.length;
 				result.total_checks = Array.from(result.locations.keys()).length;
 				result.save();
-				submitToLeaderboard(result);
-				res.send({ route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
+				if (result.use_logic) {
+					submitToLeaderboard(result);
+				}
+				res.send({used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks});
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);

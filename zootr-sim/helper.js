@@ -536,7 +536,8 @@ function parseLogicRule(save_file, rule) {
 		is_starting_age: () => true,
 		Time_Travel: () => true,
 		open_forest: () => settings.get("open_forest") == "open",
-		can_use: x => (logicEvaluation.is_magic_item(x.replace(/_/g, " ")) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
+		can_use: x => ((x == "Sticks" && logicEvaluation.is_child()) || x == "Nuts" || (x.replace(/_/g, " ") == "Goron Tunic" && logicEvaluation.is_adult()) || (x.replace(/_/g, " ") == "Zora Tunic" && logicEvaluation.is_adult())) ||
+			(logicEvaluation.is_magic_item(x.replace(/_/g, " ")) && logicEvaluation.has("Magic Meter") && logicEvaluation.has(x)) ||
 			(logicEvaluation.is_adult_item(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has(x)) ||
 			(logicEvaluation.is_magic_arrow(x.replace(/_/g, " ")) && logicEvaluation.is_adult() && logicEvaluation.has("Bow") && logicEvaluation.has(x)) ||
 			(logicEvaluation.is_child_item(x.replace(/_/g, " ")) && logicEvaluation.is_child() && logicEvaluation.has(x)) ||

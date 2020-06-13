@@ -395,6 +395,27 @@ router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
 	});
 })
 
+router.get('/peek/:playthroughId/:location', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`)) {
+			if (result.known_hints.has(req.params.location)) {
+				result.known_hints.get(req.params.location).push(result.locations.get(req.params.location));
+			}
+			else {
+				result.known_hints.set(req.params.location, [result.locations.get(req.params.location)]);
+			}
+			if (simHelper.needChus(result, simHelper.subregionFromLocation(req.params.location))) {
+				result.bombchu_count--;
+			}
+			result.save();
+			res.send({bombchu_count: result.bombchu_count, known_hints: result.known_hints, item: result.locations.get(req.params.location)});
+		}
+		else {
+			res.sendStatus(403);
+		}
+	});
+})
+
 router.get('/badgateway', function(req, res, next) {
 	res.sendStatus(502);
 });

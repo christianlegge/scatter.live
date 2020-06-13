@@ -116,6 +116,9 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	};
 	
 	$scope.checkLocation = function(loc) {
+		if ($scope.checked_locations.includes(loc)) {
+			return;
+		}
 		if (!$scope.checkingLocation) {
 			$scope.checkingLocation = true;
 			var el = document.getElementById(loc);
@@ -170,7 +173,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				var el = document.getElementById(loc);
 				if (error.status == 403) {
 					console.error(`Logic required: ${error.data}`);
-					$scope.headline = `Can't access that!`;
+					$scope.headline = `Can't ${loc.includes("Shop Item") || loc.includes("Bazaar Item") ? "afford" : "access"} that!`;
 					if (el) {
 						el.classList.add('logicfailed-anim');
 						el.style.animation = 'none';
@@ -299,21 +302,36 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 };
 
 $scope.peekAt = function(loc) {
-	var hintItem = $scope.allLocations[loc];
-	if (!(loc in $scope.knownHints)) {
-		$scope.knownHints[loc] = [hintItem];
+	if (!$scope.peeking) {
+		$scope.peeking = true;
+		var el = document.getElementById(loc);
+		el.classList.add('loadinglink');
+		el.style.animation = 'none';
+		el.offsetHeight;
+		el.style.animation = null;
+		$http.get(`/zootr-sim/peek/${$scope.playthroughId}/${loc}`).then(function(response) {
+			$scope.known_hints = response.data.known_hints;
+			$scope.bombchu_count = response.data.bombchu_count;
+			$scope.headline = `${loc}: ${response.data.item}`;
+			var el = document.getElementById(loc);
+			el.classList.remove('loadinglink');
+			$scope.peeking = false;
+		}, function(error) {
+			var el = document.getElementById(loc);
+			if (error.status == 403) {
+				$scope.headline = "Can't see that!";
+				el.classList.add('logicfailed-anim');
+				el.style.animation = 'none';
+				el.offsetHeight;
+				el.style.animation = null;
+			}
+			else {
+				console.error(error);
+			}
+			el.classList.remove('loadinglink');
+			$scope.peeking = false;
+		});
 	}
-	else {
-		$scope.knownHints[loc].push(hintItem);
-	}
-	$scope.peekedLocations.push(loc);
-	$scope.headline = loc + ": " + hintItem;
-	$scope.actions.push("Peek:" + loc);
-	$scope.updateForage();
-};
-
-$scope.hasPeeked = function(loc) {
-	return $scope.peekedLocations.includes(loc);
 };
 
 $scope.copyRoute = function() {
@@ -611,6 +629,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.headline = "";
 		$scope.playing = false;
 		$scope.finished = false;
+		$scope.shops = {};
 		$scope.show_modal(false);
 		localforage.setItem("playthroughId", null);
 	};

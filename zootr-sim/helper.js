@@ -1287,9 +1287,10 @@ function getHint(save_file, stone) {
 
 function needChus(save_file, location) {
 	var initialCount = save_file.bombchu_count;
-	if (canCheckLocation(save_file, location)) {
+	var rule = buildRule(save_file, save_file.current_region, location);
+	if (parseLogicRule(save_file, rule)) {
 		save_file.bombchu_count = 0;
-		if (!canCheckLocation(save_file, location)) {
+		if (!parseLogicRule(save_file, rule)) {
 			save_file.bombchu_count = initialCount;
 			return true;
 		}
@@ -1315,6 +1316,7 @@ module.exports.getLocations = getLocations;
 module.exports.getShops = getShops;
 module.exports.getEntrances = getEntrances;
 module.exports.buildRule = buildRule;
+module.exports.parseLogicRule = parseLogicRule;
 module.exports.testAllRules = testAllRules;
 module.exports.getHint = getHint;
 module.exports.getParentRegion = getParentRegion;

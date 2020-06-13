@@ -877,6 +877,14 @@ a.useChu {
 	animation: logicfailedshop 1.2s forwards;
 }
 
+.peekicon.logicfailed-anim {
+	animation: logicfailedeye 1.2s forwards;
+}
+
+.peekicon:before {
+	background: rgba(255, 0, 0, 0.5);
+}
+
 @keyframes copied {
 	0% {
 		color:black;
@@ -908,6 +916,11 @@ a.useChu {
 @keyframes logicfailedshop {
 	from { color: red; }
 	to { color: #eee; }
+}
+
+@keyframes logicfailedeye {
+	from { opacity: 1; }
+	to { opacity: 0; }
 }
 
 .playthroughid {

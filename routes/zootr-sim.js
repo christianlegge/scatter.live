@@ -25,6 +25,7 @@ function submitToLeaderboard(playthrough) {
 		checked_locations: playthrough.num_checks_made,
 		total_locations: playthrough.total_checks,
 		settings: playthrough.settings,
+		playtime: playthrough.playtime,
 		finish_date: playthrough.start_time + playthrough.playtime,
 	});
 	lb.save();

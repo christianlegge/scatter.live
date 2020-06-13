@@ -1125,7 +1125,7 @@ function getShops(save_file, region) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
 	}
-	var shop_locs = all_locs.filter(x => x.includes("Shop Item") || x.includes("Bazaar Item"));
+	var shop_locs = all_locs.filter(x => save_file.locations.has(x) && (x.includes("Shop Item") || x.includes("Bazaar Item")));
 	if (shop_locs.length == 0) {
 		return [];
 	}

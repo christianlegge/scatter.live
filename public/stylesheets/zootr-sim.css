@@ -426,6 +426,22 @@ div.loadfromid {
 	text-align: center;
 }
 
+div.logiccheck {
+	border:0;
+	padding:0;
+	margin:0;
+	margin-top:16px;
+}
+
+div.logiccheckfooter {
+	border:0;
+	padding:0;
+	margin:0;
+	min-height:0;
+	min-width:0;
+	font-size:0.75em;
+}
+
 div.error {
 	background-color: #ffdddd;
 	border-radius: 6px;

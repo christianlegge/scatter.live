@@ -31,6 +31,13 @@ html
 				figure.quote
 					blockquote.curly-quotes only reason i made it to grands
 					figcaption.quote-by - Whatthehellshappened
+			.logiccheck(ng-show="!playing")
+				label Enforce Logic
+					input(type="checkbox", ng-model="use_logic")#logiccheckbox
+					span.slider
+			br
+			.logiccheckfooter(ng-show="!playing")
+				p {{use_logic ? "You will not be able to access locations you don't have the items for. Your run will be added to the leaderboards." : "You will be able to access every location in the game at the start. Your run will NOT be added to the leaderboards."}}
 			.start(ng-show="!playing")
 				.startleft
 					span.header Generate a seed

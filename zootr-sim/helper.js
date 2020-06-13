@@ -526,6 +526,9 @@ var hintLocationsMeanings = {
 };
 
 function parseLogicRule(save_file, rule) {
+	if (!save_file.use_logic) {
+		return true;
+	}
 	var items = save_file["current_items"];
 	var settings = save_file["settings"];
 	var age = save_file["current_age"];
@@ -898,6 +901,9 @@ function parseLogicRule(save_file, rule) {
 }
 
 function buildRule(save_file, region, location) {
+	if (!save_file.use_logic) {
+		return "True";
+	}
 	var paths = [];
 	var first = save_file.current_subregion;
 
@@ -979,6 +985,9 @@ function buildRule(save_file, region, location) {
 }
 
 function canCheckLocation(save_file, location) {
+	if (!save_file.use_logic) {
+		return true;
+	}
 	var rule = buildRule(save_file, save_file["current_region"], location);
 	return parseLogicRule(save_file, rule);
 }

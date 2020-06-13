@@ -27,7 +27,7 @@ function submitToLeaderboard(playthrough) {
 	lb.save();
 }
 
-function parseLog(logfile) {
+function parseLog(logfile, use_logic) {
 	if (typeof logfile == 'string') {
 		logfile = JSON.parse(logfile);
 	}
@@ -113,6 +113,7 @@ function parseLog(logfile) {
 		}
 	}
 	var doc = new playthroughModel({
+		use_logic: use_logic,
 		locations: logfile["locations"],
 		checked_locations: ["Links Pocket"],
 		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
@@ -448,7 +449,7 @@ router.get('/getspoiler', function(req, res, next) {
 					return;
 				}
 			}
-			res.send(parseLog(body));
+			res.send(parseLog(body, req.query.logic));
 		});
 	}
 	else {
@@ -458,7 +459,7 @@ router.get('/getspoiler', function(req, res, next) {
 
 router.post('/uploadlog', function(req, res, next) {
 	try {
-		res.send(parseLog(req["body"]));
+		res.send(parseLog(req.body, req.query.logic));
 	}
 	catch (e) {
 		console.error(e);

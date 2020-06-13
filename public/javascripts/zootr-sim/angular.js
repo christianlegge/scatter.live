@@ -58,6 +58,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 
 	$scope.known_medallions = {};
 	$scope.current_items = [];
+	$scope.use_logic = true;
 
 	$scope.now = Date.now();
 	$interval(() => $scope.now = Date.now(), 1000);
@@ -881,7 +882,7 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		$scope.generating = true;
 		$scope.generationError = null;
-		var url = '/zootr-sim/getspoiler?valid=true&settings='+$scope.settingsString+'&seed='+($scope.seed || '');
+		var url = '/zootr-sim/getspoiler?logic='+$scope.use_logic+'&valid=true&settings='+$scope.settingsString+'&seed='+($scope.seed || '');
 		$http({
 			method: 'GET',
 			url: url
@@ -915,7 +916,7 @@ $scope.hasBossKey = function(dungeon) {
 		reader = new FileReader();
 		reader.onload = function(e) {
 			$scope.uploading = true;
-			$http.post("/zootr-sim/uploadlog", e.target.result).then(function successCallback(response) {
+			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
 				$scope.uploading = false;
 				$scope.initializeFromServer(response["data"]);
 			}, function errorCallback(response) {

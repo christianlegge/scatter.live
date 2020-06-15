@@ -127,6 +127,7 @@ function parseLog(logfile, use_logic) {
 	var doc = new playthroughModel({
 		use_logic: use_logic,
 		locations: logfile["locations"],
+		entrances: logfile.entrances,
 		checked_locations: ["Links Pocket"],
 		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
 		start_time: Date.now(),

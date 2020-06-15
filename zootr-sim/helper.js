@@ -1156,21 +1156,26 @@ function getShops(save_file, region) {
 }
 
 function getEntrances(save_file, region) {
-	var all_entrances = [];
-	var subregions = logic[region];
-	if (save_file["dungeons"].has(region)) {
-		subregions = logic[region][save_file["dungeons"].get(region)];
-	}
-	for (subregion in subregions) {
-		if (subregion == "Root Exits") {
-			continue;
+	if (save_file.settings.get("entrance_shuffle") == "off") {
+		var all_entrances = [];
+		var subregions = logic[region];
+		if (save_file["dungeons"].has(region)) {
+			subregions = logic[region][save_file["dungeons"].get(region)];
 		}
-		if ("exits" in subregions[subregion]) {
-			all_entrances = all_entrances.concat(Object.keys(subregions[subregion]["exits"]));
+		for (subregion in subregions) {
+			if (subregion == "Root Exits") {
+				continue;
+			}
+			if ("exits" in subregions[subregion]) {
+				all_entrances = all_entrances.concat(Object.keys(subregions[subregion]["exits"]));
+			}
 		}
+		var entrances = [...new Set(all_entrances.filter(x => !(x in subregions)))];
+		return entrances;
 	}
-	var entrances = [...new Set(all_entrances.filter(x => !(x in subregions)))];
-	return entrances;
+	else {
+		return Array.from(save_file.entrances.keys()).filter(x => x.split("->")[0].trim() == region).map(x => x.split("->")[1].trim());
+	}
 }
 
 var bosses = {

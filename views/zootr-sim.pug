@@ -160,7 +160,7 @@ html
 							br
 				br
 				br
-				a.button#reset(ng-click="show_modal(true)")
+				a.button#reset(ng-click="show_throwaway_modal(true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")
 				h1 Congratulations!
@@ -206,12 +206,21 @@ html
 			|  | 
 			a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
 	
-		div.modal.hidden
+		div.modal.hidden#throwAwayModal
 			div.modal-content
 				p Really throw the seed away?
 				p You won't be able to get it back!
-				a.button#reset(ng-click="throwAway()")
+				a.button.red(ng-click="throwAway()")
 					| Get it outta here
+		div.modal.hidden#logicWarningModal
+			.modal-content
+				h1 Hold up!
+				p This seed uses {{logic_rules == "none" ? "no" : logic_rules}} logic, and the sim will enforce logic!
+				p In all likelihood, most checks will be unobtainable. Only continue if you know what you're doing!
+				a.button.red(ng-click="show_logic_warning_modal(false)")
+					| Never mind
+				a.button.blue(ng-click="show_logic_warning_modal(false); initializeFromServer(init_data);")
+					| I know what I'm doing
 		+jquery
 		+localforage
 		+filesaver

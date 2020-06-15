@@ -563,6 +563,14 @@ a#undo {
 	background-color: #0061ff;
 }
 
+a.button.blue {
+	background-color: #0061ff;
+}
+
+a.button.red {
+	background-color: #ee0000;
+}
+
 .peekicon {
 	height: 0.8em;
 	vertical-align: middle;

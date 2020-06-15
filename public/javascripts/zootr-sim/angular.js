@@ -52,7 +52,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 
 	$document[0].onclick = function(event) {
 		if (event.target.id != "reset" && !document.getElementsByClassName("modal-content")[0].contains(event.target)) {
-			$scope.show_modal(false);
+			$scope.show_throwaway_modal(false);
 		}
 	};
 
@@ -616,8 +616,18 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	}
 
-	$scope.show_modal = function(show) {
-		var el = document.getElementsByClassName("modal")[0];
+	$scope.show_throwaway_modal = function (show) {
+		var el = document.getElementById("throwAwayModal");
+		if (show) {
+			el.classList.remove("hidden");
+		}
+		else {
+			el.classList.add("hidden");
+		}
+	}
+
+	$scope.show_logic_warning_modal = function (show) {
+		var el = document.getElementById("logicWarningModal");
 		if (show) {
 			el.classList.remove("hidden");
 		}
@@ -633,7 +643,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.playing = false;
 		$scope.finished = false;
 		$scope.shops = {};
-		$scope.show_modal(false);
+		$scope.show_throwaway_modal(false);
 		localforage.setItem("playthroughId", null);
 	};
 	
@@ -891,7 +901,14 @@ $scope.hasBossKey = function(dungeon) {
 			method: 'GET',
 			url: url
 		}).then(function successCallback(response) {
-			$scope.initializeFromServer(response["data"]);
+			if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
+				$scope.init_data = response.data;
+				$scope.logic_rules = response.data.logic_rules;
+				$scope.show_logic_warning_modal(true);
+			}
+			else {
+				$scope.initializeFromServer(response["data"]);
+			}
 			return;
 		}, function errorCallback(response) {
 			$scope.generating = false;
@@ -922,7 +939,14 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
 				$scope.uploading = false;
-				$scope.initializeFromServer(response["data"]);
+				if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
+					$scope.init_data = response.data;
+					$scope.logic_rules = response.data.logic_rules;
+					$scope.show_logic_warning_modal(true);
+				}
+				else {
+					$scope.initializeFromServer(response["data"]);
+				}
 			}, function errorCallback(response) {
 				$scope.uploading = false;
 				if (response.status == 413) {

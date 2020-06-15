@@ -141,6 +141,8 @@ function parseLog(logfile, use_logic) {
 		trials: logfile["trials"],
 		bombchu_count: 0,
 		route: [],
+		playtime: 0,
+		num_checks_made: 0,
 	});
 	if (!doc.current_age) {
 		doc.current_age = "child";
@@ -163,6 +165,7 @@ function parseLog(logfile, use_logic) {
 		known_hints: {},
 		known_medallions: doc.known_medallions,
 		bombchu_count: 0,
+		logic_rules: logfile.settings.logic_rules,
 	};
 }
 

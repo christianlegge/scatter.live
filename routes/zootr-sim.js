@@ -568,16 +568,14 @@ router.get('/leaderboard', function(req, res, next) {
 });
 
 router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {
-	setTimeout(function() {
-		var sortObj = {};
-		sortObj[req.params.sortfield] = req.params.ascdesc;
-		leaderboardModel.find().limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
-			res.send(entries);
-		}, function(error) {
-			console.error(error);
-			res.status(500).send(error);
-		});
-	}, 5000);
+	var sortObj = {};
+	sortObj[req.params.sortfield] = req.params.ascdesc;
+	leaderboardModel.find().limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
+		res.send(entries);
+	}, function(error) {
+		console.error(error);
+		res.status(500).send(error);
+	});
 });
 
 module.exports = router;

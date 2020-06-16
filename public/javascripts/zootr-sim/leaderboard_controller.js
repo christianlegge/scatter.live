@@ -1,3 +1,10 @@
+function formatTime(s) {
+	var secs = Math.floor(s % 60);
+	var min = Math.floor((s / 60) % 60);
+	var hours = Math.floor(s / 3600);
+	return `${hours}:${min.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 var app = angular.module('zootr-sim-leaderboard', []);
 
 app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $http) {
@@ -23,6 +30,8 @@ app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $
 				$scope.sort_direction = ascdesc;
 				$scope.current_page = page;
 				$scope.entries = response.data;
+				$scope.entries.forEach(x => x.finish_date = new Date(x.finish_date).toDateString());
+				$scope.entries.forEach(x => x.playtime = formatTime(x.playtime));
 			}
 			$scope.loading = false;
 		}, function (error) {

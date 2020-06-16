@@ -7,7 +7,7 @@ function formatTime(s) {
 
 var app = angular.module('zootr-sim-leaderboard', []);
 
-app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $http) {
+app.controller('leaderboard-controller', ['$scope', '$http', '$window', function ($scope, $http, $window) {
 	$scope.toggleDarkMode = function () {
 		$scope.darkModeOn = !$scope.darkModeOn;
 		localforage.setItem('darkModeOn', $scope.darkModeOn);
@@ -19,6 +19,10 @@ app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $
 			$scope.$apply();
 		}
 	});
+
+	$scope.load_home = function() {
+		$window.location.href = $window.location.origin + "/zootr-sim";
+	}
 
 	$scope.fields = ["name", "checked_locations", "total_locations", "playtime", "finish_date"];
 

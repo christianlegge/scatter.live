@@ -113,19 +113,19 @@ body {
 }
 
 .dark-mode #dark-mode-toggle {
-	color: #007fff;
+	color: #d2d2d2;
 }
 
 .dark-mode #dark-mode-toggle:visited {
-	color: #007fff;
+	color: #d2d2d2;
 }
 
 .dark-mode a {
-	color: #007fff;
+	color: #d2d2d2;
 }
 
 .dark-mode a:visited {
-	color: #ae00ff;
+	color: #d2d2d2;
 }
 
 div.headerbar {

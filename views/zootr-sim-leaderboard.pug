@@ -12,8 +12,8 @@ html
 		
 	body(ng-app="zootr-sim-leaderboard",ng-controller="leaderboard-controller",class="{{darkModeOn ? 'dark-mode' : ''}}")
 		.headerbar.noselect
-			.title 
-				img(src="/images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false")
+			.title(ng-click="load_home()",style="cursor:pointer;")
+				img(src="/images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false",ng-href="..")
 				span ZOoTR Sim
 			span.credit made by scatter
 		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode

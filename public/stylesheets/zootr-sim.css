@@ -995,3 +995,60 @@ a.useChu {
 		font-size: 14px;
 		text-align: center;
 }
+
+.lbtable {
+	display:inline-block;
+}
+
+.lbtable tbody tr:nth-child(even) {
+	background-color: rgba(127,127,127,0.3);
+	
+}
+
+.lbtable thead {
+	font-size: 0.7em;
+	text-transform: uppercase;
+}
+
+.lbtable th {
+	min-width:200px;
+}
+
+.lbtable td {
+	padding: 10px;
+}
+
+.lbtable .sortdesc::before {
+	position: absolute;
+	margin-left:-12px;
+	content: "▼";
+}
+
+.lbtable .sortasc::before {
+	position: absolute;
+	margin-left:-12px;
+	content: "▲";
+}
+
+.skeleton td {
+	border:0;
+	padding:0;
+	height: 24px;
+	
+}
+
+.lbtable tr:nth-child(even) .skeleton  {
+	background-image: linear-gradient(90deg, rgba(127,127,127,0.3) 0, rgba(127,127,127,0) 50%, rgba(127,127,127,0.3) 100%);
+	background-position: 0;
+	background-size: 200%;
+	animation: skeletonanim 2s linear infinite reverse;
+}
+
+@keyframes skeletonanim {
+	from {
+		background-position: 0%;
+	}
+	to {
+		background-position: 200%;
+	}
+}

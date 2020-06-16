@@ -16,6 +16,23 @@ var meta = {
 	card: "summary",
 };
 
+router.get("/populatelb", function(req, res, next) {
+	for (var i = 0; i < 200; i++) {
+		var total_checks = Math.floor(Math.random() * 200 + 200);
+		var checked_locations = Math.floor(Math.random() * total_checks);
+		var lb = new leaderboardModel({
+			name: Math.random().toString(36).substring(7),
+			checked_locations: checked_locations,
+			total_locations: total_checks,
+			settings: {},
+			playtime: Math.floor(Math.random() * 86400),
+			finish_date: Math.floor(Math.random() * 1000000000 + Date.now()),
+		});
+		lb.save();
+	}
+	res.send("Success");
+});
+
 function submitToLeaderboard(playthrough) {
 	if (!playthrough.use_logic) {
 		return;
@@ -544,6 +561,23 @@ router.post('/uploadlog', function(req, res, next) {
 		console.error(e);
 		res.send(e, status=400);
 	}
+});
+
+router.get('/leaderboard', function(req, res, next) {
+	res.render("zootr-sim-leaderboard", {meta: meta});
+});
+
+router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {
+	setTimeout(function() {
+		var sortObj = {};
+		sortObj[req.params.sortfield] = req.params.ascdesc;
+		leaderboardModel.find().limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
+			res.send(entries);
+		}, function(error) {
+			console.error(error);
+			res.status(500).send(error);
+		});
+	}, 5000);
 });
 
 module.exports = router;

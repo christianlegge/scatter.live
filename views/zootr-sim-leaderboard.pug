@@ -1,0 +1,39 @@
+include head
+
+doctype html
+html
+	head
+		+meta(meta)
+		+ga
+		title ZOoTR Sim
+		link(rel="stylesheet",type="text/css",href="/stylesheets/zootr-sim.css")
+		link(rel="shortcut icon",href="/favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		link(rel="icon",href="/favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		
+	body(ng-app="zootr-sim-leaderboard",ng-controller="leaderboard-controller",class="{{darkModeOn ? 'dark-mode' : ''}}")
+		.headerbar.noselect
+			.title 
+				img(src="/images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false")
+				span ZOoTR Sim
+			span.credit made by scatter
+		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
+		.mainbody
+			table.lbtable
+				thead
+					tr
+						th(ng-repeat="field in fields")
+							a(ng-click="get_entries(25, field, current_sort == field && sort_direction == 'asc' ? 'desc' : 'asc', current_page)",class="{{current_sort == field ? (sort_direction == 'asc' ? 'sortasc' : 'sortdesc') : ''}}") {{field.replace("_", " ")}}
+				tbody
+					tr(ng-if="!loading",ng-repeat="entry in entries")
+						td {{entry.name}}
+						td {{entry.checked_locations}}
+						td {{entry.total_locations}}
+						td {{entry.playtime}}
+						td {{entry.finish_date}}
+					- for (var i = 0; i < 6; i++) {
+					tr(ng-show="loading")
+						td(colspan="{{fields.length}}").skeleton
+					- }
+		+angular
+		+localforage
+		script(type="text/javascript",src="/javascripts/zootr-sim/leaderboard_controller.js")

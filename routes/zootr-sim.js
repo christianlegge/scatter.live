@@ -140,6 +140,8 @@ function parseLog(logfile, use_logic) {
 		settings: logfile["settings"],
 		dungeons: logfile["dungeons"],
 		trials: logfile["trials"],
+		child_wind: "",
+		adult_wind: "",
 		bombchu_count: 0,
 		route: [],
 		playtime: 0,
@@ -165,6 +167,8 @@ function parseLog(logfile, use_logic) {
 		checked_locations: ["Links Pocket"],
 		known_hints: {},
 		known_medallions: doc.known_medallions,
+		child_wind: doc.child_wind,
+		adult_wind: doc.adult_wind,
 		bombchu_count: 0,
 		logic_rules: logfile.settings.logic_rules,
 	};
@@ -202,6 +206,8 @@ router.get('/resume', function(req, res, next) {
 				route: result.route,
 				playtime: result.playtime,
 				finished: result.finished,
+				child_wind: result.child_wind,
+				adult_wind: result.adult_wind,
 				num_checks_made: result.num_checks_made,
 				total_checks: result.total_checks,
 				used_logic: result.use_logic,
@@ -418,6 +424,54 @@ router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		var entrances = simHelper.getEntrances(result, req.params["region"]);
 		res.send(entrances);
+	});
+})
+
+router.get('/setwind/:playthroughId/:age/:region', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
+			if (result.current_age == "child") {
+				result.child_wind = req.params.region;
+			}
+			else {
+				result.adult_wind = req.params.region;
+			}
+			result.save();
+			res.sendStatus(200);
+		}
+		else {
+			res.sendStatus(403);
+		}
+	});
+})
+
+router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+		if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
+			if (result.current_age == "child") {
+				if (result.child_wind) {
+					res.send(result.child_wind);
+					result.child_wind = "";
+					result.save();
+				}
+				else {
+					res.sendStatus(400);
+				}
+			}
+			else {
+				if (result.adult_wind) {
+					res.send(result.adult_wind);
+					result.adult_wind = "";
+					result.save();
+				}
+				else {
+					res.sendStatus(400);
+				}
+			}
+		}
+		else {
+			res.sendStatus(403);
+		}
 	});
 })
 

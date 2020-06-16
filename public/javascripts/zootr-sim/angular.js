@@ -667,25 +667,52 @@ $scope.hasBossKey = function(dungeon) {
 	};
 
 	$scope.setWind = function() {
-		if ($scope.current_age == "child") {
-			$scope.windRegionChild = $scope.current_region;
+		if (!$scope.setting_wind) {
+			$scope.setting_wind = true;
+			var el = document.getElementById("faroreswind");
+			el.classList.add('loadinglink');
+			$http.get(`/zootr-sim/setwind/${$scope.playthroughId}/${$scope.current_age}/${$scope.current_region}`).then(function(response) {
+				$scope.setting_wind = false;
+				if ($scope.current_age == "child") {
+					$scope.child_wind = $scope.current_region;
+				}
+				else {
+					$scope.adult_wind = $scope.current_region;
+				}
+				var el = document.getElementById("faroreswind");
+				el.classList.remove('loadinglink');
+			}, function(error) {
+				$scope.setting_wind = false;
+				var el = document.getElementById("faroreswind");
+				el.classList.remove('loadinglink');
+			});
 		}
-		else {
-			$scope.windRegionAdult = $scope.current_region;
-		}
-		$scope.updateForage();
 	};
 
 	$scope.recallWind = function() {
-		if ($scope.current_age == "child") {
-			$scope.current_region = $scope.windRegionChild;
-			$scope.windRegionChild = "";
+		if (!$scope.setting_wind) {
+			$scope.setting_wind = true;
+			var el = document.getElementById("faroreswind");
+			el.classList.add('loadinglink');
+			$http.get(`/zootr-sim/recallwind/${$scope.playthroughId}/${$scope.current_age}`).then(function (response) {
+				$scope.current_region = response.data;
+				$scope.getAvailableLocations();
+				$scope.getAvailableEntrances();
+				if ($scope.current_age == "child") {
+					$scope.child_wind = "";
+				}
+				else {
+					$scope.adult_wind = "";
+				}
+				$scope.setting_wind = false;
+				var el = document.getElementById("faroreswind");
+				el.classList.remove('loadinglink');
+			}, function (error) {
+				$scope.setting_wind = false;
+				var el = document.getElementById("faroreswind");
+				el.classList.remove('loadinglink');
+			});
 		}
-		else {
-			$scope.current_region = $scope.windRegionAdult;
-			$scope.windRegionAdult = "";
-		}
-		$scope.updateForage();
 	};
 	
 	$scope.downloadSpoilerLog = function() {
@@ -884,6 +911,8 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.route = "route" in data ? data["route"].join("\n") : "";
 		$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
 		$scope.percentiles = data["percentiles"];
+		$scope.child_wind = data.child_wind;
+		$scope.adult_wind = data.adult_wind;
 		$scope.playing = true;
 		localforage.setItem("playthroughId", data["id"]);
 		$scope.getAvailableLocations();

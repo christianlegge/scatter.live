@@ -94,8 +94,8 @@ html
 					span(ng-if="bombchu_count > 0") Bombchus: {{bombchu_count > 1000 ? "∞" : bombchu_count}}
 					br
 					br
-					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && windRegionChild == '') || (current_age == 'adult' && windRegionAdult == ''))", ng-click="setWind()") Set Wind
-					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && windRegionChild != '') || (current_age == 'adult' && windRegionAdult != ''))", ng-click="recallWind()") Recall Wind ({{current_age == 'child' ? windRegionChild : windRegionAdult}})
+					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && child_wind == '') || (current_age == 'adult' && adult_wind == ''))", ng-click="setWind()")#faroreswind Set Wind
+					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && child_wind != '') || (current_age == 'adult' && adult_wind != ''))", ng-click="recallWind()")#faroreswind Recall Wind ({{current_age == 'child' ? child_wind : adult_wind}})
 				.main.current
 					.currentinner
 						p Current Region: {{current_region}} ({{current_subregion}}) [{{current_age}}]

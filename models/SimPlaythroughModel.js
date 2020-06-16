@@ -21,6 +21,8 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	dungeons: Map,
 	trials: Map,
 	bombchu_count: Number,
+	child_wind: String,
+	adult_wind: String,
 	finished: false,
 	num_checks_made: Number,
 	total_checks: Number,

@@ -564,7 +564,9 @@ router.post('/uploadlog', function(req, res, next) {
 });
 
 router.get('/leaderboard', function(req, res, next) {
-	res.render("zootr-sim-leaderboard", {meta: meta});
+	leaderboardModel.estimatedDocumentCount().then(function(count) {
+		res.render("zootr-sim-leaderboard", { meta: meta, count: count });
+	});
 });
 
 router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {

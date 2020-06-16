@@ -17,13 +17,16 @@ app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $
 
 	$scope.get_entries = function(count, sort_field, ascdesc, page) {
 		$scope.loading = true;
-		$scope.current_sort = sort_field;
-		$scope.sort_direction = ascdesc;
-		$scope.current_page = page;
 		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}`).then(function (response) {
+			if (response.data.length > 0) {
+				$scope.current_sort = sort_field;
+				$scope.sort_direction = ascdesc;
+				$scope.current_page = page;
+				$scope.entries = response.data;
+			}
 			$scope.loading = false;
-			$scope.entries = response.data;
 		}, function (error) {
+			$scope.loading = false;
 			console.error(error);
 		});
 	}
@@ -31,5 +34,7 @@ app.controller('leaderboard-controller', ['$scope', '$http', function ($scope, $
 	$scope.current_sort = "finish_date";
 	$scope.sort_direction = "desc";
 	$scope.current_page = 1;
-	$scope.get_entries(25, $scope.current_sort, $scope.sort_direction, $scope.current_page);
+	$scope.per_page = 25;
+	$scope.pages = Math.ceil(count/$scope.per_page);
+	$scope.get_entries($scope.per_page, $scope.current_sort, $scope.sort_direction, $scope.current_page);
 }]);

@@ -18,11 +18,15 @@ html
 			span.credit made by scatter
 		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
 		.mainbody
+			button(ng-click="get_entries(per_page, current_sort, sort_direction, current_page - 1)", ng-disabled="loading || current_page <= 1") < 
+			button(ng-click="get_entries(per_page, current_sort, sort_direction, current_page + 1)", ng-disabled="loading || current_page >= pages") >
+			| Page {{current_page}} of {{pages}}
+			br
 			table.lbtable
 				thead
 					tr
 						th(ng-repeat="field in fields")
-							a(ng-click="get_entries(25, field, current_sort == field && sort_direction == 'asc' ? 'desc' : 'asc', current_page)",class="{{current_sort == field ? (sort_direction == 'asc' ? 'sortasc' : 'sortdesc') : ''}}") {{field.replace("_", " ")}}
+							a(ng-click="get_entries(per_page, field, current_sort == field && sort_direction == 'asc' ? 'desc' : 'asc', current_page)",class="{{current_sort == field ? (sort_direction == 'asc' ? 'sortasc' : 'sortdesc') : ''}}") {{field.replace("_", " ")}}
 				tbody
 					tr(ng-if="!loading",ng-repeat="entry in entries").entry
 						td {{entry.name}}
@@ -36,4 +40,5 @@ html
 					- }
 		+angular
 		+localforage
+		script var count = #{count};
 		script(type="text/javascript",src="/javascripts/zootr-sim/leaderboard_controller.js")

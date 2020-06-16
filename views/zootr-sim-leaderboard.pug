@@ -22,12 +22,12 @@ html
 				.lbheader
 					div
 						form(ng-submit="get_entries(per_page, current_sort, sort_direction, 1, search_name_input)")
-							input(type="text", ng-model="search_name_input")
+							input(type="text", ng-model="search_name_input",placeholder="Search name")
 							button(type="submit") Search
 					div
 						button(ng-click="get_entries(per_page, current_sort, sort_direction, current_page - 1, search_name)", ng-disabled="loading || current_page <= 1") < 
 						button(ng-click="get_entries(per_page, current_sort, sort_direction, current_page + 1, search_name)", ng-disabled="loading || current_page >= pages") >
-						| Page {{current_page}} of {{pages}}
+						|  Page {{current_page}} of {{pages}}
 				br
 				table.lbtable
 					thead

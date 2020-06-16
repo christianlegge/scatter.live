@@ -20,22 +20,24 @@ var meta = {
 	card: "summary",
 };
 
-router.get("/populatelb", function(req, res, next) {
-	for (var i = 0; i < 200; i++) {
-		var total_checks = Math.floor(Math.random() * 200 + 200);
-		var checked_locations = Math.floor(Math.random() * total_checks);
-		var lb = new leaderboardModel({
-			name: Math.random().toString(36).substring(7),
-			checked_locations: checked_locations,
-			total_locations: total_checks,
-			settings: {},
-			playtime: Math.floor(Math.random() * 86400),
-			finish_date: Math.floor(Math.random() * 1000000000 + Date.now()),
-		});
-		lb.save();
-	}
-	res.send("Success");
-});
+if (process.env.DEBUG) {
+	router.get("/populatelb", function(req, res, next) {
+		for (var i = 0; i < 200; i++) {
+			var total_checks = Math.floor(Math.random() * 200 + 200);
+			var checked_locations = Math.floor(Math.random() * total_checks);
+			var lb = new leaderboardModel({
+				name: Math.random().toString(36).substring(7),
+				checked_locations: checked_locations,
+				total_locations: total_checks,
+				settings: {},
+				playtime: Math.floor(Math.random() * 86400),
+				finish_date: Math.floor(Math.random() * 1000000000 + Date.now()),
+			});
+			lb.save();
+		}
+		res.send("Success");
+	});
+}
 
 function submitToLeaderboard(playthrough) {
 	if (!playthrough.use_logic) {

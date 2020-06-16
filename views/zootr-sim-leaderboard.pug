@@ -24,7 +24,7 @@ html
 						th(ng-repeat="field in fields")
 							a(ng-click="get_entries(25, field, current_sort == field && sort_direction == 'asc' ? 'desc' : 'asc', current_page)",class="{{current_sort == field ? (sort_direction == 'asc' ? 'sortasc' : 'sortdesc') : ''}}") {{field.replace("_", " ")}}
 				tbody
-					tr(ng-if="!loading",ng-repeat="entry in entries")
+					tr(ng-if="!loading",ng-repeat="entry in entries").entry
 						td {{entry.name}}
 						td {{entry.checked_locations}}
 						td {{entry.total_locations}}

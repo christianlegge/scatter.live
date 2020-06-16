@@ -1005,6 +1005,10 @@ a.useChu {
 	
 }
 
+.lbtable .entry:hover {
+	background-image: linear-gradient(rgba(127,127,127,0.1) 0, rgba(127,127,127,0.1) 100%);
+}
+
 .lbtable thead {
 	font-size: 0.7em;
 	text-transform: uppercase;

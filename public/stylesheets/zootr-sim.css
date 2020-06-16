@@ -192,13 +192,19 @@ div.headerbar {
 	padding-bottom: 4px;
 }
 
-div {
+div.main {
 	padding: 10px;
 	border: 1px solid black;
 	display:inline-block;
 	overflow-y: auto;
 	overflow-x:auto;
 	margin: 10px;
+}
+
+div {
+	display:inline-block;
+	overflow-y: auto;
+	overflow-x:auto;
 }
 
 .dark-mode div.main {
@@ -994,6 +1000,13 @@ a.useChu {
 		padding:10px 0 20px 0;
 		font-size: 14px;
 		text-align: center;
+}
+
+.lbheader {
+	display: inline-flex;
+	justify-content: space-between;
+	border:0;
+	width:100%;
 }
 
 .lbtable {

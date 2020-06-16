@@ -26,14 +26,23 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 
 	$scope.fields = ["name", "checked_locations", "total_locations", "playtime", "finish_date"];
 
-	$scope.get_entries = function(count, sort_field, ascdesc, page) {
+	$scope.get_entries = function(count, sort_field, ascdesc, page, search_name = "") {
 		$scope.loading = true;
-		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}`).then(function (response) {
-			if (response.data.length > 0) {
+		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}?name=${search_name}`).then(function (response) {
+			if (response.data.entries.length > 0) {
 				$scope.current_sort = sort_field;
 				$scope.sort_direction = ascdesc;
 				$scope.current_page = page;
-				$scope.entries = response.data;
+				$scope.search_name = search_name;
+				if (response.data.count) {
+					$scope.total = response.data.count;
+					$scope.pages = Math.ceil($scope.total/$scope.per_page);
+				}
+				else {
+					$scope.total = total_entries;
+					$scope.pages = Math.ceil($scope.total/$scope.per_page);
+				}
+				$scope.entries = response.data.entries;
 				$scope.entries.forEach(x => x.finish_date = new Date(x.finish_date).toDateString());
 				$scope.entries.forEach(x => x.playtime = formatTime(x.playtime));
 			}
@@ -48,6 +57,6 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 	$scope.sort_direction = "desc";
 	$scope.current_page = 1;
 	$scope.per_page = 25;
-	$scope.pages = Math.ceil(count/$scope.per_page);
+	$scope.pages = Math.ceil($scope.total/$scope.per_page);
 	$scope.get_entries($scope.per_page, $scope.current_sort, $scope.sort_direction, $scope.current_page);
 }]);

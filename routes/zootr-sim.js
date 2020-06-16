@@ -7,6 +7,10 @@ var router = express.Router();
 var playthroughModel = require('../models/SimPlaythroughModel.js');
 var leaderboardModel = require('../models/SimLeaderboardModel.js');
 
+function regexEscape(str) {
+	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 var meta = {
 	title: "ZOoTR Sim",
 	description: "Simulator to practice and play Ocarina of Time Randomizer seeds.",
@@ -572,8 +576,15 @@ router.get('/leaderboard', function(req, res, next) {
 router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {
 	var sortObj = {};
 	sortObj[req.params.sortfield] = req.params.ascdesc;
-	leaderboardModel.find().limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
-		res.send(entries);
+	leaderboardModel.find({name: new RegExp(regexEscape(req.query.name, "i"))}).limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
+		if (req.query.name) {
+			leaderboardModel.countDocuments().where({ name: new RegExp(regexEscape(req.query.name, "i")) }).then(function(count) {
+				res.send({entries: entries, count: count});
+			})
+		}
+		else {
+			res.send({entries: entries});
+		}
 	}, function(error) {
 		console.error(error);
 		res.status(500).send(error);

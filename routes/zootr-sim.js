@@ -173,25 +173,12 @@ function parseLog(logfile, use_logic) {
 			log: logfile,
 			active: false,
 			num_players: logfile.settings.world_count,
-			players: [
-				{
-					name: "",
-					id: new mongoose.Types.ObjectId(),
-					ready: false,
-					num: 1,
-				}
-			],
+			players: [],
 			created_at: Date.now(),
 		});
-		var doc = new playthroughModel({
-			_id: mw_doc.players[0].id,
-			multiworld_id: mw_doc._id,
-		});
 		mw_doc.save();
-		doc.save();
 		return {
-			multiworld: true,
-			id: doc._id,
+			multiworld_id: mw_doc._id,
 			players: mw_doc.players,
 		};
 	}
@@ -203,7 +190,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/getmwgames', function (req, res, next) {
 	multiworldModel.find({ active: false }).sort({ created_at: "desc" }).then(function (result) {
-		var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: "scatter", age: toAgeString(x.created_at) }));
+		var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: x.players.length > 0 ? x.players[0].name : "-", age: toAgeString(x.created_at) }));
 		res.send(games);
 	});
 });
@@ -211,6 +198,20 @@ router.get('/getmwgames', function (req, res, next) {
 router.get('/getlobbyinfo/:id', function (req, res, next) {
 	multiworldModel.findById(req.params.id).then(function (result) {
 		res.send(result.players);
+	});
+});
+
+router.get('/readyup/:id', function (req, res, next) {
+	playthroughModel.findById(req.params.id).then(function (result) {
+		multiworldModel.findById(result.multiworld_id).then(function(mw) {
+			mw.players.filter(x => x.id == req.params.id)[0].ready = true;
+			mw.save();
+			if (mw._id in lobby_callbacks) {
+				lobby_callbacks[mw._id].forEach(function (callback) {
+					callback({ readied: result._id });
+				});
+			}
+		})
 	});
 });
 
@@ -242,12 +243,21 @@ router.get('/lobbyconnect/:id', function(req, res, next) {
 
 router.get('/joinlobby/:id/:name', function(req, res, next) {
 	multiworldModel.findById(req.params.id).then(function(result) {
+		if (result.players.length >= result.num_players) {
+			res.sendStatus(400);
+			return;
+		}
 		var new_player = {
 			name: req.params.name,
 			id: new mongoose.Types.ObjectId(),
 			ready: false,
 			num: result.players.length + 1,
 		};
+		var player_doc = new playthroughModel({
+			_id: new_player.id,
+			multiworld_id: result._id,
+		});
+		player_doc.save();
 		if (result._id in lobby_callbacks) {
 			lobby_callbacks[result._id].forEach(function(callback) {
 				callback({joined: new_player});
@@ -257,6 +267,7 @@ router.get('/joinlobby/:id/:name', function(req, res, next) {
 			result.players.push(new_player);
 			result.save();
 		}
+		res.send(new_player.id);
 	});
 });
 
@@ -280,6 +291,7 @@ router.get('/resume', async function(req, res, next) {
 		}
 		var info = {
 			playing: mw_doc ? mw_doc.active : true,
+			multiworld_id: result.multiworld_id,
 			id: result._id,
 			players: mw_doc.players,
 			in_mw_party: mw_doc ? true : false,

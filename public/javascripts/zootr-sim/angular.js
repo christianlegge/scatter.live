@@ -56,11 +56,16 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		}
 	};
 
-	$http.get("/zootr-sim/getmwgames").then(function(response) {
-		$scope.mwgames = response.data;
-	}, function(error) {
+	$scope.get_lobbies = function() {
+		$http.get("/zootr-sim/getmwgames").then(function (response) {
+			$scope.mwgames = response.data;
+		}, function (error) {
 
-	});
+		});
+	};
+
+	$scope.get_lobbies();
+	
 	/*var source = new EventSource("/zootr-sim/multiworldconnect");
 	source.onmessage = function(event) {
 		$scope.event = event.data;
@@ -77,29 +82,46 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		return Object.keys(obj).length == 0;
 	};
 
+	$scope.subscribe_lobby = function(id) {
+		$scope.lobby_source = new EventSource(`/zootr-sim/lobbyconnect/${id}`);
+		$scope.lobby_source.onmessage = function (event) {
+			var data = JSON.parse(event.data);
+			if ("joined" in data) {
+				$scope.players.push(data.joined);
+			}
+			if ("readied" in data) {
+				var player = $scope.players.filter(x => x.id == data.readied)[0];
+				player.ready = true;
+			}
+		};
+	}
+
 	$scope.load_lobby = function(id) {
 		$http.get(`/zootr-sim/getlobbyinfo/${id}`).then(function(response) {
 			$scope.players = response.data;
 			$scope.current_mw_lobby = id;
-			$scope.lobby_source = new EventSource(`/zootr-sim/lobbyconnect/${id}`);
-			$scope.lobby_source.onmessage = function(event) {
-				var data = JSON.parse(event.data);
-				if ("joined" in data) {
-					$scope.players.push(data.joined);
-				}
-			};
+			$scope.current_mw_game = $scope.mwgames.filter(x => x.id == id)[0];
+			$scope.subscribe_lobby(id);
 		});
 	}
 
 	$scope.unload_lobby = function() {
+		$scope.get_lobbies();
 		$scope.players = null;
 		$scope.current_mw_lobby = null;
 		$scope.lobby_source.close();
 		$scope.lobby_source = null;
 	}
 
+	$scope.ready_up = function(id) {
+		$http.get(`/zootr-sim/readyup/${id}`);
+	}
+
 	$scope.join_lobby = function(id, name) {
-		$http.get(`/zootr-sim/joinlobby/${id}/${name}`);
+		$http.get(`/zootr-sim/joinlobby/${id}/${name}`).then(function(response) {
+			$scope.playthroughId = response.data;
+			localforage.setItem("playthroughId", response.data);
+		});
 	}
 
 	$scope.getAvailableLocations = function() {
@@ -946,6 +968,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.finished = data["finished"];
 		$scope.playtime = data["playtime"];
 		$scope.in_mw_party = data["in_mw_party"];
+		$scope.current_mw_lobby = data["multiworld_id"];
 		$scope.num_checks_made = data["num_checks_made"];
 		$scope.used_logic = data["used_logic"];
 		$scope.total_checks = data["total_checks"];
@@ -959,6 +982,9 @@ $scope.hasBossKey = function(dungeon) {
 		if ($scope.playing) {
 			$scope.getAvailableLocations();
 			$scope.getAvailableEntrances();
+		}
+		if ("multiworld_id" in data) {
+			$scope.load_lobby(data.multiworld_id);
 		}
 	}
 	
@@ -1011,8 +1037,8 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
 				$scope.uploading = false;
-				if (response.data.multiworld) {
-					$scope.in_mw_party = true;
+				if (response.data.multiworld_id) {
+					$scope.load_lobby(response.data.multiworld_id);
 					$scope.playthroughId = response.data.id;
 					localforage.setItem("playthroughId", $scope.playthroughId);
 					console.log(response);
@@ -1179,7 +1205,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.updateForage();
 	};
 
-	localforage.getItem("playthroughId").then(function(result) {
+	localforage.getItem("playthroughId").then(function (result) {
 		if (result) {
 			console.log("result found");
 			$scope.resumeFromId(result);

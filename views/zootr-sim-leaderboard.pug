@@ -29,7 +29,7 @@ html
 						button(ng-click="get_entries(per_page, current_sort, sort_direction, current_page + 1, search_name)", ng-disabled="loading || current_page >= pages") >
 						|  Page {{current_page}} of {{pages}}
 				br
-				table.lbtable
+				table.lbtable.nicetable
 					thead
 						tr
 							th(ng-repeat="field in fields")

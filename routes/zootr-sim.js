@@ -6,10 +6,14 @@ var simHelper = require("../zootr-sim/helper.js");
 var router = express.Router();
 var playthroughModel = require('../models/SimPlaythroughModel.js');
 var leaderboardModel = require('../models/SimLeaderboardModel.js');
+var multiworldModel = require('../models/MultiworldPlaythroughModel.js');
+var mongoose = require('mongoose');
 
 function regexEscape(str) {
 	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
+
+var multiworld_callbacks = {};
 
 var meta = {
 	title: "ZOoTR Sim",
@@ -37,6 +41,41 @@ if (process.env.DEBUG) {
 		}
 		res.send("Success");
 	});
+}
+
+function toAgeString(s) {
+	var age = (Date.now() - s)/1000;
+	var unit, factor;
+	if (age < 60) {
+		unit = "second";
+		factor = 1;
+	}
+	else if (age < 60*60) {
+		unit = "minute";
+		factor = 60;
+	}
+	else if (age < 60*60*24) {
+		unit = "hour";
+		factor = 60*60;
+	}
+	else if (age < 60*60*24*7) {
+		unit = "day";
+		factor = 60*60*24;
+	}
+	else if (age < 60*60*24*30) {
+		unit = "week";
+		factor = 60*60*24*7;
+	}
+	else if (age < 60*60*24*365) {
+		unit = "month";
+		factor = 60*60*24*30;
+	}
+	else {
+		unit = "year";
+		factor = 60*60*24*365;
+	}
+	var amount = Math.floor(age/factor);
+	return `${amount} ${unit}${amount == 1 ? "" : "s"} ago`;
 }
 
 function submitToLeaderboard(playthrough) {
@@ -69,176 +108,151 @@ function parseLog(logfile, use_logic) {
 	if(!(":version" in logfile) || logfile[":version"] != "5.2.0 Release") {
 		throw "Incorrect version.";
 	}
-		
-	/*
-	$scope.currentSpoilerLog = logfile;
-	if (logfile['settings']['entrance_shuffle'] != "off") {
-		alert("Error! Entrance shuffle is not supported.");
-		return;
-	}
-	else if (logfile['settings']['world_count'] != 1) {
-		alert("Error! Multiworld is not supported.");
-		return;
-	}
-	try {
-		$scope.currentSeed = logfile[':seed'];
-		var results = logfile['locations'];
-		$scope.fsHash = logfile['file_hash'];
-		$scope.isShopsanity = logfile['settings']['shopsanity'] != 'off';
 
-		$scope.totalChecks = results.length;
-		for (var loc in results) {
-			item = typeof results[loc] == 'object' ? results[loc]['item'] : results[loc];
-			var shop = getShop(loc);
-			if (shop != '') {
-				var cost = results[loc]['price'];
-				if (!(shop in $scope.shopContents)) {
-					$scope.shopContents[shop] = [];
+	if (logfile.settings.world_count == 1) {
+		for (loc in logfile.locations) {
+			if (typeof logfile.locations[loc] == "object") {
+				var newname = logfile.locations[loc].item.split("[")[0].trim();
+				logfile.locations[loc].item = newname;
+			}
+		}
+		var doc = new playthroughModel({
+			use_logic: use_logic,
+			locations: logfile["locations"],
+			entrances: logfile.entrances,
+			checked_locations: ["Links Pocket"],
+			current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
+			start_time: Date.now(),
+			hash: logfile["file_hash"],
+			entrances: logfile["entrances"],
+			hints: logfile["gossip_stones"],
+			known_hints: {},
+			current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
+			known_medallions: new Map(),
+			settings: logfile["settings"],
+			dungeons: logfile["dungeons"],
+			trials: logfile["trials"],
+			child_wind: "",
+			adult_wind: "",
+			bombchu_count: 0,
+			route: [],
+			playtime: 0,
+			num_checks_made: 0,
+		});
+		if (!doc.current_age) {
+			doc.current_age = "child";
+		}
+		doc.route.push(doc.current_age.toUpperCase() + " 1");
+		doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
+		doc.current_subregion = doc.current_age == "child" ? "Links House" : "Temple of Time";
+		doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
+		doc.save();
+
+		return {
+			id: doc._id,
+			start_time: doc.start_time,
+			hash: logfile["file_hash"],
+			locations: Object.keys(logfile["locations"]),
+			current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
+			current_age: doc.current_age,
+			current_region: doc.current_region,
+			current_subregion: doc.current_subregion,
+			checked_locations: ["Links Pocket"],
+			known_hints: {},
+			known_medallions: doc.known_medallions,
+			child_wind: doc.child_wind,
+			adult_wind: doc.adult_wind,
+			bombchu_count: 0,
+			logic_rules: logfile.settings.logic_rules,
+			player_count: logfile.settings.world_count,
+		};
+	}
+	else {
+		var mw_doc = new multiworldModel({
+			log: logfile,
+			active: false,
+			num_players: logfile.settings.world_count,
+			players: [
+				{
+					name: "",
+					id: new mongoose.Types.ObjectId(),
+					ready: false,
+					num: 1,
 				}
-				var shopItem = {};
-				var refill = item.includes('Buy');
-				shopItem['item'] = refill ? item.split('Buy')[1].trim() : item;
-				shopItem['item'] = shopItem['item'].split('[')[0].trim();
-				shopItem['cost'] = cost;
-				shopItem['refill'] = refill;
-				shopItem['bought'] = false;
-				$scope.shopContents[shop].push(shopItem);
-			}
-			$scope.allLocations[loc] = item;
-			$scope.itemCounts[item] = 0;
-		}
-		for (var hint in logfile['gossip_stones']) {
-			region = hint.split('(')[0].trim();
-			if (region == 'Zoras River') region = 'Zora River';
-			if (region == 'Graveyard') region = 'Above Graveyard';
-			if (region == 'Kakariko') region = 'Kakariko Village';
-			stone = hint.split('(')[1].split(')')[0].trim();
-			if (!(region in $scope.gossipHints)) {
-				$scope.gossipHints[region] = {};
-			}
-			$scope.gossipHints[region][stone] = logfile['gossip_stones'][hint]['text'].replace(/#/g, '');
-		}
-		$scope.checkedLocations.push('Links Pocket');
-		$scope.currentItemsAll.push($scope.allLocations['Links Pocket']);
-		$scope.numChecksMade++;
-		$scope.knownMedallions['Free'] = $scope.allLocations['Links Pocket'];
-		$scope.medallions['Free'] = $scope.allLocations['Links Pocket'];
-		$scope.medallions['Deku Tree'] = $scope.allLocations['Queen Gohma'];
-		$scope.medallions['Dodongos Cavern'] = $scope.allLocations['King Dodongo'];
-		$scope.medallions['Jabu Jabus Belly'] = $scope.allLocations['Barinade'];
-		$scope.medallions['Forest Temple'] = $scope.allLocations['Phantom Ganon'];
-		$scope.medallions['Fire Temple'] = $scope.allLocations['Volvagia'];
-		$scope.medallions['Water Temple'] = $scope.allLocations['Morpha'];
-		$scope.medallions['Shadow Temple'] = $scope.allLocations['Bongo Bongo'];
-		$scope.medallions['Spirit Temple'] = $scope.allLocations['Twinrova'];
-		$scope.playing = true;
-		$scope.route += '---- CHILD ' + $scope.currentChild + ' ----\n\n';
-		$scope.updateForage();
+			],
+			created_at: Date.now(),
+		});
+		var doc = new playthroughModel({
+			_id: mw_doc.players[0].id,
+			multiworld_id: mw_doc._id,
+		});
+		mw_doc.save();
+		doc.save();
+		return {
+			multiworld: true,
+			id: doc._id,
+			players: mw_doc.players,
+		};
 	}
-	catch (err) {
-		console.log(err);
-		alert('Error parsing file! Please choose a randomizer spoiler log.');
-	}
-
-	*/
-	for (loc in logfile.locations) {
-		if (typeof logfile.locations[loc] == "object") {
-			var newname = logfile.locations[loc].item.split("[")[0].trim();
-			logfile.locations[loc].item = newname;
-		}
-	}
-	var doc = new playthroughModel({
-		use_logic: use_logic,
-		locations: logfile["locations"],
-		entrances: logfile.entrances,
-		checked_locations: ["Links Pocket"],
-		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
-		start_time: Date.now(),
-		hash: logfile["file_hash"],
-		entrances: logfile["entrances"],
-		hints: logfile["gossip_stones"],
-		known_hints: {},
-		current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
-		known_medallions: new Map(),
-		settings: logfile["settings"],
-		dungeons: logfile["dungeons"],
-		trials: logfile["trials"],
-		child_wind: "",
-		adult_wind: "",
-		bombchu_count: 0,
-		route: [],
-		playtime: 0,
-		num_checks_made: 0,
-	});
-	if (!doc.current_age) {
-		doc.current_age = "child";
-	}
-	doc.route.push(doc.current_age.toUpperCase() + " 1");
-	doc.current_region = doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
-	doc.current_subregion = doc.current_age == "child" ? "Links House" : "Temple of Time";
-	doc.known_medallions.set("Free", logfile["locations"]["Links Pocket"]);
-	doc.save();
-	return {
-		id: doc._id,
-		start_time: doc.start_time,
-		hash: logfile["file_hash"],
-		locations: Object.keys(logfile["locations"]),
-		current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
-		current_age: doc.current_age,
-		current_region: doc.current_region,
-		current_subregion: doc.current_subregion,
-		checked_locations: ["Links Pocket"],
-		known_hints: {},
-		known_medallions: doc.known_medallions,
-		child_wind: doc.child_wind,
-		adult_wind: doc.adult_wind,
-		bombchu_count: 0,
-		logic_rules: logfile.settings.logic_rules,
-	};
 }
 
 router.get('/', function(req, res, next) {
 	res.render('zootr-sim', {meta: meta});
 });
 
-router.get('/resume', function(req, res, next) {
+router.get('/getmwgames', function (req, res, next) {
+	multiworldModel.find({active: false}).sort({created_at: "desc"}).then(function(result) {
+		var games = result.map(x => ({total_players: x.num_players, current_players: x.players.length, name: "scatter", age: toAgeString(x.created_at) }));
+		res.send(games);
+	});
+});
+
+router.get('/resume', async function(req, res, next) {
 	var id = req.query.id;
-	playthroughModel.findById(id, function(err, result) {
-		getPercentiles(result).then(function(percentiles) {
-			if (err) {
-				res.sendStatus(400);
-				return;
-			}
-			if (result == null) {
-				res.sendStatus(404);
-				return;
-			}
-			var info = {
-				id: result._id,
-				hash: result.hash,
-				locations: Array.from(result.locations.keys()),
-				current_items: result.current_items,
-				current_age: result.current_age,
-				current_region: result.current_region,
-				current_subregion: result.current_subregion,
-				checked_locations: result.checked_locations,
-				known_hints: result.known_hints,
-				known_medallions: result.known_medallions,
-				bombchu_count: result.bombchu_count,
-				start_time: result.start_time,
-				route: result.route,
-				playtime: result.playtime,
-				finished: result.finished,
-				child_wind: result.child_wind,
-				adult_wind: result.adult_wind,
-				num_checks_made: result.num_checks_made,
-				total_checks: result.total_checks,
-				used_logic: result.use_logic,
-				percentiles: {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)}
-			};
-			res.send(info);
-		});
-		
+	playthroughModel.findById(id, async function(err, result) {
+		if (err) {
+			res.sendStatus(400);
+			return;
+		}
+		if (result == null) {
+			res.sendStatus(404);
+			return;
+		}
+		var percentiles, mw_doc;
+		if (result.finished) {
+			percentiles = await getPercentiles(result);
+		}
+		if (result.multiworld_id) {
+			mw_doc = await multiworldModel.findById(result.multiworld_id)
+		}
+		var info = {
+			playing: mw_doc ? mw_doc.active : true,
+			id: result._id,
+			players: mw_doc.players,
+			in_mw_party: mw_doc ? true : false,
+			hash: result.hash,
+			locations: result.locations ? Array.from(result.locations.keys()) : null,
+			current_items: result.current_items,
+			current_age: result.current_age,
+			current_region: result.current_region,
+			current_subregion: result.current_subregion,
+			checked_locations: result.checked_locations,
+			known_hints: result.known_hints,
+			known_medallions: result.known_medallions,
+			bombchu_count: result.bombchu_count,
+			start_time: result.start_time,
+			route: result.route,
+			playtime: result.playtime,
+			finished: result.finished,
+			child_wind: result.child_wind,
+			adult_wind: result.adult_wind,
+			num_checks_made: result.num_checks_made,
+			total_checks: result.total_checks,
+			used_logic: result.use_logic,
+			percentiles: percentiles ? {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)} : null
+		};
+		res.send(info);
+	
 	});
 });
 
@@ -561,7 +575,8 @@ router.get('/getspoiler', function(req, res, next) {
 
 router.post('/uploadlog', function(req, res, next) {
 	try {
-		res.send(parseLog(req.body, req.query.logic));
+		var parsed_log = parseLog(req.body, req.query.logic);
+		res.send(parsed_log);
 	}
 	catch (e) {
 		console.error(e);
@@ -592,6 +607,29 @@ router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(r
 		res.status(500).send(error);
 	});
 });
+
+router.get('/multiworldconnect', function(req, res, next) {
+	res.set({
+		"Cache-Control": "no-cache",
+		"Content-Type": "text/event-stream",
+		"Connection": "keep-alive",
+	});
+	res.flushHeaders();
+	res.write("retry: 10000\n\n");
+	res.write(`data: ${Math.random()}\n\n`);
+	var count = 0;
+	multiworld_callbacks[0] = function() {
+		res.write(`data: ${Math.random()}\n\n`);
+	}
+
+	req.on("close", function() {
+	});
+});
+
+router.get('/multiworldsend', function(req, res, next) {
+	multiworld_callbacks[0]();
+	res.sendStatus(200);
+})
 
 module.exports = router;
 

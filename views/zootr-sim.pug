@@ -22,59 +22,95 @@ html
 		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
 		a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
 		.mainbody
-			h1.navihey(ng-show="!playing") Hey!
-			p(ng-show="!playing") The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
-			
-			.praise(ng-show="!playing") PRAISE FOR ZOOTR SIM
-			br(ng-show="!playing")
-			.quotecontainer(ng-show="!playing")
-				figure.quote
-					blockquote.curly-quotes only reason i made it to grands
-					figcaption.quote-by - Whatthehellshappened
-			.logiccheck(ng-show="!playing")
-				label Enforce Logic
-					input(type="checkbox", ng-model="use_logic")#logiccheckbox
-					span.slider
-			br
-			.logiccheckfooter(ng-show="!playing")
-				p {{use_logic ? "You will not be able to access locations you don't have the items for. Your run will be added to the leaderboards." : "You will be able to access every location in the game at the start. Your run will NOT be added to the leaderboards."}}
-			.start(ng-show="!playing")
-				.startleft
-					span.header Generate a seed
-					br
-					span.subheader 
-						| Generate on the fly using 
-						a(href="https://ootrandomizer.com") ootrandomizer.com
-					br
-					div.generateform
-						form(ng-submit="fetchSeed()")
-							div Seed
-							br
-							input(type="text",ng-model="seed",placeholder="leave blank for random")
-							br
-							div Settings
-							br
-							input(type="text",ng-model="settingsString",placeholder="Settings String",required)
-							br
-							select(placeholder="test",ng-model="settingsPreset",ng-change="presetSelected()",ng-options="k for (k,v) in settingsPresets")
-							br
-							input(type="submit",value="Generate")
-					br
-					span(ng-if="generating").generating Generating...
-					div(ng-if="generationError != null").error {{generationError}}
-				.startright
-					span.header Upload a log
-					br
-					span.subheader Upload a preexisting v5.2 spoiler log
-					br
-					br
-					input(type="file",id="files",custom-on-change="fileSelected",ng-model="file")
-					br
-					span(ng-if="uploading").uploading Uploading...
-					div(ng-if="uploadError != null").error {{uploadError}}
+			.startcontainer(ng-show="!playing && !in_mw_party")
+				h1.navihey Hey!
+				p The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
+				.praise PRAISE FOR ZOOTR SIM
+				br
+				.quotecontainer
+					figure.quote
+						blockquote.curly-quotes only reason i made it to grands
+						figcaption.quote-by - Whatthehellshappened
+				.logiccheck
+					label Enforce Logic
+						input(type="checkbox", ng-model="use_logic")#logiccheckbox
+						span.slider
+				br
+				.logiccheckfooter
+					p {{use_logic ? "You will not be able to access locations you don't have the items for. Your run will be added to the leaderboards." : "You will be able to access every location in the game at the start. Your run will NOT be added to the leaderboards."}}
+				.start
+					.startleft
+						span.header Generate a seed
+						br
+						span.subheader 
+							| Generate on the fly using 
+							a(href="https://ootrandomizer.com") ootrandomizer.com
+						br
+						div.generateform
+							form(ng-submit="fetchSeed()")
+								div Seed
+								br
+								input(type="text",ng-model="seed",placeholder="leave blank for random")
+								br
+								div Settings
+								br
+								input(type="text",ng-model="settingsString",placeholder="Settings String",required)
+								br
+								select(placeholder="test",ng-model="settingsPreset",ng-change="presetSelected()",ng-options="k for (k,v) in settingsPresets")
+								br
+								input(type="submit",value="Generate")
+						br
+						span(ng-if="generating").generating Generating...
+						div(ng-if="generationError != null").error {{generationError}}
+					.startright
+						span.header Upload a log
+						br
+						span.subheader Upload a preexisting v5.2 spoiler log
+						br
+						br
+						input(type="file",id="files",custom-on-change="fileSelected",ng-model="file")
+						br
+						span(ng-if="uploading").uploading Uploading...
+						div(ng-if="uploadError != null").error {{uploadError}}
 				br
 				| {{spoiler}}
-			span(ng-show="playing && !finished")
+				h2 Multiworld Games
+				table.nicetable#mwgames
+					thead
+						th Name
+						th Players
+						th Age
+					tbody
+						tr(ng-repeat="game in mwgames",ng-click="console.log('joining game')")
+							td {{game.name}}
+							td {{game.current_players}}/{{game.total_players}}
+							td {{game.age}}
+				br
+				.loadfromid
+					p Load from Playthrough ID
+					form(ng-submit="resumeFromId(loadFormId)")
+						input(type="text",ng-model="loadFormId",placeholder="Playthrough ID",required)
+						input(type="submit",value="Load")
+						span(ng-if="loading").loading Loading...
+						div(ng-if="loadError != null").error {{loadError}}
+			.multiworldcontainer(ng-show="in_mw_party")
+				table.mwparty
+					thead
+						th Name
+						th ID
+						th Ready?
+					tr(ng-repeat="player in players")
+						td {{player.name}}
+						td {{player.num}}
+						td(ng-if="player.id == playthroughId") 
+							a.button(ng-class="player.ready ? 'red' : 'blue'") {{player.ready ? "Unready" : "Ready"}}
+						td(ng-if="player.id != playthroughId") {{player.ready ? "✔️" : "❌"}}
+					tr
+						td
+							input(type="text",placeholder="Name")
+						td
+							a.button Join
+			span(ng-if="playing && !finished")
 				span {{(now - start_time) | formatDuration}}
 				br
 				.headline {{headline}}
@@ -160,6 +196,7 @@ html
 							br
 				br
 				br
+				p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
 				a.button#reset(ng-click="show_throwaway_modal(true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")
@@ -191,14 +228,8 @@ html
 				br 
 				br 
 				a(ng-click="throwAway()").button#reset Finish
-			p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
-			div(ng-show="!playing").loadfromid
-				p Load from Playthrough ID
-				form(ng-submit="resumeFromId(loadFormId)")
-					input(type="text",ng-model="loadFormId",placeholder="Playthrough ID",required)
-					input(type="submit",value="Load")
-					span(ng-if="loading").loading Loading...
-					div(ng-if="loadError != null").error {{loadError}}
+			
+			
 		.footer 
 			a(href="..") Back to scatter.live
 			|  | 
@@ -208,13 +239,13 @@ html
 			|  | 
 			a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
 	
-		div.modal.hidden#throwAwayModal
-			div.modal-content
+		.modal.hidden#throwAwayModal
+			.modal-content
 				p Really throw the seed away?
 				p You won't be able to get it back!
 				a.button.red(ng-click="throwAway()")
 					| Get it outta here
-		div.modal.hidden#logicWarningModal
+		.modal.hidden#logicWarningModal
 			.modal-content
 				h1 Hold up!
 				p This seed uses {{logic_rules == "none" ? "no" : logic_rules}} logic, and the sim will enforce logic!

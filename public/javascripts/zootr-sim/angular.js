@@ -56,6 +56,16 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		}
 	};
 
+	$http.get("/zootr-sim/getmwgames").then(function(response) {
+		$scope.mwgames = response.data;
+	}, function(error) {
+
+	});
+	/*var source = new EventSource("/zootr-sim/multiworldconnect");
+	source.onmessage = function(event) {
+		$scope.event = event.data;
+	};*/
+
 	$scope.known_medallions = {};
 	$scope.current_items = [];
 	$scope.use_logic = true;
@@ -876,6 +886,8 @@ $scope.hasBossKey = function(dungeon) {
 	$scope.resumeFromId = function(id) {
 		$scope.loading = true;
 		$http.get(`/zootr-sim/resume?id=${id}`).then(function(response) {
+			console.log("resuming from id");
+			console.log(response);
 			$scope.loading = false;
 			$scope.initializeFromServer(response["data"]);
 		}, function(error) {
@@ -890,8 +902,11 @@ $scope.hasBossKey = function(dungeon) {
 	};
 
 	$scope.initializeFromServer = function(data) {
+		console.log("initializing");
+		console.log(data);
 		$scope.generating = false;
 		$scope.locations = data["locations"];
+		$scope.players = data["players"];
 		$scope.current_items = data["current_items"];
 		$scope.fsHash = data["hash"];
 		$scope.start_time = data["start_time"];
@@ -905,6 +920,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.bombchu_count = data["bombchu_count"];
 		$scope.finished = data["finished"];
 		$scope.playtime = data["playtime"];
+		$scope.in_mw_party = data["in_mw_party"];
 		$scope.num_checks_made = data["num_checks_made"];
 		$scope.used_logic = data["used_logic"];
 		$scope.total_checks = data["total_checks"];
@@ -913,10 +929,12 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.percentiles = data["percentiles"];
 		$scope.child_wind = data.child_wind;
 		$scope.adult_wind = data.adult_wind;
-		$scope.playing = true;
+		$scope.playing = data.playing;
 		localforage.setItem("playthroughId", data["id"]);
-		$scope.getAvailableLocations();
-		$scope.getAvailableEntrances();
+		if ($scope.playing) {
+			$scope.getAvailableLocations();
+			$scope.getAvailableEntrances();
+		}
 	}
 	
 	$scope.fetchSeed = function() {
@@ -968,13 +986,21 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
 				$scope.uploading = false;
-				if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
-					$scope.init_data = response.data;
-					$scope.logic_rules = response.data.logic_rules;
-					$scope.show_logic_warning_modal(true);
+				if (response.data.multiworld) {
+					$scope.in_mw_party = true;
+					$scope.playthroughId = response.data.id;
+					localforage.setItem("playthroughId", $scope.playthroughId);
+					console.log(response);
 				}
 				else {
-					$scope.initializeFromServer(response["data"]);
+					if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
+						$scope.init_data = response.data;
+						$scope.logic_rules = response.data.logic_rules;
+						$scope.show_logic_warning_modal(true);
+					}
+					else {
+						$scope.initializeFromServer(response["data"]);
+					}
 				}
 			}, function errorCallback(response) {
 				$scope.uploading = false;
@@ -985,8 +1011,8 @@ $scope.hasBossKey = function(dungeon) {
 					$scope.uploadError = "Error! Parsing file failed. If this is a v5.2 spoiler log, please report this."
 				}
 				else {
-					$scope.uploadError = "Unknown error (please report this!): " + response.data;
-					console.error(response.data);
+					$scope.uploadError = "Unknown error (please report this!): " + response;
+					console.error(response);
 				}
 			});
 		}
@@ -1130,6 +1156,7 @@ $scope.hasBossKey = function(dungeon) {
 
 	localforage.getItem("playthroughId").then(function(result) {
 		if (result) {
+			console.log("result found");
 			$scope.resumeFromId(result);
 		}
 	});

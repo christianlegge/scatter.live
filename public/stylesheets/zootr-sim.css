@@ -464,14 +464,18 @@ div.logiccheckfooter {
 }
 
 div.error {
+	margin: 8px;
+	padding: 8px;
 	background-color: #ffdddd;
 	border-radius: 6px;
-	border-left: 6px solid #d36363;
+	border: 1px solid #d36363;
+	border-left: 6px #d36363;
 	border-left-style: inset;
 }
 
 .dark-mode div.error {
 	background-color: #560000;
+	border-color: #7a4444;
 	border-left: 6px solid #7a4444;
 }
 
@@ -1025,40 +1029,40 @@ a.useChu {
 	padding: 16px 0px;
 }
 
-.lbtable {
+.nicetable {
 	display:inline-block;
 	border-collapse: collapse;
 }
 
-.lbtable tbody tr:nth-child(even) {
+.nicetable tbody tr:nth-child(even) {
 	background-color: rgba(127,127,127,0.3);
 	
 }
 
-.lbtable .entry:hover {
+.nicetable tr:hover {
 	background-image: linear-gradient(rgba(127,127,127,0.1) 0, rgba(127,127,127,0.1) 100%);
 }
 
-.lbtable thead {
+.nicetable thead {
 	font-size: 0.7em;
 	text-transform: uppercase;
 }
 
-.lbtable th {
+.nicetable th {
 	min-width:200px;
 }
 
-.lbtable td {
+.nicetable td {
 	padding: 10px;
 }
 
-.lbtable .sortdesc::before {
+.nicetable .sortdesc::before {
 	position: absolute;
 	margin-left:-12px;
 	content: "▼";
 }
 
-.lbtable .sortasc::before {
+.nicetable .sortasc::before {
 	position: absolute;
 	margin-left:-12px;
 	content: "▲";
@@ -1071,7 +1075,7 @@ a.useChu {
 	
 }
 
-.lbtable tr:nth-child(even) .skeleton  {
+.nicetable tr:nth-child(even) .skeleton  {
 	border:0;
 	background-image: linear-gradient(90deg, rgba(127,127,127,0.3) 0, rgba(127,127,127,0) 50%, rgba(127,127,127,0.3) 100%);
 	background-position: 0;
@@ -1086,4 +1090,8 @@ a.useChu {
 	to {
 		background-position: 200%;
 	}
+}
+
+#mwgames tr:hover {
+	cursor: pointer;
 }

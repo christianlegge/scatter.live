@@ -83,7 +83,10 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			$scope.current_mw_lobby = id;
 			$scope.lobby_source = new EventSource(`/zootr-sim/lobbyconnect/${id}`);
 			$scope.lobby_source.onmessage = function(event) {
-				console.log(event);
+				var data = JSON.parse(event.data);
+				if ("joined" in data) {
+					$scope.players.push(data.joined);
+				}
 			};
 		});
 	}
@@ -93,6 +96,10 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		$scope.current_mw_lobby = null;
 		$scope.lobby_source.close();
 		$scope.lobby_source = null;
+	}
+
+	$scope.join_lobby = function(id, name) {
+		$http.get(`/zootr-sim/joinlobby/${id}/${name}`);
 	}
 
 	$scope.getAvailableLocations = function() {

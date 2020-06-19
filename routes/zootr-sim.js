@@ -219,7 +219,7 @@ router.get('/lobbyconnect/:id', function(req, res, next) {
 		lobby_callbacks[req.params.id] = [];
 	}
 	var callback = function (message) {
-		res.write(message);
+		res.write(`data: ${JSON.stringify(message)}\n\n`);
 	};
 	lobby_callbacks[req.params.id].push(callback);
 
@@ -236,6 +236,26 @@ router.get('/lobbyconnect/:id', function(req, res, next) {
 		lobby_callbacks[req.params.id].splice(index, 1);
 		if (lobby_callbacks[req.params.id].length == 0) {
 			delete lobby_callbacks[req.params.id];
+		}
+	});
+});
+
+router.get('/joinlobby/:id/:name', function(req, res, next) {
+	multiworldModel.findById(req.params.id).then(function(result) {
+		var new_player = {
+			name: req.params.name,
+			id: new mongoose.Types.ObjectId(),
+			ready: false,
+			num: result.players.length + 1,
+		};
+		if (result._id in lobby_callbacks) {
+			lobby_callbacks[result._id].forEach(function(callback) {
+				callback({joined: new_player});
+			});
+		}
+		if (result.players.length < result.num_players) {
+			result.players.push(new_player);
+			result.save();
 		}
 	});
 });

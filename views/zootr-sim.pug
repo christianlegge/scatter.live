@@ -108,9 +108,9 @@ html
 						td(ng-if="player.id != playthroughId") {{player.ready ? "✔️" : "❌"}}
 					tr
 						td
-							input(type="text",placeholder="Name")
+							input(type="text",placeholder="Name",ng-model="lobby_name")
 						td
-							a.button Join
+							a.button(ng-click="join_lobby(current_mw_lobby, lobby_name)") Join
 			span(ng-if="playing && !finished")
 				span {{(now - start_time) | formatDuration}}
 				br

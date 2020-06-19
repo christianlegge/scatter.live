@@ -361,7 +361,7 @@ div.generateform input {
 	border: 1px solid #ccc;
 }
 
-button {
+button, a.button {
 	padding:10px;
 	font-family: 'scatter OpenSans', sans-serif;
 	border-radius: 6px;
@@ -559,7 +559,7 @@ a {
 }
 
 
-a.button {
+/*a.button {
 	font-weight: bold;
 	text-decoration: none;
 	padding:6px 10px;
@@ -572,7 +572,7 @@ a.button {
 
 .dark-mode a.button {
 	color: #efefef;
-}
+}*/
 
 
 a#reset {

@@ -14,6 +14,7 @@ function regexEscape(str) {
 }
 
 var multiworld_callbacks = {};
+var lobby_callbacks = {};
 
 var meta = {
 	title: "ZOoTR Sim",
@@ -201,9 +202,41 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/getmwgames', function (req, res, next) {
-	multiworldModel.find({active: false}).sort({created_at: "desc"}).then(function(result) {
-		var games = result.map(x => ({total_players: x.num_players, current_players: x.players.length, name: "scatter", age: toAgeString(x.created_at) }));
+	multiworldModel.find({ active: false }).sort({ created_at: "desc" }).then(function (result) {
+		var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: "scatter", age: toAgeString(x.created_at) }));
 		res.send(games);
+	});
+});
+
+router.get('/getlobbyinfo/:id', function (req, res, next) {
+	multiworldModel.findById(req.params.id).then(function (result) {
+		res.send(result.players);
+	});
+});
+
+router.get('/lobbyconnect/:id', function(req, res, next) {
+	if (!(req.params.id in lobby_callbacks)) {
+		lobby_callbacks[req.params.id] = [];
+	}
+	var callback = function (message) {
+		res.write(message);
+	};
+	lobby_callbacks[req.params.id].push(callback);
+
+	res.set({
+		"Cache-Control": "no-cache",
+		"Content-Type": "text/event-stream",
+		"Connection": "keep-alive",
+	});
+	res.flushHeaders();
+	res.write("retry: 10000\n\n");
+
+	req.on("close", function () {
+		var index = lobby_callbacks[req.params.id].indexOf(callback);
+		lobby_callbacks[req.params.id].splice(index, 1);
+		if (lobby_callbacks[req.params.id].length == 0) {
+			delete lobby_callbacks[req.params.id];
+		}
 	});
 });
 

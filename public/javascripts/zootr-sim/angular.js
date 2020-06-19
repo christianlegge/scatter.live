@@ -77,6 +77,24 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		return Object.keys(obj).length == 0;
 	};
 
+	$scope.load_lobby = function(id) {
+		$http.get(`/zootr-sim/getlobbyinfo/${id}`).then(function(response) {
+			$scope.players = response.data;
+			$scope.current_mw_lobby = id;
+			$scope.lobby_source = new EventSource(`/zootr-sim/lobbyconnect/${id}`);
+			$scope.lobby_source.onmessage = function(event) {
+				console.log(event);
+			};
+		});
+	}
+
+	$scope.unload_lobby = function() {
+		$scope.players = null;
+		$scope.current_mw_lobby = null;
+		$scope.lobby_source.close();
+		$scope.lobby_source = null;
+	}
+
 	$scope.getAvailableLocations = function() {
 		if (!$scope.playing) {
 			return [];

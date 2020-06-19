@@ -22,7 +22,7 @@ html
 		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
 		a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
 		.mainbody
-			.startcontainer(ng-show="!playing && !in_mw_party")
+			.startcontainer(ng-show="!playing && !current_mw_lobby")
 				h1.navihey Hey!
 				p The current version of OoT Randomizer is v5.2. This should work with the sim as-is, but it's not tested - I'm working on some big updates, so in the meantime, use v5.1 if you want to be extra sure everything works.
 				.praise PRAISE FOR ZOOTR SIM
@@ -81,7 +81,7 @@ html
 						th Players
 						th Age
 					tbody
-						tr(ng-repeat="game in mwgames",ng-click="console.log('joining game')")
+						tr(ng-repeat="game in mwgames",ng-click="load_lobby(game.id)")
 							td {{game.name}}
 							td {{game.current_players}}/{{game.total_players}}
 							td {{game.age}}
@@ -93,8 +93,9 @@ html
 						input(type="submit",value="Load")
 						span(ng-if="loading").loading Loading...
 						div(ng-if="loadError != null").error {{loadError}}
-			.multiworldcontainer(ng-show="in_mw_party")
-				table.mwparty
+			.multiworldcontainer(ng-show="current_mw_lobby")
+				a.button(ng-click="unload_lobby()") < Back
+				table#mwparty
 					thead
 						th Name
 						th ID

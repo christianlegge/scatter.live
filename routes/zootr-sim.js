@@ -25,6 +25,15 @@ var meta = {
 	card: "summary",
 };
 
+function notify_lobby(id, message) {
+	if (!(id in lobby_callbacks)) {
+		return;
+	}
+	lobby_callbacks[id].forEach(function (callback) {
+		callback(message);
+	});
+}
+
 if (process.env.DEBUG) {
 	router.get("/populatelb", function(req, res, next) {
 		for (var i = 0; i < 200; i++) {
@@ -102,6 +111,49 @@ function getPercentiles(playthrough) {
 	]);
 }
 
+async function start_multiworld(mw_doc) {
+	mw_doc.active = true;
+	await Promise.all(mw_doc.players.map(async function(player) {
+		try {
+			var player_doc = await playthroughModel.findById(player.id);
+			var log = mw_doc.log;
+			player_doc.settings = mw_doc.log.get("settings");
+			player_doc.use_logic = mw_doc.use_logic;
+			player_doc.locations = log.get("locations")[`World ${player.num}`];
+			player_doc.entrances = log.get("entrances")[`World ${player.num}`];
+			player_doc.checked_locations = ["Links Pocket"];
+			player_doc.current_items = Object.keys(log.get("starting_items")[`World ${player.num}`]).concat(player_doc.locations.get("Links Pocket").item);
+			player_doc.start_time = Date.now();
+			player_doc.hash = log.get("file_hash");
+			player_doc.hints = log.get("gossip_stones")[`World ${player.num}`];
+			player_doc.known_hints = { };
+			player_doc.current_age = player_doc.settings.starting_age == "random" ? log.get("randomized_settings")[`World ${player.num}`]["starting_age"] : player_doc.settings.starting_age;
+			player_doc.known_medallions = new Map();
+			player_doc.dungeons = log.get("dungeons")[`World ${player.num}`];
+			player_doc.trials = log.get("trials")[`World ${player.num}`];
+			player_doc.child_wind = "";
+			player_doc.adult_wind = "";
+			player_doc.bombchu_count = 0;
+			player_doc.route = [];
+			player_doc.playtime = 0;
+			player_doc.num_checks_made = 0;
+
+			if (!player_doc.current_age) {
+				player_doc.current_age = "child";
+			}
+			player_doc.route.push(player_doc.current_age.toUpperCase() + " 1");
+			player_doc.current_region = player_doc.current_age == "child" ? "Kokiri Forest" : "Temple of Time";
+			player_doc.current_subregion = player_doc.current_age == "child" ? "Links House" : "Temple of Time";
+			player_doc.known_medallions.set("Free", player_doc.locations.get("Links Pocket").item);
+			player_doc.save();
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}));
+	mw_doc.save();
+}
+
 function parseLog(logfile, use_logic) {
 	if (typeof logfile == 'string') {
 		logfile = JSON.parse(logfile);
@@ -125,7 +177,6 @@ function parseLog(logfile, use_logic) {
 			current_items: Object.keys(logfile["starting_items"]).concat(logfile["locations"]["Links Pocket"]),
 			start_time: Date.now(),
 			hash: logfile["file_hash"],
-			entrances: logfile["entrances"],
 			hints: logfile["gossip_stones"],
 			known_hints: {},
 			current_age: logfile["settings"]["starting_age"] == "random" ? logfile["randomized_settings"]["starting_age"] : logfile["settings"]["starting_age"],
@@ -175,6 +226,7 @@ function parseLog(logfile, use_logic) {
 			num_players: logfile.settings.world_count,
 			players: [],
 			created_at: Date.now(),
+			use_logic: use_logic,
 		});
 		mw_doc.save();
 		return {
@@ -201,28 +253,32 @@ router.get('/getlobbyinfo/:id', function (req, res, next) {
 	});
 });
 
-router.get('/readyup/:id', function (req, res, next) {
+router.get('/readyup/:id', async function (req, res, next) {
 	playthroughModel.findById(req.params.id).then(function (result) {
-		multiworldModel.findById(result.multiworld_id).then(function(mw) {
+		multiworldModel.findById(result.multiworld_id).then(async function(mw) {
 			mw.players.filter(x => x.id == req.params.id)[0].ready = true;
 			mw.save();
 			if (mw._id in lobby_callbacks) {
-				lobby_callbacks[mw._id].forEach(function (callback) {
-					callback({ readied: result._id });
-				});
+				for (player in lobby_callbacks[mw._id]) {
+					lobby_callbacks[mw._id][player]({ readied: result._id });
+				}
+			}
+			if (mw.players.length == mw.num_players && mw.players.every(x => x.ready)) {
+				await start_multiworld(mw);
+				notify_lobby(mw._id, {starting: true});
 			}
 		})
 	});
 });
 
-router.get('/lobbyconnect/:id', function(req, res, next) {
-	if (!(req.params.id in lobby_callbacks)) {
-		lobby_callbacks[req.params.id] = [];
+router.get('/lobbyconnect/:multi_id/', function(req, res, next) {
+	if (!(req.params.multi_id in lobby_callbacks)) {
+		lobby_callbacks[req.params.multi_id] = [];
 	}
 	var callback = function (message) {
 		res.write(`data: ${JSON.stringify(message)}\n\n`);
 	};
-	lobby_callbacks[req.params.id].push(callback);
+	lobby_callbacks[req.params.multi_id].push(callback);
 
 	res.set({
 		"Cache-Control": "no-cache",
@@ -233,10 +289,10 @@ router.get('/lobbyconnect/:id', function(req, res, next) {
 	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
-		var index = lobby_callbacks[req.params.id].indexOf(callback);
-		lobby_callbacks[req.params.id].splice(index, 1);
-		if (lobby_callbacks[req.params.id].length == 0) {
-			delete lobby_callbacks[req.params.id];
+		var index = lobby_callbacks[req.params.multi_id].indexOf(callback);
+		lobby_callbacks[req.params.multi_id].splice(index, 1);
+		if (lobby_callbacks[req.params.multi_id].length == 0) {
+			delete lobby_callbacks[req.params.multi_id];
 		}
 	});
 });
@@ -258,15 +314,12 @@ router.get('/joinlobby/:id/:name', function(req, res, next) {
 			multiworld_id: result._id,
 		});
 		player_doc.save();
-		if (result._id in lobby_callbacks) {
-			lobby_callbacks[result._id].forEach(function(callback) {
-				callback({joined: new_player});
-			});
-		}
-		if (result.players.length < result.num_players) {
-			result.players.push(new_player);
-			result.save();
-		}
+
+		notify_lobby(result._id, {joined: new_player});
+		
+		result.players.push(new_player);
+		result.save();
+
 		res.send(new_player.id);
 	});
 });

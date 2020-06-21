@@ -93,6 +93,13 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				var player = $scope.players.filter(x => x.id == data.readied)[0];
 				player.ready = true;
 			}
+			if ("starting" in data) {
+				if (data.starting) {
+					if ($scope.playthroughId) {
+						$scope.resumeFromId($scope.playthroughId);
+					}
+				}
+			}
 		};
 	}
 
@@ -700,6 +707,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.playing = false;
 		$scope.finished = false;
 		$scope.shops = {};
+		$scope.current_mw_lobby = null;
 		$scope.show_throwaway_modal(false);
 		localforage.setItem("playthroughId", null);
 	};
@@ -983,7 +991,7 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.getAvailableLocations();
 			$scope.getAvailableEntrances();
 		}
-		if ("multiworld_id" in data) {
+		if ("multiworld_id" in data && !$scope.playing) {
 			$scope.load_lobby(data.multiworld_id);
 		}
 	}
@@ -1039,9 +1047,9 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.uploading = false;
 				if (response.data.multiworld_id) {
 					$scope.load_lobby(response.data.multiworld_id);
-					$scope.playthroughId = response.data.id;
-					localforage.setItem("playthroughId", $scope.playthroughId);
-					console.log(response);
+					//$scope.playthroughId = response.data.id;
+					//localforage.setItem("playthroughId", $scope.playthroughId);
+					//console.log(response);
 				}
 				else {
 					if (response.data.logic_rules != "glitchless" && $scope.use_logic) {

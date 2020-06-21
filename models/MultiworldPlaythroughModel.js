@@ -12,6 +12,7 @@ var MultiworldPlaythroughSchema = new mongoose.Schema({
 	active: Boolean,
 	log: Map,
 	created_at: Date,
+	use_logic: Boolean,
 });
 var MultiworldPlaythroughModel = mongoose.model('MultiworldPlaythrough', MultiworldPlaythroughSchema);
 

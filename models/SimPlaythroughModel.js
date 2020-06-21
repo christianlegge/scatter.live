@@ -28,6 +28,7 @@ var SimPlaythroughSchema = new mongoose.Schema({
 	total_checks: Number,
 	route: Array,
 	multiworld_id: mongoose.Types.ObjectId,
+	multiworld_num: Number,
 });
 var SimPlaythroughModel = mongoose.model('SimPlaythrough', SimPlaythroughSchema);
 

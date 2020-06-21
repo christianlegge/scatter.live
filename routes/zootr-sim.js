@@ -8,6 +8,8 @@ var playthroughModel = require('../models/SimPlaythroughModel.js');
 var leaderboardModel = require('../models/SimLeaderboardModel.js');
 var multiworldModel = require('../models/MultiworldPlaythroughModel.js');
 var mongoose = require('mongoose');
+const MultiworldPlaythroughModel = require('../models/MultiworldPlaythroughModel.js');
+const { response } = require('express');
 
 function regexEscape(str) {
 	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -117,6 +119,7 @@ async function start_multiworld(mw_doc) {
 		try {
 			var player_doc = await playthroughModel.findById(player.id);
 			var log = mw_doc.log;
+			player_doc.multiworld_num = player.num;
 			player_doc.settings = mw_doc.log.get("settings");
 			player_doc.use_logic = mw_doc.use_logic;
 			player_doc.locations = log.get("locations")[`World ${player.num}`];
@@ -271,7 +274,7 @@ router.get('/readyup/:id', async function (req, res, next) {
 	});
 });
 
-router.get('/lobbyconnect/:multi_id/', function(req, res, next) {
+router.get('/lobbyconnect/:multi_id/', function (req, res, next) {
 	if (!(req.params.multi_id in lobby_callbacks)) {
 		lobby_callbacks[req.params.multi_id] = [];
 	}
@@ -293,6 +296,34 @@ router.get('/lobbyconnect/:multi_id/', function(req, res, next) {
 		lobby_callbacks[req.params.multi_id].splice(index, 1);
 		if (lobby_callbacks[req.params.multi_id].length == 0) {
 			delete lobby_callbacks[req.params.multi_id];
+		}
+	});
+});
+
+router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, next) {
+	if (!(req.params.multi_id in multiworld_callbacks)) {
+		multiworld_callbacks[req.params.multi_id] = {};
+	}
+	var callback = function (message) {
+		res.write(`data: ${JSON.stringify(message)}\n\n`);
+	};
+	var mw_doc = await MultiworldPlaythroughModel.findById(req.params.multi_id);
+	var player_num = mw_doc.players.filter(x => x.id == req.params.player_id)[0].num;
+	multiworld_callbacks[req.params.multi_id][player_num] = callback;
+	console.log(multiworld_callbacks);
+
+	res.set({
+		"Cache-Control": "no-cache",
+		"Content-Type": "text/event-stream",
+		"Connection": "keep-alive",
+	});
+	res.flushHeaders();
+	res.write("retry: 10000\n\n");
+
+	req.on("close", function () {
+		delete multiworld_callbacks[req.params.multi_id][player_num];
+		if (Object.keys(multiworld_callbacks[req.params.multi_id]).length == 0) {
+			delete multiworld_callbacks[req.params.multi_id];
 		}
 	});
 });
@@ -375,7 +406,7 @@ router.get('/resume', async function(req, res, next) {
 });
 
 router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
+	playthroughModel.findOne({ _id: req.params["playthroughId"] }, async function (err, result) {
 		if (result.checked_locations.includes(req.params["location"])) {
 			res.send(400);
 			return;
@@ -418,6 +449,20 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);
+			var other_player;
+			if (item && result.multiworld_id) {
+				var mw_doc = await MultiworldPlaythroughModel.findById(result.multiworld_id);
+				player = item.player;
+				item = item.item;
+				if (player != result.multiworld_num) {
+					other_player = mw_doc.players.filter(x => x.num == player)[0];
+					my_name = mw_doc.players.filter(x => x.id == req.params.playthroughId)[0].name;
+					var other_doc = await playthroughModel.findById(other_player.id);
+					other_doc.current_items.push(item);
+					other_doc.save();
+					multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
+				}
+			}
 			if (typeof item == "object") {
 				item = item["item"];
 			}
@@ -437,7 +482,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.checked_locations.push(req.params["location"]);
 			}
 			result.route.push(`${req.params.location}${simHelper.isEssentialItem(item) ? " (" + item + ")" : ""}`);
-			result.current_items.push(item);
+
+			if (!other_player) {
+				result.current_items.push(item);
+			}
 			
 			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
 				result.known_medallions.set(result.current_region, item);
@@ -460,6 +508,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				result.current_subregion = simHelper.region_changing_checks[req.params.location][1];
 				response_obj.subregion = result.current_subregion;
 				response_obj.region_changed = true;
+			}
+			if (other_player) {
+				response_obj.other_player = other_player.name;
 			}
 			result.save();
 			res.send(response_obj);
@@ -725,29 +776,6 @@ router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(r
 		res.status(500).send(error);
 	});
 });
-
-router.get('/multiworldconnect', function(req, res, next) {
-	res.set({
-		"Cache-Control": "no-cache",
-		"Content-Type": "text/event-stream",
-		"Connection": "keep-alive",
-	});
-	res.flushHeaders();
-	res.write("retry: 10000\n\n");
-	res.write(`data: ${Math.random()}\n\n`);
-	var count = 0;
-	multiworld_callbacks[0] = function() {
-		res.write(`data: ${Math.random()}\n\n`);
-	}
-
-	req.on("close", function() {
-	});
-});
-
-router.get('/multiworldsend', function(req, res, next) {
-	multiworld_callbacks[0]();
-	res.sendStatus(200);
-})
 
 module.exports = router;
 

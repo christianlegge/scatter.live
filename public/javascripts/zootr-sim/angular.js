@@ -103,6 +103,17 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		};
 	}
 
+	$scope.subscribe_multiworld = function(multi_id, player_id) { 
+		$scope.multiworld_source = new EventSource(`/zootr-sim/multiworldconnect/${multi_id}/${player_id}`);
+		$scope.multiworld_source.onmessage = function (event) {
+			var data = JSON.parse(event.data);
+			if ("item" in data) {
+				$scope.current_items.push(data.item);
+				$scope.headline = `Received from ${data.from}: ${data.item}`;
+			}
+		};
+	}
+
 	$scope.load_lobby = function(id) {
 		$http.get(`/zootr-sim/getlobbyinfo/${id}`).then(function(response) {
 			$scope.players = response.data;
@@ -218,8 +229,13 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				}
 				else {
 					$scope.checked_locations = response.data.checked_locations;
-					$scope.headline = `${loc}: ${response.data.item}`;
-					$scope.current_items.push(response.data.item);
+					if (response.data.other_player) {
+						$scope.headline = `Sent to ${response.data.other_player}: ${response.data.item}`;
+					}
+					else {
+						$scope.headline = `${loc}: ${response.data.item}`;
+						$scope.current_items.push(response.data.item);
+					}
 					$scope.current_region = response.data.region;
 					$scope.current_subregion = response.data.subregion;
 					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
@@ -991,8 +1007,13 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.getAvailableLocations();
 			$scope.getAvailableEntrances();
 		}
-		if ("multiworld_id" in data && !$scope.playing) {
-			$scope.load_lobby(data.multiworld_id);
+		if ("multiworld_id" in data) {
+			if ($scope.playing) {
+				$scope.subscribe_multiworld(data.multiworld_id, $scope.playthroughId);
+			}
+			else {
+				$scope.load_lobby(data.multiworld_id);
+			}
 		}
 	}
 	

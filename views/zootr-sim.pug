@@ -106,7 +106,7 @@ html
 						td(ng-if="player.id == playthroughId") 
 							a.button(ng-click="ready_up(player.id)",ng-class="player.ready ? 'red' : 'blue'") {{player.ready ? "Unready" : "Ready"}}
 						td(ng-if="player.id != playthroughId") {{player.ready ? "✔️" : "❌"}}
-					tr(ng-if="true || !playthroughId")
+					tr(ng-if="!playthroughId")
 						td
 							input(type="text",placeholder="Name",ng-model="lobby_name")
 						td

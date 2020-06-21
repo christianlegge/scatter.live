@@ -716,6 +716,16 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	}
 
+	$scope.show_missed_items_modal = function (show) {
+		var el = document.getElementById("missedItemsModal");
+		if (show) {
+			el.classList.remove("hidden");
+		}
+		else {
+			el.classList.add("hidden");
+		}
+	}
+
 	$scope.throwAway = function(item) {
 		$http.get(`/zootr-sim/throwaway/${$scope.playthroughId}`);
 		$scope.playthroughId = null;
@@ -1014,6 +1024,11 @@ $scope.hasBossKey = function(dungeon) {
 			else {
 				$scope.load_lobby(data.multiworld_id);
 			}
+		}
+		if (data.missed_items && data.missed_items.length > 0) {
+			console.log(data.missed_items);
+			$scope.missed_items = data.missed_items.map(x => `Received from ${x.from}: ${x.item}`);
+			$scope.show_missed_items_modal(true);
 		}
 	}
 	

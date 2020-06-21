@@ -255,6 +255,11 @@ html
 					| Never mind
 				a.button.blue(ng-click="show_logic_warning_modal(false); initializeFromServer(init_data);")
 					| I know what I'm doing
+		.modal.hidden#missedItemsModal
+			.modal-content
+				h2 While you were away
+				p(ng-repeat="item in missed_items") {{item}}
+				a.button.blue(ng-click="show_missed_items_modal(false)") OK
 		+jquery
 		+localforage
 		+filesaver

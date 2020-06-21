@@ -120,6 +120,7 @@ async function start_multiworld(mw_doc) {
 			var player_doc = await playthroughModel.findById(player.id);
 			var log = mw_doc.log;
 			player_doc.multiworld_num = player.num;
+			player_doc.missed_items = [];
 			player_doc.settings = mw_doc.log.get("settings");
 			player_doc.use_logic = mw_doc.use_logic;
 			player_doc.locations = log.get("locations")[`World ${player.num}`];
@@ -321,7 +322,9 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
-		delete multiworld_callbacks[req.params.multi_id][player_num];
+		if (player_num in multiworld_callbacks[req.params.multi_id]) {
+			delete multiworld_callbacks[req.params.multi_id][player_num];
+		}
 		if (Object.keys(multiworld_callbacks[req.params.multi_id]).length == 0) {
 			delete multiworld_callbacks[req.params.multi_id];
 		}
@@ -398,8 +401,11 @@ router.get('/resume', async function(req, res, next) {
 			num_checks_made: result.num_checks_made,
 			total_checks: result.total_checks,
 			used_logic: result.use_logic,
+			missed_items: result.missed_items,
 			percentiles: percentiles ? {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)} : null
 		};
+		result.missed_items = [];
+		result.save();
 		res.send(info);
 	
 	});
@@ -460,7 +466,12 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 					var other_doc = await playthroughModel.findById(other_player.id);
 					other_doc.current_items.push(item);
 					other_doc.save();
-					multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
+					try {
+						multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
+					}
+					catch (error) {
+						other_doc.missed_items.push({item: item, from: my_name});
+					}
 				}
 			}
 			if (typeof item == "object") {

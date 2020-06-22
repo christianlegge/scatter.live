@@ -203,8 +203,6 @@ div.main {
 
 div {
 	display:inline-block;
-	overflow-y: auto;
-	overflow-x:auto;
 }
 
 .dark-mode div.main {

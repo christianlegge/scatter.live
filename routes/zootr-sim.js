@@ -511,8 +511,6 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			if (simHelper.needChus(result, req.params.location)) {
 				result.bombchu_count--;
 			}
-			var subregion = simHelper.subregionFromLocation(req.params.location);
-			result.current_subregion = subregion;
 			var response_obj = { item: item, checked_locations: result.checked_locations, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
 			if (req.params.location in simHelper.region_changing_checks) {
 				result.current_region = simHelper.region_changing_checks[req.params.location][0];

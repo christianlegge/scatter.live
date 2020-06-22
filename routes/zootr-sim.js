@@ -456,6 +456,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				return;
 			}
 			var item = result.locations.get(req.params["location"]);
+			if (/Clear .* Trial/.test(req.params.location)) {
+				item = req.params.location;
+			}
 			var other_player;
 			if (item && result.multiworld_id) {
 				var mw_doc = await MultiworldPlaythroughModel.findById(result.multiworld_id);

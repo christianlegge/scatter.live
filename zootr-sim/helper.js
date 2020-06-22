@@ -688,12 +688,12 @@ function parseLogicRule(save_file, rule) {
 		"Eyeball Frog Access": () => parseLogicRule(save_file, "( is_adult and 'Zora Thawed' and (Eyedrops or Eyeball_Frog or Prescription or 'Prescription Access'))"),
 		"Epona": () => parseLogicRule(save_file, "(can_play(Eponas_Song) and is_adult and at_day)"),
 		"Links Cow": () => parseLogicRule(save_file, "(can_play(Eponas_Song) and is_adult and at_day)"),
-		"Forest Trial Clear": () => parseLogicRule(save_file, "(can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire))"),
-		"Fire Trial Clear": () => parseLogicRule(save_file, "( can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot))"),
-		"Water Trial Clear": () => parseLogicRule(save_file, "(Blue_Fire and Hammer and can_use(Light_Arrows))"),
-		"Shadow Trial Clear": () => parseLogicRule(save_file, "( can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens)))))"),
-		"Spirit Trial Clear": () => parseLogicRule(save_file, "( can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot))"),
-		"Light Trial Clear": () => parseLogicRule(save_file, "( can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens)"),
+		"Forest Trial Clear": () => parseLogicRule(save_file, ""),
+		"Fire Trial Clear": () => parseLogicRule(save_file, ""),
+		"Water Trial Clear": () => parseLogicRule(save_file, ""),
+		"Shadow Trial Clear": () => parseLogicRule(save_file, ""),
+		"Spirit Trial Clear": () => parseLogicRule(save_file, ""),
+		"Light Trial Clear": () => parseLogicRule(save_file, ""),
 		"Deku Tree Clear": () => parseLogicRule(save_file, "( (has_shield) and (is_adult or Kokiri_Sword or Sticks))"),
 		"Forest Temple Amy and Meg": () => parseLogicRule(save_file, "can_reach('Forest Temple Falling Room') and (can_use(Bow))"),
 		"Forest Temple Jo and Beth": () => parseLogicRule(save_file, "can_reach('Forest Temple Bow Region') and (can_use(Bow))"),
@@ -1107,7 +1107,7 @@ function testAllRules(save_file) {
 	return "Success";
 }
 
-var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Ganon"];
+var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganon"];
 
 function getLocations(save_file, region) {
 	var all_locs = [];
@@ -1119,6 +1119,11 @@ function getLocations(save_file, region) {
 		if ("locations" in subregions[subregion]) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
+	}
+	if (region == "Ganons Castle") {
+		var active_trials = Array.from(save_file.trials.keys()).filter(x => save_file.trials.get(x) == "active");
+		active_trials = active_trials.map(x => `Clear ${x} Trial`);
+		all_locs = all_locs.filter(x => !(/Clear .* Trial/.test(x)) || active_trials.includes(x));
 	}
 	return all_locs.filter(x => !x.includes("Shop Item") && !x.includes("Bazaar Item") && (location_exceptions.includes(x) || Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy")));
 }

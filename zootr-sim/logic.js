@@ -1886,7 +1886,7 @@ var logic = {
 					"Ganons Castle Shadow Trial": "True",
 					"Ganons Castle Spirit Trial": "True",
 					"Ganons Castle Light Trial": "can_use(Golden_Gauntlets)",
-					"Ganons Castle Tower": " (skipped_trial(Forest) or 'Forest Trial Clear') and (skipped_trial(Fire) or 'Fire Trial Clear') and (skipped_trial(Water) or 'Water Trial Clear') and (skipped_trial(Shadow) or 'Shadow Trial Clear') and (skipped_trial(Spirit) or 'Spirit Trial Clear') and (skipped_trial(Light) or 'Light Trial Clear')",
+					"Ganons Castle Tower": " (skipped_trial(Forest) or has('Clear Forest Trial')) and (skipped_trial(Fire) or has('Clear Fire Trial')) and (skipped_trial(Water) or has('Clear Water Trial')) and (skipped_trial(Shadow) or has('Clear Shadow Trial')) and (skipped_trial(Spirit) or has('Clear Spirit Trial')) and (skipped_trial(Light) or has('Clear Light Trial'))",
 					"Ganons Castle Deku Scrubs": "can_see_with_lens"
 				}
 			},
@@ -1907,11 +1907,9 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Forest Trial Clear": "can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire)"
-				},
 				"locations": {
-					"Ganons Castle Forest Trial Chest": "True"
+					"Ganons Castle Forest Trial Chest": "True",
+					"Clear Forest Trial": "(can_use(Light_Arrows) and (Fire_Arrows or Dins_Fire))"
 				}
 			},
 			"Ganons Castle Fire Trial": {
@@ -1920,8 +1918,8 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Fire Trial Clear": " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot)"
+				"locations": {
+					"Clear Fire Trial": "(can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and can_use(Longshot))"
 				}
 			},
 			"Ganons Castle Water Trial": {
@@ -1930,14 +1928,12 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Water Trial Clear": "Blue_Fire and Hammer and can_use(Light_Arrows)"
-				},
 				"locations": {
 					"Ganons Castle Water Trial Left Chest": "True",
 					"Ganons Castle Water Trial Right Chest": "True",
 					"Fairy Pot": "Blue_Fire and has_bottle",
-					"Blue Fire": "has_bottle"
+					"Blue Fire": "has_bottle",
+					"Clear Water Trial": "(Blue_Fire and Hammer and can_use(Light_Arrows))"
 				}
 			},
 			"Ganons Castle Shadow Trial": {
@@ -1946,12 +1942,10 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Shadow Trial Clear": " can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens))))"
-				},
 				"locations": {
 					"Ganons Castle Shadow Trial First Chest": " can_use(Fire_Arrows) or Progressive_Hookshot or Hover_Boots or can_play(Song_of_Time)",
-					"Ganons Castle Shadow Trial Second Chest": " can_use(Fire_Arrows) or (can_use(Longshot) and (Hover_Boots or can_use(Dins_Fire)))"
+					"Ganons Castle Shadow Trial Second Chest": " can_use(Fire_Arrows) or (can_use(Longshot) and (Hover_Boots or can_use(Dins_Fire)))",
+					"Clear Shadow Trial": "(can_use(Light_Arrows) and Hammer and ((Fire_Arrows and can_see_with_lens) or (can_use(Longshot) and (Hover_Boots or (Dins_Fire and can_see_with_lens)))))"
 				}
 			},
 			"Ganons Castle Spirit Trial": {
@@ -1960,13 +1954,11 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Spirit Trial Clear": " can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot)"
-				},
 				"locations": {
 					"Ganons Castle Spirit Trial First Chest": " (logic_spirit_trial_hookshot or Progressive_Hookshot)",
 					"Ganons Castle Spirit Trial Second Chest": " (logic_spirit_trial_hookshot or Progressive_Hookshot) and has_bombchus and can_see_with_lens",
-					"Nut Pot": " (logic_spirit_trial_hookshot or Progressive_Hookshot) and has_bombchus and Bow and Mirror_Shield"
+					"Nut Pot": " (logic_spirit_trial_hookshot or Progressive_Hookshot) and has_bombchus and Bow and Mirror_Shield",
+					"Clear Spirit Trial": "(can_use(Light_Arrows) and Mirror_Shield and has_bombchus and (logic_spirit_trial_hookshot or Progressive_Hookshot))"
 				}
 			},
 			"Ganons Castle Light Trial": {
@@ -1974,9 +1966,6 @@ var logic = {
 				"dungeon": "Ganons Castle",
 				"exits": {
 					"Ganons Castle Lobby": "True"
-				},
-				"events": {
-					"Light Trial Clear": " can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens"
 				},
 				"locations": {
 					"Ganons Castle Light Trial First Left Chest": "True",
@@ -1986,7 +1975,8 @@ var logic = {
 					"Ganons Castle Light Trial Second Right Chest": "True",
 					"Ganons Castle Light Trial Third Right Chest": "True",
 					"Ganons Castle Light Trial Invisible Enemies Chest": "can_see_with_lens",
-					"Ganons Castle Light Trial Lullaby Chest": " can_play(Zeldas_Lullaby) and (Small_Key_Ganons_Castle, 1)"
+					"Ganons Castle Light Trial Lullaby Chest": " can_play(Zeldas_Lullaby) and (Small_Key_Ganons_Castle, 1)",
+					"Clear Light Trial": "(can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens)"
 				}
 			}
 		},
@@ -2002,7 +1992,7 @@ var logic = {
 					"Ganons Castle Shadow Trial": "True",
 					"Ganons Castle Spirit Trial": "True",
 					"Ganons Castle Light Trial": "can_use(Golden_Gauntlets)",
-					"Ganons Castle Tower": " (skipped_trial(Forest) or 'Forest Trial Clear') and (skipped_trial(Fire) or 'Fire Trial Clear') and (skipped_trial(Water) or 'Water Trial Clear') and (skipped_trial(Shadow) or 'Shadow Trial Clear') and (skipped_trial(Spirit) or 'Spirit Trial Clear') and (skipped_trial(Light) or 'Light Trial Clear')",
+					"Ganons Castle Tower": " (skipped_trial(Forest) or has('Clear Forest Trial')) and (skipped_trial(Fire) or has('Clear Fire Trial')) and (skipped_trial(Water) or has('Clear Water Trial')) and (skipped_trial(Shadow) or has('Clear Shadow Trial')) and (skipped_trial(Spirit) or has('Clear Spirit Trial')) and (skipped_trial(Light) or has('Clear Light Trial'))",
 					"Ganons Castle Deku Scrubs": "can_see_with_lens"
 				}
 			},
@@ -2024,13 +2014,11 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Forest Trial Clear": "can_use(Light_Arrows) and can_play(Song_of_Time)"
-				},
 				"locations": {
 					"Ganons Castle MQ Forest Trial First Chest": "Bow",
 					"Ganons Castle MQ Forest Trial Second Chest": "has_fire_source",
-					"Ganons Castle MQ Forest Trial Freestanding Key": "Progressive_Hookshot"
+					"Ganons Castle MQ Forest Trial Freestanding Key": "Progressive_Hookshot",
+					"Clear Forest Trial": "can_use(Light_Arrows) and can_play(Song_of_Time)"
 				}
 			},
 			"Ganons Castle Fire Trial": {
@@ -2039,8 +2027,8 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Fire Trial Clear": " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and (can_use(Longshot) or Hover_Boots)"
+				"locations": {
+					"Clear Fire Trial": " can_use(Goron_Tunic) and can_use(Golden_Gauntlets) and can_use(Light_Arrows) and (can_use(Longshot) or Hover_Boots)"
 				}
 			},
 			"Ganons Castle Water Trial": {
@@ -2049,12 +2037,10 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Water Trial Clear": " Blue_Fire and can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3)"
-				},
 				"locations": {
 					"Ganons Castle MQ Water Trial Chest": "Blue_Fire",
-					"Blue Fire": "has_bottle"
+					"Blue Fire": "has_bottle",
+					"Clear Water Trial": " Blue_Fire and can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3)"
 				}
 			},
 			"Ganons Castle Shadow Trial": {
@@ -2063,12 +2049,10 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Shadow Trial Clear": " can_use(Light_Arrows) and can_see_with_lens and (Hover_Boots or (Progressive_Hookshot and (has_fire_source or logic_shadow_trial_mq)))"
-				},
 				"locations": {
 					"Ganons Castle MQ Shadow Trial First Chest": " (Bow and (Progressive_Hookshot or Hover_Boots)) or (Hover_Boots and can_see_with_lens and (has_explosives or Progressive_Strength_Upgrade or can_use(Dins_Fire)))",
-					"Ganons Castle MQ Shadow Trial Second Chest": " Bow and can_see_with_lens and (Hover_Boots or (Progressive_Hookshot and (has_fire_source or logic_shadow_trial_mq)))"
+					"Ganons Castle MQ Shadow Trial Second Chest": " Bow and can_see_with_lens and (Hover_Boots or (Progressive_Hookshot and (has_fire_source or logic_shadow_trial_mq)))",
+					"Clear Shadow Trial": " can_use(Light_Arrows) and can_see_with_lens and (Hover_Boots or (Progressive_Hookshot and (has_fire_source or logic_shadow_trial_mq)))"
 				}
 			},
 			"Ganons Castle Spirit Trial": {
@@ -2077,9 +2061,6 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Spirit Trial Clear": " can_use(Light_Arrows) and Hammer and has_bombchus and Fire_Arrows and Mirror_Shield"
-				},
 				"locations": {
 					"Ganons Castle MQ Spirit Trial First Chest": "(Bow or logic_rusted_switches) and Hammer",
 					"Ganons Castle MQ Spirit Trial Second Chest": " (Bow or logic_rusted_switches) and Hammer and has_bombchus and can_see_with_lens",
@@ -2087,7 +2068,8 @@ var logic = {
 					"Ganons Castle MQ Spirit Trial Sun Back Left Chest": " Hammer and has_bombchus and can_use(Fire_Arrows) and Mirror_Shield",
 					"Ganons Castle MQ Spirit Trial Golden Gauntlets Chest": " Hammer and has_bombchus and can_use(Fire_Arrows) and Mirror_Shield",
 					"Ganons Castle MQ Spirit Trial Sun Back Right Chest": " Hammer and has_bombchus and can_use(Fire_Arrows) and Mirror_Shield",
-					"Nut Pot": " Hammer and has_bombchus and can_use(Fire_Arrows) and Mirror_Shield"
+					"Nut Pot": " Hammer and has_bombchus and can_use(Fire_Arrows) and Mirror_Shield",
+					"Clear Spirit Trial": " can_use(Light_Arrows) and Hammer and has_bombchus and Fire_Arrows and Mirror_Shield"
 				}
 			},
 			"Ganons Castle Light Trial": {
@@ -2096,11 +2078,9 @@ var logic = {
 				"exits": {
 					"Ganons Castle Lobby": "True"
 				},
-				"events": {
-					"Light Trial Clear": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens"
-				},
 				"locations": {
-					"Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby)"
+					"Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby)",
+					"Clear Light Trial": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens"
 				}
 			}
 		}

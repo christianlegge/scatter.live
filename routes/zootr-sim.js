@@ -312,7 +312,6 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 	var mw_doc = await MultiworldPlaythroughModel.findById(req.params.multi_id);
 	var player_num = mw_doc.players.filter(x => x.id == req.params.player_id)[0].num;
 	multiworld_callbacks[req.params.multi_id][player_num] = callback;
-	console.log(multiworld_callbacks);
 
 	res.set({
 		"Cache-Control": "no-cache",

@@ -723,7 +723,6 @@ function parseLogicRule(save_file, rule) {
 	}
 
 	function getChar(n = 1) {
-		//console.log(rule.substring(0, it) + '[' + rule.substring(it, it+n) + ']' + rule.substring(it+n, rule.length));
 		it += n;
 		leftToConsume = rule.substring(it, rule.length);
 		return rule.substring(it - n, it);

@@ -973,8 +973,6 @@ $scope.hasBossKey = function(dungeon) {
 	$scope.resumeFromId = function(id) {
 		$scope.loading = true;
 		$http.get(`/zootr-sim/resume?id=${id}`).then(function(response) {
-			console.log("resuming from id");
-			console.log(response);
 			$scope.loading = false;
 			$scope.initializeFromServer(response["data"]);
 		}, function(error) {
@@ -989,8 +987,6 @@ $scope.hasBossKey = function(dungeon) {
 	};
 
 	$scope.initializeFromServer = function(data) {
-		console.log("initializing");
-		console.log(data);
 		$scope.generating = false;
 		$scope.locations = data["locations"];
 		$scope.players = data["players"];
@@ -1032,7 +1028,6 @@ $scope.hasBossKey = function(dungeon) {
 			}
 		}
 		if (data.missed_items && data.missed_items.length > 0) {
-			console.log(data.missed_items);
 			$scope.missed_items = data.missed_items.map(x => `Received from ${x.from}: ${x.item}`);
 			$scope.show_missed_items_modal(true);
 		}
@@ -1257,7 +1252,6 @@ $scope.hasBossKey = function(dungeon) {
 
 	localforage.getItem("playthroughId").then(function (result) {
 		if (result) {
-			console.log("result found");
 			$scope.resumeFromId(result);
 		}
 	});

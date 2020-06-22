@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   else {
     var path = req.path;
     viewcount.find({path: req.path}, function(err, result) {
-      if (err) console.log(err);
+      if (err) console.error(err);
       else if (result.length == 0){
         doc = new viewcount({path: req.path, views: 1});
         doc.save();

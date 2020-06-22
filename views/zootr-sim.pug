@@ -20,7 +20,6 @@ html
 				.hash-item(ng-repeat="x in fsHash track by $index",id="{{x}}",style="background-image: url('images/zootr-sim/{{hashImages[x]}}')")
 			span.credit made by scatter
 		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
-		a(href="",ng-click="downloadSpoilerLog()",ng-if="currentSpoilerLog != ''")#spoiler-download Download Spoiler Log
 		.mainbody
 			.startcontainer(ng-show="!playing && !current_mw_lobby")
 				h1.navihey Hey!

@@ -205,6 +205,7 @@ function parseLog(logfile, use_logic) {
 		doc.save();
 
 		return {
+			playing: true,
 			id: doc._id,
 			start_time: doc.start_time,
 			hash: logfile["file_hash"],

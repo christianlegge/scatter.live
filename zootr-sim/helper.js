@@ -610,7 +610,7 @@ function parseLogicRule(save_file, rule) {
 		is_child: () => age == "child",
 		is_adult: () => age == "adult",
 		can_plant_bugs: () => logicEvaluation.is_child() && logicEvaluation.has_bottle(),
-		can_plant_bean: () => logicEvaluation.is_child(),
+		can_plant_bean: () => logicEvaluation.is_child() && (!save_file.settings.get("shuffle_beans") || logicEvaluation.has("Magic Bean Pack")),
 		can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
 		can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
 		found_bombchus: () => settings.get("bombchus_in_logic") ? items.filter(x => x.includes("Bombchus")).length > 0 : logicEvaluation.has("Bomb Bag"),

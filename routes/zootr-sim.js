@@ -441,6 +441,24 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				res.send(result.current_age);
 				return;
 			}
+			else if (req.params.location == "Ganondorf Hint") {
+				var light_arrow_loc = Array.from(result.locations.keys()).filter(x => result.locations.get(x) == "Light Arrows")[0];
+				var light_arrow_region;
+				if (light_arrow_loc) {
+					light_arrow_region = simHelper.getParentRegion(simHelper.subregionFromLocation(light_arrow_loc));
+					if (!result.known_hints.has(light_arrow_region)) {
+						result.known_hints.set(light_arrow_region, []);
+					}
+					result.known_hints.get(light_arrow_region).push("Light Arrows");
+				}
+				else {
+					light_arrow_region = "your pocket";
+				}
+				result.checked_locations.push("Ganondorf Hint");
+				result.save();
+				res.send({light_arrow_region: light_arrow_region, known_hints: result.known_hints});
+				return;
+			}
 			else if (req.params.location == "Ganon") {
 				result.finished = true;
 				result.playtime = Date.now() - result.start_time;

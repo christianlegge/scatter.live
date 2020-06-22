@@ -1107,7 +1107,7 @@ function testAllRules(save_file) {
 	return "Success";
 }
 
-var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganon"];
+var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganondorf Hint", "Ganon"];
 
 function getLocations(save_file, region) {
 	var all_locs = [];

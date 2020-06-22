@@ -217,6 +217,12 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.current_age = response.data;
 					$scope.checkingLocation = false;
 				}
+				else if (loc == "Ganondorf Hint") {
+					$scope.headline = `Ha ha ha...You'll never beat me by reflecting my lightning bolts and unleashing the arrows from ${response.data.light_arrow_region}!`
+					$scope.known_hints = response.data.known_hints;
+					$scope.checked_locations.push(loc);
+					$scope.checkingLocation = false;
+				}
 				else if (loc == "Ganon") {
 					$scope.finished = response.data.finished;
 					$scope.playtime = response.data.playtime;

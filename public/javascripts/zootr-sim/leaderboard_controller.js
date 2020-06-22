@@ -29,7 +29,11 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 	$scope.get_entries = function(count, sort_field, ascdesc, page, search_name = "") {
 		$scope.loading = true;
 		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}?name=${search_name}`).then(function (response) {
-			if (response.data.entries.length > 0) {
+			if (response.data.entries.length == 0) {
+				$scope.load_error = "No entries found.";
+			}
+			else {
+				$scope.load_error = "";
 				$scope.current_sort = sort_field;
 				$scope.sort_direction = ascdesc;
 				$scope.current_page = page;
@@ -49,6 +53,7 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 			$scope.loading = false;
 		}, function (error) {
 			$scope.loading = false;
+			$scope.load_error = "Unknown error. Please try again and report if this persists.";
 			console.error(error);
 		});
 	}

@@ -45,6 +45,8 @@ html
 						tr(ng-show="loading")
 							td(colspan="{{fields.length}}").skeleton
 						- }
+				br
+				.error(ng-if="load_error") {{load_error}}
 		+angular
 		+localforage
 		script var total_entries = #{count};

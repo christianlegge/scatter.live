@@ -52,7 +52,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 
 	$document[0].onclick = function(event) {
 		if (event.target.id != "reset" && !document.getElementsByClassName("modal-content")[0].contains(event.target)) {
-			$scope.show_throwaway_modal(false);
+			$scope.show_modal("throwAwayModal", false);
 		}
 	};
 
@@ -60,7 +60,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		$http.get("/zootr-sim/getmwgames").then(function (response) {
 			$scope.mwgames = response.data;
 		}, function (error) {
-
+			$scope.lobbies_error = "Error! Could not load multiworld games. Refresh to try again.";
 		});
 	};
 
@@ -115,6 +115,9 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			$scope.current_mw_lobby = id;
 			$scope.current_mw_game = $scope.mwgames.filter(x => x.id == id)[0];
 			$scope.subscribe_lobby(id);
+		}, function(error) {
+			console.error(error);
+			$scope.show_modal("lobbyLoadErrorModal", true);
 		});
 	}
 
@@ -127,18 +130,40 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	}
 
 	$scope.ready_up = function(id) {
-		$http.get(`/zootr-sim/readyup/${id}`);
+		if ($scope.readying) {
+			return;
+		}
+		$scope.readying = true;
+		$http.get(`/zootr-sim/readyup/${id}`).then(function(result) {
+			$scope.lobby_error = "";
+			$scope.readying = false;
+		}, function(error) {
+			$scope.readying = false;
+			console.error(error);
+			$scope.lobby_error = "Error! Could not ready up. Please try again and report if this persists.";
+		});
 	}
 
 	$scope.join_lobby = function(id, name) {
+		if ($scope.joining) {
+			return;
+		}
+		$scope.joining = true;
 		$http.get(`/zootr-sim/joinlobby/${id}/${name}`).then(function(response) {
 			$scope.playthroughId = response.data;
 			localforage.setItem("playthroughId", response.data);
+			$scope.joining = false;
+			$scope.lobby_error = "";
+		}, function(error) {
+			console.error(error);
+			$scope.lobby_error = "Error! Could not join game. Please try again and report if this persists.";
+			$scope.joining = false;
 		});
 	}
 
 	$scope.getAvailableLocations = function() {
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
+			$scope.locations_error = "";
 			$scope.available_hints = response.data.locations.filter(x => x.includes("Gossip Stone"));
 			$scope.available_skulltulas = response.data.locations.filter(x => x.startsWith("GS "));
 			$scope.available_locations = response.data.locations.filter(x => !$scope.available_skulltulas.includes(x) && !$scope.available_hints.includes(x));
@@ -148,14 +173,17 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			}
 		}, function(error) {
 			console.error(error);
+			$scope.locations_error = "Error! Could not retrieve locations. Refresh to try again and report if this persists.";
 		});
 	}
 	
 	$scope.getAvailableEntrances = function() {
 		$http.get(`/zootr-sim/getentrances/${$scope.playthroughId}/${$scope.current_region}`).then(function (response) {
 			$scope.available_entrances = response.data;
+			$scope.entrances_error = "";
 		}, function (error) {
 			console.error(error);
+			$scope.entrances_error = "Error! Could not retreive entrances. Refresh to try again and report if this persists.";
 		});
 	};
 
@@ -260,14 +288,12 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				}
 				else {
 					console.error(error);
+					$scope.headline = "Unknown error. Try again and report if this persists.";
 				}
 				if (el) {
 					el.classList.remove('loadinglink');
 				}
 				$scope.checkingLocation = false;
-			}).catch(function(error) {
-				$scope.checkingLocation = false;
-				console.error(error);
 			});
 		}
 	};
@@ -313,6 +339,7 @@ $scope.peekAt = function(loc) {
 			}
 			else {
 				console.error(error);
+				$scope.headline = "Unknown error. Try again and report if this persists.";
 			}
 			el.classList.remove('loadinglink');
 			$scope.peeking = false;
@@ -386,6 +413,7 @@ $scope.hasBossKey = function(dungeon) {
 					el.style.animation = null;
 				}
 				else {
+					$scope.headline = "Unknown error. Try again and report if this persists.";
 					console.error(err);
 				}
 				$scope.takingEntrance = false;
@@ -565,28 +593,8 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	}
 
-	$scope.show_throwaway_modal = function (show) {
-		var el = document.getElementById("throwAwayModal");
-		if (show) {
-			el.classList.remove("hidden");
-		}
-		else {
-			el.classList.add("hidden");
-		}
-	}
-
-	$scope.show_logic_warning_modal = function (show) {
-		var el = document.getElementById("logicWarningModal");
-		if (show) {
-			el.classList.remove("hidden");
-		}
-		else {
-			el.classList.add("hidden");
-		}
-	}
-
-	$scope.show_missed_items_modal = function (show) {
-		var el = document.getElementById("missedItemsModal");
+	$scope.show_modal = function (id, show) {
+		var el = document.getElementById(id);
 		if (show) {
 			el.classList.remove("hidden");
 		}
@@ -603,7 +611,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.finished = false;
 		$scope.shops = {};
 		$scope.current_mw_lobby = null;
-		$scope.show_throwaway_modal(false);
+		$scope.show_modal("throwAwayModal", false);
 		localforage.setItem("playthroughId", null);
 	};
 
@@ -617,6 +625,10 @@ $scope.hasBossKey = function(dungeon) {
 				if (error.status == 403) {
 					$scope.lb_error = "Run already named!";
 				}
+				else {
+					console.error(error);
+					$scope.lb_error = "Unknown error! Please try again and report if this persists.";
+				}
 				$scope.submitting = false;
 			});
 		}
@@ -628,6 +640,7 @@ $scope.hasBossKey = function(dungeon) {
 			var el = document.getElementById("faroreswind");
 			el.classList.add('loadinglink');
 			$http.get(`/zootr-sim/setwind/${$scope.playthroughId}/${$scope.current_age}/${$scope.current_region}`).then(function(response) {
+				$scope.wind_error = "";
 				$scope.setting_wind = false;
 				if ($scope.current_age == "child") {
 					$scope.child_wind = $scope.current_region;
@@ -641,6 +654,7 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.setting_wind = false;
 				var el = document.getElementById("faroreswind");
 				el.classList.remove('loadinglink');
+				$scope.wind_error = "Unknown error! Try again and report if this persists.";
 			});
 		}
 	};
@@ -651,6 +665,7 @@ $scope.hasBossKey = function(dungeon) {
 			var el = document.getElementById("faroreswind");
 			el.classList.add('loadinglink');
 			$http.get(`/zootr-sim/recallwind/${$scope.playthroughId}/${$scope.current_age}`).then(function (response) {
+				$scope.wind_error = "";
 				$scope.current_region = response.data;
 				$scope.getAvailableLocations();
 				$scope.getAvailableEntrances();
@@ -667,6 +682,7 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.setting_wind = false;
 				var el = document.getElementById("faroreswind");
 				el.classList.remove('loadinglink');
+				$scope.wind_error = "Unknown error! Try again and report if this persists.";
 			});
 		}
 	};
@@ -777,6 +793,10 @@ $scope.hasBossKey = function(dungeon) {
 			if (error.status == 404) {
 				$scope.loadError = "Playthrough not found.";
 			}
+			else {
+				console.error(error);
+				$scope.loadError = "Unknown error while loading playthrough. Please report if this persists.";
+			}
 		});
 	};
 
@@ -823,7 +843,7 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		if (data.missed_items && data.missed_items.length > 0) {
 			$scope.missed_items = data.missed_items.map(x => `Received from ${x.from}: ${x.item}`);
-			$scope.show_missed_items_modal(true);
+			$scope.show_modal("missedItemsModal", true);
 		}
 	}
 	
@@ -838,10 +858,11 @@ $scope.hasBossKey = function(dungeon) {
 			method: 'GET',
 			url: url
 		}).then(function successCallback(response) {
+			$scope.generationError = "";
 			if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
 				$scope.init_data = response.data;
 				$scope.logic_rules = response.data.logic_rules;
-				$scope.show_logic_warning_modal(true);
+				$scope.show_modal("logicWarningModal", true);
 			}
 			else {
 				$scope.initializeFromServer(response["data"]);
@@ -865,7 +886,8 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.generationError = "Error! 502 Bad Gateway response from ootrandomizer.com.";
 			}
 			else {
-				$scope.generationError = "Unknown error (please report this!): " + response.data;
+				$scope.generationError = "Unknown error. Please try again and report if this persists.";
+				console.error(response);
 			}
 		});
 	};
@@ -875,6 +897,7 @@ $scope.hasBossKey = function(dungeon) {
 		reader.onload = function(e) {
 			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
+				$scope.uploadError = "";
 				$scope.uploading = false;
 				if (response.data.multiworld_id) {
 					$scope.load_lobby(response.data.multiworld_id);
@@ -883,7 +906,7 @@ $scope.hasBossKey = function(dungeon) {
 					if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
 						$scope.init_data = response.data;
 						$scope.logic_rules = response.data.logic_rules;
-						$scope.show_logic_warning_modal(true);
+						$scope.show_modal("logicWarningModal", true);
 					}
 					else {
 						$scope.initializeFromServer(response["data"]);
@@ -898,7 +921,7 @@ $scope.hasBossKey = function(dungeon) {
 					$scope.uploadError = "Error! Parsing file failed. If this is a v5.2 spoiler log, please report this."
 				}
 				else {
-					$scope.uploadError = "Unknown error (please report this!): " + response;
+					$scope.uploadError = "Unknown error. Please try again and report if this persists.";
 					console.error(response);
 				}
 			});
@@ -927,6 +950,7 @@ $scope.hasBossKey = function(dungeon) {
 				}
 				else {
 					console.error(error);
+					$scope.headline = "Unknown error. Please try again and report if this persists.";
 				}
 				$scope.checkingLocation = false;
 			})

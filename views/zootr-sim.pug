@@ -85,6 +85,8 @@ html
 							td {{game.current_players}}/{{game.total_players}}
 							td {{game.age}}
 				br
+				.error(ng-if="lobbies_error") {{lobbies_error}}
+				br
 				.loadfromid
 					p Load from Playthrough ID
 					form(ng-submit="resumeFromId(loadFormId)")
@@ -110,6 +112,7 @@ html
 							input(type="text",placeholder="Name",ng-model="lobby_name")
 						td
 							a.button(ng-click="join_lobby(current_mw_lobby, lobby_name)") Join
+				.error(ng-if="lobby_error") {{lobby_error}}
 			span(ng-if="playing && !finished")
 				span {{(now - start_time) | formatDuration}}
 				br
@@ -132,6 +135,7 @@ html
 					br
 					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && child_wind == '') || (current_age == 'adult' && adult_wind == ''))", ng-click="setWind()")#faroreswind Set Wind
 					a(ng-if="current_items.includes('Farores Wind') && current_items.includes('Magic Meter') && ((current_age == 'child' && child_wind != '') || (current_age == 'adult' && adult_wind != ''))", ng-click="recallWind()")#faroreswind Recall Wind ({{current_age == 'child' ? child_wind : adult_wind}})
+					.error(ng-if="wind_error") {{wind_error}}
 				.main.current
 					.currentinner
 						p Current Region: {{current_region}} [{{current_age}}]
@@ -140,9 +144,11 @@ html
 							br
 						span(ng-repeat-end,ng-if="checked_locations.includes(loc)", class="checked") {{ loc }}
 							br
+						.error(ng-if="locations_error") {{locations_error}}
 						br
 						a(ng-repeat="entrance in available_entrances",ng-click="takeEntrance(entrance)",id="{{entrance}}").entrance -> To {{entrance}}
 							br
+						.error(ng-if="entrances_error") {{entrances_error}}
 						p(ng-if="collected_warps.length > 0") WARPS 
 						a(ng-repeat="warp in collected_warps",ng-click="takeEntrance(warp)",id="{{warp}}").entrance -> Play {{warp}}
 							br
@@ -197,7 +203,7 @@ html
 				br
 				br
 				p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
-				a.button#reset(ng-click="show_throwaway_modal(true)")
+				a.button#reset(ng-click="show_modal('throwAwayModal', true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")
 				h1 Congratulations!
@@ -250,15 +256,20 @@ html
 				h1 Hold up!
 				p This seed uses {{logic_rules == "none" ? "no" : logic_rules}} logic, and the sim will enforce logic!
 				p In all likelihood, most checks will be unobtainable. Only continue if you know what you're doing!
-				a.button.red(ng-click="show_logic_warning_modal(false)")
+				a.button.red(ng-click="show_modal('logicWarningModal', false)")
 					| Never mind
-				a.button.blue(ng-click="show_logic_warning_modal(false); initializeFromServer(init_data);")
+				a.button.blue(ng-click="show_modal('logicWarningModal', false); initializeFromServer(init_data);")
 					| I know what I'm doing
 		.modal.hidden#missedItemsModal
 			.modal-content
 				h2 While you were away
 				p(ng-repeat="item in missed_items") {{item}}
-				a.button.blue(ng-click="show_missed_items_modal(false)") OK
+				a.button.blue(ng-click="show_modal('missedItemsModal', false)") OK
+		.modal.hidden#lobbyLoadErrorModal
+			.modal-content
+				p Error loading multiworld game.
+				p Please try again and report if this persists.
+				a.button.red(ng-click="show_modal('lobbyLoadErrorModal', false)") OK
 		+jquery
 		+localforage
 		+filesaver

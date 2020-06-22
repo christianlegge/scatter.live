@@ -1122,7 +1122,6 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.headline = response.data.text;
 				$scope.known_hints = response.data.known_hints;
 				$scope.checked_locations.push(stone);
-				$scope.current_subregion = response.data.subregion;
 				$scope.bombchu_count = response.data.bombchu_count;
 				$scope.checkingLocation = false;
 			}, function(error) {

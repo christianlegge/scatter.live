@@ -565,8 +565,6 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 		}
 		if (simHelper.canCheckLocation(result, req.params["stone"])) {
 			var hint = simHelper.getHint(result, req.params["stone"]);
-			var subregion = simHelper.subregionFromLocation(req.params.stone);
-			result.current_subregion = subregion;
 			if (result.known_hints.has(hint.hint[0])) {
 				var arr = result.known_hints.get(hint.hint[0]);
 				arr.push(hint.hint[1]);
@@ -580,7 +578,7 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 			}
 			result.checked_locations.push(req.params["stone"]);
 			result.save();
-			res.send({ text: hint.hint_text, subregion: subregion, bombchu_count: result.bombchu_count, known_hints: result.known_hints });
+			res.send({ text: hint.hint_text, bombchu_count: result.bombchu_count, known_hints: result.known_hints });
 		}
 		else {
 			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.stone));

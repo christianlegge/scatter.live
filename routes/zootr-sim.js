@@ -381,7 +381,7 @@ router.get('/resume', async function(req, res, next) {
 			playing: mw_doc ? mw_doc.active : true,
 			multiworld_id: result.multiworld_id,
 			id: result._id,
-			players: mw_doc.players,
+			players: mw_doc ? mw_doc.players : [],
 			in_mw_party: mw_doc ? true : false,
 			hash: result.hash,
 			locations: result.locations ? Array.from(result.locations.keys()) : null,

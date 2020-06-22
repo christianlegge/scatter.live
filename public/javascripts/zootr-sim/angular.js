@@ -65,11 +65,6 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	};
 
 	$scope.get_lobbies();
-	
-	/*var source = new EventSource("/zootr-sim/multiworldconnect");
-	source.onmessage = function(event) {
-		$scope.event = event.data;
-	};*/
 
 	$scope.known_medallions = {};
 	$scope.current_items = [];
@@ -143,9 +138,6 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	}
 
 	$scope.getAvailableLocations = function() {
-		if (!$scope.playing) {
-			return [];
-		}
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
 			$scope.available_hints = response.data.locations.filter(x => x.includes("Gossip Stone"));
 			$scope.available_skulltulas = response.data.locations.filter(x => x.startsWith("GS "));
@@ -186,11 +178,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		"Goron Tunic", "Zora Tunic", "Hover Boots", "Progressive Scale", "Child Trade", "Song of Time", "Nocturne of Shadow",
 		"Deku Shield", "Hylian Shield", "Mirror Shield", "Bombchus", "Adult Trade", "Song of Storms", "Prelude of Light", 
 	];
-	
-	$scope.buildRoute = function() {
-		return $scope.route.replace(/(?:\r\n|\r|\n)/g, '<br/>');
-	};
-	
+
 	$scope.checkLocation = function(loc) {
 		if ($scope.checked_locations.includes(loc)) {
 			return;
@@ -282,113 +270,22 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				console.error(error);
 			});
 		}
-		return;
-		if (loc in logic[$scope.current_region] && !parseLogicRule(logic[$scope.current_region][loc])) {
-			if (loc != "Treasure Chest Game" || Math.floor(Math.random() * 32) > 0) {
-				$scope.headline = logic[$scope.current_region][loc];
-				var el = document.getElementById(loc);
-				el.classList.add('logicfailed-anim');
-				el.style.animation = 'none';
-				el.offsetHeight;
-				el.style.animation = null;
-				return;
-			}
-		}
-		$scope.actions.push('Location:' + loc);
-		if (loc.startsWith('Check Pedestal')) {
-			$scope.checkedLocations.push(loc);
-			if ($scope.current_age == 'adult') {
-				$scope.checkedLocations.push('Check Pedestal (Stones)');
-			}
-			for (var key in $scope.medallions) {
-				if (!$scope.current_items.includes($scope.medallions[key])) {
-					if ($scope.medallions[key].includes('Medallion')) {
-						if ($scope.current_age == 'adult') {
-							$scope.known_medallions[key] = $scope.medallions[key];
-						}
-					}
-					else {
-						$scope.known_medallions[key] = $scope.medallions[key];
-					}
-				}
-			}
-		}
-		else if (loc == 'Light Arrows Hint') {
-			$scope.checkedLocations.push(loc);
-			var lightlocation = Object.keys($scope.allLocations).find(key => $scope.allLocations[key] === 'Light Arrows');
-			var lighthint = Object.keys(locationsByRegionAdult).find(key => locationsByRegionAdult[key].includes(lightlocation));
-			if (typeof lighthint == 'undefined') {
-				lighthint = Object.keys(locationsByRegionChild).find(key => locationsByRegionChild[key].includes(lightlocation));
-			}
-			if (!(lighthint in $scope.knownHints)) {
-				$scope.knownHints[lighthint] = ['Light Arrows'];
-			}
-			else {
-				$scope.knownHints[lighthint].push('Light Arrows');
-			}
-			$scope.headline = 'Ha ha ha... You\'ll never beat me by reflecting my lightning bolts and unleashing the arrows from '+lighthint+'!';
-			$scope.route += 'Light Arrows Hint ('+lighthint+')\n';
-		}
-		else if (loc == 'Ganon') {
-			if (false && !$scope.current_items.includes('Light Arrows')) {
-				$scope.actions.pop();
-				$scope.headline = 'Not without Light Arrows!';
-			}
-			else {
-				$scope.finished = true;
-				$scope.route += 'Ganon\n';
-			}
-		}
-		else if (!(loc in $scope.allLocations) && loc.startsWith('GS ')) {
-			$scope.current_items.push('Gold Skulltula Token');
-			$scope.itemCounts['Gold Skulltula Token']++;
-			$scope.checkedLocations.push(loc);
-		}
-
-		else {
-			$scope.numChecksMade++;
-			
-			$scope.checkedLocations.push(loc);
-			var item = $scope.allLocations[loc];
-			if (item.includes('[Costs')) {
-				item = item.split('[Costs')[0].trim();
-			}
-			$scope.current_items.push(item);
-			$scope.route += loc + (importantItems.includes(item) ? ' ('+item+')' : '') + '\n';
-			//$scope.headline = loc + ': ' + item;
-			$scope.headline = logic[$scope.current_region][loc];
-			$scope.itemCounts[item]++;
-			
-			if (loc in bosses) {
-				$scope.known_medallions[bosses[loc]] = item;
-			}
-			
-			if (loc in regionChangingChecks) {
-				$scope.current_region = regionChangingChecks[loc];
-			}
-			
-			if (warpSongs.includes(item)) {
-				$scope.collectedWarps.push(item);
-			}
-		}
-
-		$scope.updateForage();
 	};
 	
 	$scope.hasKeys = function(dungeon) {
-	return dungeon in {
-		'Forest Temple':0,
-		'Fire Temple':0,
-		'Water Temple':0,
-		'Shadow Temple':0,
-		'Spirit Temple':0,
-		'Spirit Temple':0,
-		'Bottom of the Well':0,
-		'Gerudo Fortress':0,
-		'Gerudo Training Grounds':0,
-		'Ganons Castle':0
+		return [
+			'Forest Temple',
+			'Fire Temple',
+			'Water Temple',
+			'Shadow Temple',
+			'Spirit Temple',
+			'Spirit Temple',
+			'Bottom of the Well',
+			'Gerudo Fortress',
+			'Gerudo Training Grounds',
+			'Ganons Castle',
+		].includes(dungeon);
 	};
-};
 
 $scope.peekAt = function(loc) {
 	if (!$scope.peeking) {
@@ -494,40 +391,6 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.takingEntrance = false;
 			})
 		}
-		return;
-		$scope.actions.push('Entrance:' + $scope.current_region + ':' + entrance);
-		if (entrance == 'Pull Master Sword') {
-			$scope.currentAdult++;
-			$scope.route += '\n---- ADULT ' + $scope.currentAdult + ' ----\n\n';
-			$scope.current_age = 'adult';
-		}
-		else if (entrance == 'Place Master Sword') {
-			$scope.currentChild++;
-			$scope.route += '\n---- CHILD ' + $scope.currentChild + ' ----\n\n';
-			$scope.current_age = 'child';
-		}
-		else if (entrance == 'Savewarp child') {
-			$scope.current_region = 'Kokiri Forest';
-			$scope.route += 'Savewarp\n';
-		}
-		else if (entrance == 'Savewarp adult') {
-			$scope.current_region = 'Temple of Time';
-			$scope.route += 'Savewarp\n';
-		}
-		else if (entrance in songTargets) {
-			$scope.current_region = songTargets[entrance];
-			$scope.route += 'Play ' + entrance + '\n';
-		}
-		else if ($scope.current_region == 'Kokiri Forest' && entrance == 'Hyrule Field' && $scope.current_age == 'child' && !$scope.checked_locations.includes('Gift from Saria')) {
-			$scope.checkLocation("Gift from Saria");
-			$scope.current_region = "Hyrule Field";
-		}
-		else {
-			$scope.current_region = entrance;
-		}
-		$scope.getAvailableLocations();
-		$scope.getAvailableEntrances();
-		$http.get(`/zootr-sim/updateregion/${$scope.playthroughId}/${$scope.current_region}/${$scope.current_age}`);
 	};
 	
 	$scope.dungeongrid = [
@@ -743,10 +606,6 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.show_throwaway_modal(false);
 		localforage.setItem("playthroughId", null);
 	};
-	
-	$scope.countItem = function(item) {
-		return 0;
-	};
 
 	$scope.submitToLb = function(name) {
 		if (!$scope.submitting) {
@@ -812,11 +671,6 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	};
 	
-	$scope.downloadSpoilerLog = function() {
-		var blob = new Blob([JSON.stringify($scope.currentSpoilerLog, null, '\t')], {type: "application/json"});
-		window.saveAs(blob, $scope.currentSeed + "-spoiler.json");
-	};
-	
 	$scope.codeToImage = {
 		'Ocarina': ['fairyocarina.png', 'fairyocarina.png', 'ocarina.png'],
 		'Slingshot': ['slingshot.png', 'sling3.png', 'sling4.png', 'sling5.png'],
@@ -862,8 +716,6 @@ $scope.hasBossKey = function(dungeon) {
 	
 	$scope.settingsPreset = '';
 	
-	$scope.result = '';
-	
 	$scope.hashImages = {
 		'Deku Stick': 'stick.png',
 		'Deku Nut': 'nut.png',
@@ -906,64 +758,6 @@ $scope.hasBossKey = function(dungeon) {
 	
 	$scope.presetSelected = function() {
 		$scope.settingsString = $scope.settingsPreset;
-	};
-	
-	$scope.currentShop = function() {
-		if ($scope.current_region == 'Kokiri Forest') {
-			return 'Kokiri Shop';
-		}
-		else if ($scope.current_region == 'Market') {
-			if ($scope.currentOtherShop == 'Castle Town Potion Shop' || $scope.currentOtherShop == 'Bombchu Shop') {
-				return $scope.currentOtherShop;
-			}
-			else {
-				return 'Castle Town Bazaar';
-			}
-		}
-		else if ($scope.current_region == 'Kakariko Village') {
-			if ($scope.currentOtherShop == 'Kakariko Potion Shop') {
-				return $scope.currentOtherShop;
-			}
-			else {
-				return 'Kakariko Bazaar';
-			}
-		}
-		else if ($scope.current_region == 'Goron City') {
-			return 'Goron Shop';
-		}
-		else if ($scope.current_region == 'Zoras Domain') {
-			return 'Zora Shop';
-		}
-		else {
-			return '';
-		}
-	}
-	
-	$scope.currentOtherShop = '';
-	
-	$scope.otherShops = function() {
-		if ($scope.current_region == 'Market') {
-			if ($scope.currentOtherShop == 'Castle Town Potion Shop') {
-				return ['Castle Town Bazaar', 'Bombchu Shop'];
-			}
-			else if ($scope.currentOtherShop == 'Bombchu Shop') {
-				return ['Castle Town Bazaar', 'Castle Town Potion Shop'];
-			}
-			else {
-				return ['Castle Town Potion Shop', 'Bombchu Shop'];
-			}
-		}
-		else if ($scope.current_region == 'Kakariko Village') {
-			if ($scope.currentOtherShop == 'Kakariko Potion Shop') {
-				return ['Kakariko Bazaar'];
-			}
-			else {
-				return ['Kakariko Potion Shop'];
-			}
-		}
-		else {
-			return [];
-		}
 	};
 	
 	$scope.setShop = function(shop) {
@@ -1084,9 +878,6 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.uploading = false;
 				if (response.data.multiworld_id) {
 					$scope.load_lobby(response.data.multiworld_id);
-					//$scope.playthroughId = response.data.id;
-					//localforage.setItem("playthroughId", $scope.playthroughId);
-					//console.log(response);
 				}
 				else {
 					if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
@@ -1140,38 +931,6 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.checkingLocation = false;
 			})
 		}
-		return;
-		var hint = '';
-		if (stone == 'Generic Grotto') {
-			hint = $scope.gossipHints[stone];
-			$scope.checkedHints.push(stone);
-		}
-		else {
-			hint = $scope.gossipHints[$scope.current_region][stone];
-			$scope.checkedHints.push($scope.current_region + ' ' + stone);
-		}
-		
-		var hintInfo = parseHint(hint);
-		var hintLoc = hintInfo[0];
-		var hintItem = hintInfo[1];
-		
-		$scope.actions.push('Hint:' + stone + ':' + hintLoc);
-		
-		if (hintLoc.includes("/")) {
-			hintLoc = hintLoc.split("/")[0] in $scope.allLocations ? hintLoc.split("/")[0] : hintLoc.split("/")[1];
-		}
-		
-		if (hintLoc != '' && hintItem != '') {
-			if (!(hintLoc in $scope.knownHints)) {
-				$scope.knownHints[hintLoc] = [hintItem];
-			}
-			else {
-				$scope.knownHints[hintLoc].push(hintItem);
-			}
-		}
-		
-		$scope.headline = hint;
-		$scope.updateForage();
 	};
 	
 	$scope.playing = false;
@@ -1206,47 +965,6 @@ $scope.hasBossKey = function(dungeon) {
 		'Kakariko Potion Shop': 'marketpotionnpc.png',
 		'Zora Shop': 'zoranpc.png',
 		'Goron Shop': 'goronnpc.png',
-	};
-	
-	var getShop = function(location) {
-		var shop = location.split('Item')[0].trim();
-		if (['Kokiri Shop', 'Castle Town Bazaar', 'Castle Town Potion Shop', 'Bombchu Shop', 'Kakariko Bazaar', 'Kakariko Potion Shop', 'Goron Shop', 'Zora Shop'].includes(shop)) {
-			return shop;
-		}
-		else {
-			return '';
-		}
-	};
-	
-	$scope.buyItem = function(ind) {
-		if ($scope.shopContents[$scope.currentShop()][ind].bought) {
-			return;
-		}
-		$scope.actions.push('Buy:' + $scope.currentShop() + ':' + ind);
-		var item = $scope.shopContents[$scope.currentShop()][ind].item;
-		if (!$scope.shopContents[$scope.currentShop()][ind].refill) {
-			$scope.checkedLocations.push("shopitem|" + $scope.currentShop() + "|" + ind);
-			$scope.shopContents[$scope.currentShop()][ind].bought = true;
-		
-			$scope.numChecksMade++;
-			
-			if (importantItems.includes(item)) {
-				$scope.route += 'Bought ' + item + ' from ' + $scope.currentShop() + '\n';
-			}
-		
-			
-			if (warpSongs.includes(item)) {
-				$scope.collectedWarps.push(item);
-			}
-			
-			if ($scope.checkedLocations.length >= 2) {
-				$scope.disableUndo = false;
-			}
-		}
-		$scope.current_items.push(item);
-		$scope.headline = $scope.currentShop() + ': ' + item;
-		$scope.itemCounts[item]++;
-		$scope.updateForage();
 	};
 
 	localforage.getItem("playthroughId").then(function (result) {

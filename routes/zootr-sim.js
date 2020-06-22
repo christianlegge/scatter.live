@@ -9,7 +9,6 @@ var leaderboardModel = require('../models/SimLeaderboardModel.js');
 var multiworldModel = require('../models/MultiworldPlaythroughModel.js');
 var mongoose = require('mongoose');
 const MultiworldPlaythroughModel = require('../models/MultiworldPlaythroughModel.js');
-const { response } = require('express');
 
 function regexEscape(str) {
 	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -33,25 +32,6 @@ function notify_lobby(id, message) {
 	}
 	lobby_callbacks[id].forEach(function (callback) {
 		callback(message);
-	});
-}
-
-if (process.env.DEBUG) {
-	router.get("/populatelb", function(req, res, next) {
-		for (var i = 0; i < 200; i++) {
-			var total_checks = Math.floor(Math.random() * 200 + 200);
-			var checked_locations = Math.floor(Math.random() * total_checks);
-			var lb = new leaderboardModel({
-				name: Math.random().toString(36).substring(7),
-				checked_locations: checked_locations,
-				total_locations: total_checks,
-				settings: {},
-				playtime: Math.floor(Math.random() * 86400),
-				finish_date: Math.floor(Math.random() * 1000000000 + Date.now()),
-			});
-			lb.save();
-		}
-		res.send("Success");
 	});
 }
 
@@ -586,15 +566,6 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 	});
 });
 
-router.get('/updateregion/:playthroughId/:region/:age', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		result.current_region = req.params["region"];
-		result.current_age = req.params["age"];
-		result.save();
-		res.sendStatus(200);
-	});
-});
-
 router.get('/submitname/:playthroughId/:name', function (req, res, next) {
 	leaderboardModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
 		if (!result.name) {
@@ -634,17 +605,6 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 		}
 	});
 })
-
-router.get('/testallrules', function (req, res, next) {
-	playthroughModel.findOne({ _id: "5edd858f985c1a72d9ea49bf" }, function (err, result) {
-		try {
-			res.send(simHelper.testAllRules(result));
-		}
-		catch (err) {
-			res.send(err);
-		}
-	});
-});
 
 router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
 	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
@@ -729,10 +689,6 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 		}
 	});
 })
-
-router.get('/badgateway', function(req, res, next) {
-	res.sendStatus(502);
-});
 
 router.get('/getspoiler', function(req, res, next) {
 	if (req.query.valid) {

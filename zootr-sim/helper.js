@@ -532,7 +532,6 @@ function parseLogicRule(save_file, rule) {
 	var items = save_file["current_items"];
 	var settings = save_file["settings"];
 	var age = save_file["current_age"];
-	var checked_locations = save_file["checked_locations"];
 	var logicEvaluation = {
 		True: () => true,
 		False: () => false,
@@ -702,11 +701,7 @@ function parseLogicRule(save_file, rule) {
 	}
 
 	rule = rule.trim();
-	var stack = [];
 	var it = 0;
-	var curChar = ' ';
-	var curWord = '';
-	var leftToConsume = rule;
 
 	function evaluate(term, params = []) {
 		if (term.includes("Small_Key") || term.includes("Boss_Key") || term.startsWith("logic_")) {
@@ -724,7 +719,6 @@ function parseLogicRule(save_file, rule) {
 
 	function getChar(n = 1) {
 		it += n;
-		leftToConsume = rule.substring(it, rule.length);
 		return rule.substring(it - n, it);
 	}
 
@@ -1046,66 +1040,6 @@ function isEssentialItem(item) {
 	return essential_items.includes(item) || item.includes("Bombchu") || item.includes("Ocarina") || item.includes("Bottle");
 }
 
-function testAllRules(save_file) {
-	var subsobj = {};
-	for (region in logic) {
-		var subs = [];
-		var subregions = logic[region];
-		if ("vanilla" in logic[region]) {
-			subregions = logic[region]["vanilla"];
-		}
-		for (subregion in subregions) {
-			subs.push(subregion);
-		}
-		subsobj[region] = subs;
-	}
-	return JSON.stringify(subsobj, null, '\t');
-	var eventsRules = [];
-	for (region in logic) {
-		if (region == "defaultAreas") {
-			continue;
-		}
-		var subregions = logic[region];
-		if ("vanilla" in logic[region]) {
-			subregions = logic[region]["vanilla"];
-		}
-		for (subregion in subregions) {
-			/*if ("exits" in subregions[subregion]) {
-				for (exit in subregions[subregion]["exits"]) {
-					try {
-						parseLogicRule(save_file, subregions[subregion]["exits"][exit]);
-					}
-					catch (err) {
-						return err;
-					}
-				}
-			}
-			if ("locations" in subregions[subregion]) {
-				for (location in subregions[subregion]["locations"]) {
-					try {
-						parseLogicRule(save_file, subregions[subregion]["locations"][location]);
-					}
-					catch (err) {
-						return err;
-					}
-				}
-			}*/
-			if ("events" in subregions[subregion]) {
-				for (event in subregions[subregion]["events"]) {
-					try {
-						eventsRules.push(`"${event}": () => parseLogicRule(save_file, "can_reach(${subregion}) and (${subregions[subregion]["events"][event]})"),`);
-					}
-					catch (err) {
-						return err;
-					}
-				}
-			}
-		}
-	}
-	return eventsRules.join('\n');
-	return "Success";
-}
-
 var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganondorf Hint", "Ganon"];
 
 function getLocations(save_file, region) {
@@ -1335,7 +1269,6 @@ module.exports.getShops = getShops;
 module.exports.getEntrances = getEntrances;
 module.exports.buildRule = buildRule;
 module.exports.parseLogicRule = parseLogicRule;
-module.exports.testAllRules = testAllRules;
 module.exports.getHint = getHint;
 module.exports.getParentRegion = getParentRegion;
 module.exports.checkPedestal = checkPedestal;

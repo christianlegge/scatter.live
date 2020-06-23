@@ -1,7 +1,5 @@
 var express = require('express');
-var path = require('path');
 var request = require('request');
-var uuid = require('uuid');
 var simHelper = require("../zootr-sim/helper.js");
 var router = express.Router();
 var playthroughModel = require('../models/SimPlaythroughModel.js');
@@ -227,32 +225,55 @@ router.get('/', function(req, res, next) {
 
 router.get('/getmwgames', function (req, res, next) {
 	multiworldModel.find({ active: false }).sort({ created_at: "desc" }).then(function (result) {
-		var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: x.players.length > 0 ? x.players[0].name : "-", age: toAgeString(x.created_at) }));
+		try {
+			var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: x.players.length > 0 ? x.players[0].name : "-", age: toAgeString(x.created_at) }));
+		}
+		catch(error) {
+			res.status(500).send(error);
+		}
 		res.send(games);
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/getlobbyinfo/:id', function (req, res, next) {
 	multiworldModel.findById(req.params.id).then(function (result) {
-		res.send(result.players);
+		try {
+			res.send(result.players);
+		}
+		catch(error) {
+			res.status(500).send(error);
+		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/readyup/:id', async function (req, res, next) {
 	playthroughModel.findById(req.params.id).then(function (result) {
 		multiworldModel.findById(result.multiworld_id).then(async function(mw) {
-			mw.players.filter(x => x.id == req.params.id)[0].ready = true;
-			mw.save();
-			if (mw._id in lobby_callbacks) {
-				for (player in lobby_callbacks[mw._id]) {
-					lobby_callbacks[mw._id][player]({ readied: result._id });
+			try {
+				mw.players.filter(x => x.id == req.params.id)[0].ready = true;
+				mw.save();
+				if (mw._id in lobby_callbacks) {
+					for (player in lobby_callbacks[mw._id]) {
+						lobby_callbacks[mw._id][player]({ readied: result._id });
+					}
+				}
+				if (mw.players.length == mw.num_players && mw.players.every(x => x.ready)) {
+					await start_multiworld(mw);
+					notify_lobby(mw._id, {starting: true});
 				}
 			}
-			if (mw.players.length == mw.num_players && mw.players.every(x => x.ready)) {
-				await start_multiworld(mw);
-				notify_lobby(mw._id, {starting: true});
+			catch (error) {
+				res.status(500).send(error);
 			}
+		}, function(error) {
+			res.status(500).send(error);
 		})
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
@@ -261,7 +282,12 @@ router.get('/lobbyconnect/:multi_id/', function (req, res, next) {
 		lobby_callbacks[req.params.multi_id] = [];
 	}
 	var callback = function (message) {
-		res.write(`data: ${JSON.stringify(message)}\n\n`);
+		try {
+			res.write(`data: ${JSON.stringify(message)}\n\n`);
+		}
+		catch (error) {
+			console.error(error);
+		}
 	};
 	lobby_callbacks[req.params.multi_id].push(callback);
 
@@ -274,10 +300,15 @@ router.get('/lobbyconnect/:multi_id/', function (req, res, next) {
 	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
-		var index = lobby_callbacks[req.params.multi_id].indexOf(callback);
-		lobby_callbacks[req.params.multi_id].splice(index, 1);
-		if (lobby_callbacks[req.params.multi_id].length == 0) {
-			delete lobby_callbacks[req.params.multi_id];
+		try {
+			var index = lobby_callbacks[req.params.multi_id].indexOf(callback);
+			lobby_callbacks[req.params.multi_id].splice(index, 1);
+			if (lobby_callbacks[req.params.multi_id].length == 0) {
+				delete lobby_callbacks[req.params.multi_id];
+			}
+		}
+		catch (error) {
+			console.error(error);
 		}
 	});
 });
@@ -287,7 +318,12 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 		multiworld_callbacks[req.params.multi_id] = {};
 	}
 	var callback = function (message) {
-		res.write(`data: ${JSON.stringify(message)}\n\n`);
+		try {
+			res.write(`data: ${JSON.stringify(message)}\n\n`);
+		}
+		catch (error) {
+			console.error(error);
+		}
 	};
 	var mw_doc = await MultiworldPlaythroughModel.findById(req.params.multi_id);
 	var player_num = mw_doc.players.filter(x => x.id == req.params.player_id)[0].num;
@@ -302,39 +338,51 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
-		if (player_num in multiworld_callbacks[req.params.multi_id]) {
-			delete multiworld_callbacks[req.params.multi_id][player_num];
+		try {
+			if (player_num in multiworld_callbacks[req.params.multi_id]) {
+				delete multiworld_callbacks[req.params.multi_id][player_num];
+			}
+			if (Object.keys(multiworld_callbacks[req.params.multi_id]).length == 0) {
+				delete multiworld_callbacks[req.params.multi_id];
+			}
 		}
-		if (Object.keys(multiworld_callbacks[req.params.multi_id]).length == 0) {
-			delete multiworld_callbacks[req.params.multi_id];
+		catch(error) {
+			console.error(error);
 		}
 	});
 });
 
 router.get('/joinlobby/:id/:name', function(req, res, next) {
 	multiworldModel.findById(req.params.id).then(function(result) {
-		if (result.players.length >= result.num_players) {
-			res.sendStatus(400);
-			return;
+		try {
+			if (result.players.length >= result.num_players) {
+				res.sendStatus(400);
+				return;
+			}
+			var new_player = {
+				name: req.params.name,
+				id: new mongoose.Types.ObjectId(),
+				ready: false,
+				num: result.players.length + 1,
+			};
+			var player_doc = new playthroughModel({
+				_id: new_player.id,
+				multiworld_id: result._id,
+			});
+			player_doc.save();
+
+			notify_lobby(result._id, {joined: new_player});
+			
+			result.players.push(new_player);
+			result.save();
+
+			res.send(new_player.id);
 		}
-		var new_player = {
-			name: req.params.name,
-			id: new mongoose.Types.ObjectId(),
-			ready: false,
-			num: result.players.length + 1,
-		};
-		var player_doc = new playthroughModel({
-			_id: new_player.id,
-			multiworld_id: result._id,
-		});
-		player_doc.save();
-
-		notify_lobby(result._id, {joined: new_player});
-		
-		result.players.push(new_player);
-		result.save();
-
-		res.send(new_player.id);
+		catch(error) {
+			res.status(500).send(error);
+		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
@@ -349,380 +397,467 @@ router.get('/resume', async function(req, res, next) {
 			res.sendStatus(404);
 			return;
 		}
-		var percentiles, mw_doc;
-		if (result.finished) {
-			percentiles = await getPercentiles(result);
+		try {
+			var percentiles, mw_doc;
+			if (result.finished) {
+				percentiles = await getPercentiles(result);
+			}
+			if (result.multiworld_id) {
+				mw_doc = await multiworldModel.findById(result.multiworld_id)
+			}
+			var info = {
+				playing: mw_doc ? mw_doc.active : true,
+				multiworld_id: result.multiworld_id,
+				id: result._id,
+				players: mw_doc ? mw_doc.players : [],
+				in_mw_party: mw_doc ? true : false,
+				hash: result.hash,
+				locations: result.locations ? Array.from(result.locations.keys()) : null,
+				current_items: result.current_items,
+				current_age: result.current_age,
+				current_region: result.current_region,
+				current_subregion: result.current_subregion,
+				checked_locations: result.checked_locations,
+				known_hints: result.known_hints,
+				known_medallions: result.known_medallions,
+				bombchu_count: result.bombchu_count,
+				start_time: result.start_time,
+				route: result.route,
+				playtime: result.playtime,
+				finished: result.finished,
+				child_wind: result.child_wind,
+				adult_wind: result.adult_wind,
+				num_checks_made: result.num_checks_made,
+				total_checks: result.total_checks,
+				used_logic: result.use_logic,
+				missed_items: result.missed_items,
+				percentiles: percentiles ? {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)} : null
+			};
+			result.missed_items = [];
+			result.save();
+			res.send(info);
 		}
-		if (result.multiworld_id) {
-			mw_doc = await multiworldModel.findById(result.multiworld_id)
+		catch(error) {
+			res.status(500).send(error);
 		}
-		var info = {
-			playing: mw_doc ? mw_doc.active : true,
-			multiworld_id: result.multiworld_id,
-			id: result._id,
-			players: mw_doc ? mw_doc.players : [],
-			in_mw_party: mw_doc ? true : false,
-			hash: result.hash,
-			locations: result.locations ? Array.from(result.locations.keys()) : null,
-			current_items: result.current_items,
-			current_age: result.current_age,
-			current_region: result.current_region,
-			current_subregion: result.current_subregion,
-			checked_locations: result.checked_locations,
-			known_hints: result.known_hints,
-			known_medallions: result.known_medallions,
-			bombchu_count: result.bombchu_count,
-			start_time: result.start_time,
-			route: result.route,
-			playtime: result.playtime,
-			finished: result.finished,
-			child_wind: result.child_wind,
-			adult_wind: result.adult_wind,
-			num_checks_made: result.num_checks_made,
-			total_checks: result.total_checks,
-			used_logic: result.use_logic,
-			missed_items: result.missed_items,
-			percentiles: percentiles ? {time: (100*percentiles[0]/percentiles[2]).toFixed(2), checks: (100*percentiles[1]/percentiles[2]).toFixed(2)} : null
-		};
-		result.missed_items = [];
-		result.save();
-		res.send(info);
-	
 	});
 });
 
 router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, async function (err, result) {
-		if (result.checked_locations.includes(req.params["location"])) {
-			res.send(400);
-			return;
-		}
-		if (simHelper.canCheckLocation(result, req.params["location"]) || (result.current_age == "child" && req.params["location"] == "Treasure Chest Game" && Math.floor(Math.random() * 32) == 0)) {
-			if (req.params["location"] == "Check Pedestal") {
-				result.known_medallions = simHelper.checkPedestal(result, result.current_age, result.known_medallions);
-				result.save();
-				if (result.current_age == "adult") {
-					result.checked_locations.push("Check Pedestal");
-				}
-				res.send(result.known_medallions);
+	playthroughModel.findById(req.params["playthroughId"]).then(async function (result) {
+		try {
+			if (result.checked_locations.includes(req.params["location"])) {
+				res.send(400);
 				return;
 			}
-			else if (req.params["location"] == "Master Sword Pedestal") {
-				result.current_age = result.current_age == "child" ? "adult" : "child";
-				result.route.push("");
-				if (result.current_age == "child") {
-					result.route.push(`CHILD ${result.route.filter(x => x.includes("CHILD")).length + 1}`);
+			if (simHelper.canCheckLocation(result, req.params["location"]) || (result.current_age == "child" && req.params["location"] == "Treasure Chest Game" && Math.floor(Math.random() * 32) == 0)) {
+				if (req.params["location"] == "Check Pedestal") {
+					result.known_medallions = simHelper.checkPedestal(result, result.current_age, result.known_medallions);
+					result.save();
+					if (result.current_age == "adult") {
+						result.checked_locations.push("Check Pedestal");
+					}
+					res.send(result.known_medallions);
+					return;
+				}
+				else if (req.params["location"] == "Master Sword Pedestal") {
+					result.current_age = result.current_age == "child" ? "adult" : "child";
+					result.route.push("");
+					if (result.current_age == "child") {
+						result.route.push(`CHILD ${result.route.filter(x => x.includes("CHILD")).length + 1}`);
+					}
+					else {
+						result.route.push(`ADULT ${result.route.filter(x => x.includes("ADULT")).length + 1}`);
+					}
+					result.save();
+					res.send(result.current_age);
+					return;
+				}
+				else if (req.params.location == "Ganondorf Hint") {
+					var light_arrow_loc = Array.from(result.locations.keys()).filter(x => result.locations.get(x) == "Light Arrows")[0];
+					var light_arrow_region;
+					if (light_arrow_loc) {
+						light_arrow_region = simHelper.getParentRegion(simHelper.subregionFromLocation(light_arrow_loc));
+						if (!result.known_hints.has(light_arrow_region)) {
+							result.known_hints.set(light_arrow_region, []);
+						}
+						result.known_hints.get(light_arrow_region).push("Light Arrows");
+					}
+					else {
+						light_arrow_region = "your pocket";
+					}
+					result.checked_locations.push("Ganondorf Hint");
+					result.save();
+					res.send({light_arrow_region: light_arrow_region, known_hints: result.known_hints});
+					return;
+				}
+				else if (req.params.location == "Ganon") {
+					result.finished = true;
+					result.playtime = Date.now() - result.start_time;
+					result.num_checks_made = result.checked_locations.length;
+					result.total_checks = Array.from(result.locations.keys()).length;
+					result.save();
+					if (result.use_logic) {
+						submitToLeaderboard(result);
+					}
+					getPercentiles(result).then(function(percentiles) {
+						try {
+							res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
+						}
+						catch(error) {
+							res.status(500).send(error);
+						}
+					}, function(error) {
+						res.status(500).send(error);
+					});
+					return;
+				}
+				var item = result.locations.get(req.params["location"]);
+				if (/Clear .* Trial/.test(req.params.location)) {
+					item = req.params.location;
+				}
+				var other_player;
+				if (item && result.multiworld_id) {
+					var mw_doc = await MultiworldPlaythroughModel.findById(result.multiworld_id);
+					player = item.player;
+					item = item.item;
+					if (player != result.multiworld_num) {
+						other_player = mw_doc.players.filter(x => x.num == player)[0];
+						my_name = mw_doc.players.filter(x => x.id == req.params.playthroughId)[0].name;
+						var other_doc = await playthroughModel.findById(other_player.id);
+						other_doc.current_items.push(item);
+						other_doc.save();
+						try {
+							multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
+						}
+						catch (error) {
+							other_doc.missed_items.push({item: item, from: my_name});
+						}
+					}
+				}
+				if (typeof item == "object") {
+					item = item["item"];
+				}
+				if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
+					item = "Gold Skulltula Token";
+				}
+				if (!(req.params["location"] in result.locations) && req.params["location"] == "Gift from Saria") {
+					item = "Ocarina";
+				}
+				if (req.params.location == "Impa at Castle") {
+					result.current_items.push("Zeldas Letter");
+				}
+				if (item.startsWith("Buy ")) {
+					item = item.substr(4, item.length - 4);
 				}
 				else {
-					result.route.push(`ADULT ${result.route.filter(x => x.includes("ADULT")).length + 1}`);
+					result.checked_locations.push(req.params["location"]);
 				}
-				result.save();
-				res.send(result.current_age);
-				return;
-			}
-			else if (req.params.location == "Ganondorf Hint") {
-				var light_arrow_loc = Array.from(result.locations.keys()).filter(x => result.locations.get(x) == "Light Arrows")[0];
-				var light_arrow_region;
-				if (light_arrow_loc) {
-					light_arrow_region = simHelper.getParentRegion(simHelper.subregionFromLocation(light_arrow_loc));
-					if (!result.known_hints.has(light_arrow_region)) {
-						result.known_hints.set(light_arrow_region, []);
-					}
-					result.known_hints.get(light_arrow_region).push("Light Arrows");
+				result.route.push(`${req.params.location}${simHelper.isEssentialItem(item) ? " (" + item + ")" : ""}`);
+
+				if (!other_player) {
+					result.current_items.push(item);
 				}
-				else {
-					light_arrow_region = "your pocket";
+				
+				if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
+					result.known_medallions.set(result.current_region, item);
 				}
-				result.checked_locations.push("Ganondorf Hint");
-				result.save();
-				res.send({light_arrow_region: light_arrow_region, known_hints: result.known_hints});
-				return;
-			}
-			else if (req.params.location == "Ganon") {
-				result.finished = true;
-				result.playtime = Date.now() - result.start_time;
-				result.num_checks_made = result.checked_locations.length;
-				result.total_checks = Array.from(result.locations.keys()).length;
-				result.save();
-				if (result.use_logic) {
-					submitToLeaderboard(result);
-				}
-				getPercentiles(result).then(function(percentiles) {
-					res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
-				});
-				return;
-			}
-			var item = result.locations.get(req.params["location"]);
-			if (/Clear .* Trial/.test(req.params.location)) {
-				item = req.params.location;
-			}
-			var other_player;
-			if (item && result.multiworld_id) {
-				var mw_doc = await MultiworldPlaythroughModel.findById(result.multiworld_id);
-				player = item.player;
-				item = item.item;
-				if (player != result.multiworld_num) {
-					other_player = mw_doc.players.filter(x => x.num == player)[0];
-					my_name = mw_doc.players.filter(x => x.id == req.params.playthroughId)[0].name;
-					var other_doc = await playthroughModel.findById(other_player.id);
-					other_doc.current_items.push(item);
-					other_doc.save();
-					try {
-						multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
-					}
-					catch (error) {
-						other_doc.missed_items.push({item: item, from: my_name});
+				if (item.includes("Bombchu")) {
+					result.bombchu_count += parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10);
+					if (result.settings.get("bombchus_in_logic")) {
+						result.bombchu_count += 10000;
 					}
 				}
-			}
-			if (typeof item == "object") {
-				item = item["item"];
-			}
-			if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
-				item = "Gold Skulltula Token";
-			}
-			if (!(req.params["location"] in result.locations) && req.params["location"] == "Gift from Saria") {
-				item = "Ocarina";
-			}
-			if (req.params.location == "Impa at Castle") {
-				result.current_items.push("Zeldas Letter");
-			}
-			if (item.startsWith("Buy ")) {
-				item = item.substr(4, item.length - 4);
+				if (simHelper.needChus(result, req.params.location)) {
+					result.bombchu_count--;
+				}
+				var response_obj = { item: item, checked_locations: result.checked_locations, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
+				if (req.params.location in simHelper.region_changing_checks) {
+					result.current_region = simHelper.region_changing_checks[req.params.location][0];
+					response_obj.region = result.current_region;
+					result.current_subregion = simHelper.region_changing_checks[req.params.location][1];
+					response_obj.subregion = result.current_subregion;
+					response_obj.region_changed = true;
+				}
+				if (other_player) {
+					response_obj.other_player = other_player.name;
+				}
+				result.save();
+				res.send(response_obj);
 			}
 			else {
-				result.checked_locations.push(req.params["location"]);
+				res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
 			}
-			result.route.push(`${req.params.location}${simHelper.isEssentialItem(item) ? " (" + item + ")" : ""}`);
-
-			if (!other_player) {
-				result.current_items.push(item);
-			}
-			
-			if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
-				result.known_medallions.set(result.current_region, item);
-			}
-			if (item.includes("Bombchu")) {
-				result.bombchu_count += parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10);
-				if (result.settings.get("bombchus_in_logic")) {
-					result.bombchu_count += 10000;
-				}
-			}
-			if (simHelper.needChus(result, req.params.location)) {
-				result.bombchu_count--;
-			}
-			var response_obj = { item: item, checked_locations: result.checked_locations, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
-			if (req.params.location in simHelper.region_changing_checks) {
-				result.current_region = simHelper.region_changing_checks[req.params.location][0];
-				response_obj.region = result.current_region;
-				result.current_subregion = simHelper.region_changing_checks[req.params.location][1];
-				response_obj.subregion = result.current_subregion;
-				response_obj.region_changed = true;
-			}
-			if (other_player) {
-				response_obj.other_player = other_player.name;
-			}
-			result.save();
-			res.send(response_obj);
 		}
-		else {
-			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.location));
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/throwaway/:playthroughId', function(req, res, next) {
-	playthroughModel.deleteOne({_id: req.params.playthroughId}, function(err, result) {
+	playthroughModel.deleteOne({_id: req.params.playthroughId}).then(function(result) {
 		res.sendStatus(200);
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (result.checked_locations.includes(req.params["stone"])) {
-			res.send(400);
-			return;
-		}
-		if (simHelper.canCheckLocation(result, req.params["stone"])) {
-			var hint = simHelper.getHint(result, req.params["stone"]);
-			if (result.known_hints.has(hint.hint[0])) {
-				var arr = result.known_hints.get(hint.hint[0]);
-				arr.push(hint.hint[1]);
-				result.known_hints.set(hint.hint[0], arr);
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (result.checked_locations.includes(req.params["stone"])) {
+				res.send(400);
+				return;
+			}
+			if (simHelper.canCheckLocation(result, req.params["stone"])) {
+				var hint = simHelper.getHint(result, req.params["stone"]);
+				if (result.known_hints.has(hint.hint[0])) {
+					var arr = result.known_hints.get(hint.hint[0]);
+					arr.push(hint.hint[1]);
+					result.known_hints.set(hint.hint[0], arr);
+				}
+				else {
+					result.known_hints.set(hint.hint[0], [hint.hint[1]]);
+				}
+				if (simHelper.needChus(result, req.params.stone)) {
+					result.bombchu_count--;
+				}
+				result.checked_locations.push(req.params["stone"]);
+				result.save();
+				res.send({ text: hint.hint_text, bombchu_count: result.bombchu_count, known_hints: result.known_hints });
 			}
 			else {
-				result.known_hints.set(hint.hint[0], [hint.hint[1]]);
+				res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.stone));
 			}
-			if (simHelper.needChus(result, req.params.stone)) {
-				result.bombchu_count--;
-			}
-			result.checked_locations.push(req.params["stone"]);
-			result.save();
-			res.send({ text: hint.hint_text, bombchu_count: result.bombchu_count, known_hints: result.known_hints });
 		}
-		else {
-			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.stone));
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/submitname/:playthroughId/:name', function (req, res, next) {
-	leaderboardModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (!result.name) {
-			result.name = req.params.name;
-			result.save();
-			res.sendStatus(200);
+	leaderboardModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (!result.name) {
+				result.name = req.params.name;
+				result.save();
+				res.sendStatus(200);
+			}
+			else {
+				res.sendStatus(403);
+			}
 		}
-		else {
-			res.sendStatus(403);
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
 router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (req.params.entrance.includes("Savewarp")) {
-			if (result.current_age == "child") {
-				result.current_region = "Kokiri Forest";
-				result.current_subregion = "Links House";
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (req.params.entrance.includes("Savewarp")) {
+				if (result.current_age == "child") {
+					result.current_region = "Kokiri Forest";
+					result.current_subregion = "Links House";
+				}
+				else if (result.current_age == "adult") {
+					result.current_region = "Temple of Time";
+					result.current_subregion = "Temple of Time";
+				}
+				result.save();
+				res.send({ region: result.current_region, subregion: result.current_subregion });
+				return;
 			}
-			else if (result.current_age == "adult") {
-				result.current_region = "Temple of Time";
-				result.current_subregion = "Temple of Time";
+			if (simHelper.canCheckLocation(result, req.params["entrance"])) {
+				result.current_region = simHelper.getParentRegion(req.params["entrance"]);
+				result.current_subregion = req.params["entrance"];
+				result.save();
+				res.send({region: result.current_region, subregion: result.current_subregion});
 			}
-			result.save();
-			res.send({ region: result.current_region, subregion: result.current_subregion });
-			return;
+			else {
+				res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.entrance));
+			}
 		}
-		if (simHelper.canCheckLocation(result, req.params["entrance"])) {
-			result.current_region = simHelper.getParentRegion(req.params["entrance"]);
-			result.current_subregion = req.params["entrance"];
-			result.save();
-			res.send({region: result.current_region, subregion: result.current_subregion});
+		catch(error) {
+			res.status(500).send(error);
 		}
-		else {
-			res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.entrance));
-		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		var locs = simHelper.getLocations(result, req.params["region"]);
-		var shops = simHelper.getShops(result, req.params.region);
-		res.send({locations: locs, shops: shops});
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			var locs = simHelper.getLocations(result, req.params["region"]);
+			var shops = simHelper.getShops(result, req.params.region);
+			res.send({locations: locs, shops: shops});
+		}
+		catch(error) {
+			res.status(500).send(error);
+		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		var entrances = simHelper.getEntrances(result, req.params["region"]);
-		res.send(entrances);
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			var entrances = simHelper.getEntrances(result, req.params["region"]);
+			res.send(entrances);
+		}
+		catch(error) {
+			res.status(500).send(error);
+		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/setwind/:playthroughId/:age/:region', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
-			if (result.current_age == "child") {
-				result.child_wind = req.params.region;
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
+				if (result.current_age == "child") {
+					result.child_wind = req.params.region;
+				}
+				else {
+					result.adult_wind = req.params.region;
+				}
+				result.save();
+				res.sendStatus(200);
 			}
 			else {
-				result.adult_wind = req.params.region;
+				res.sendStatus(403);
 			}
-			result.save();
-			res.sendStatus(200);
 		}
-		else {
-			res.sendStatus(403);
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
-			if (result.current_age == "child") {
-				if (result.child_wind) {
-					res.send(result.child_wind);
-					result.child_wind = "";
-					result.save();
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
+				if (result.current_age == "child") {
+					if (result.child_wind) {
+						res.send(result.child_wind);
+						result.child_wind = "";
+						result.save();
+					}
+					else {
+						res.sendStatus(400);
+					}
 				}
 				else {
-					res.sendStatus(400);
+					if (result.adult_wind) {
+						res.send(result.adult_wind);
+						result.adult_wind = "";
+						result.save();
+					}
+					else {
+						res.sendStatus(400);
+					}
 				}
 			}
 			else {
-				if (result.adult_wind) {
-					res.send(result.adult_wind);
-					result.adult_wind = "";
-					result.save();
-				}
-				else {
-					res.sendStatus(400);
-				}
+				res.sendStatus(403);
 			}
 		}
-		else {
-			res.sendStatus(403);
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/peek/:playthroughId/:location', function (req, res, next) {
-	playthroughModel.findOne({ _id: req.params["playthroughId"] }, function (err, result) {
-		if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`)) {
-			if (result.known_hints.has(req.params.location)) {
-				result.known_hints.get(req.params.location).push(result.locations.get(req.params.location));
+	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+		try {
+			if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`)) {
+				if (result.known_hints.has(req.params.location)) {
+					result.known_hints.get(req.params.location).push(result.locations.get(req.params.location));
+				}
+				else {
+					result.known_hints.set(req.params.location, [result.locations.get(req.params.location)]);
+				}
+				if (simHelper.needChus(result, simHelper.subregionFromLocation(req.params.location))) {
+					result.bombchu_count--;
+				}
+				result.save();
+				res.send({bombchu_count: result.bombchu_count, known_hints: result.known_hints, item: result.locations.get(req.params.location)});
 			}
 			else {
-				result.known_hints.set(req.params.location, [result.locations.get(req.params.location)]);
+				res.sendStatus(403);
 			}
-			if (simHelper.needChus(result, simHelper.subregionFromLocation(req.params.location))) {
-				result.bombchu_count--;
-			}
-			result.save();
-			res.send({bombchu_count: result.bombchu_count, known_hints: result.known_hints, item: result.locations.get(req.params.location)});
 		}
-		else {
-			res.sendStatus(403);
+		catch(error) {
+			res.status(500).send(error);
 		}
+	}, function(error) {
+		res.status(500).send(error);
 	});
 })
 
 router.get('/getspoiler', function(req, res, next) {
-	if (req.query.valid) {
-		request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
-			if (error && error.code == "ETIMEDOUT") {
-				res.sendStatus(408);
-				return;
-			}
-			else if (response.statusCode == 502) {
-				res.sendStatus(502);
-				return;
-			}
-			else if (body.includes("Invalid API Key")) {
-				res.sendStatus(401);
-				return;
-			}
-			else if (body.includes("Invalid randomizer settings")) {
-				res.sendStatus(403);
-				return;
-			}
-			else if (body.includes("Game unbeatable")) {
-
-			}
-			else if (body.includes("Traceback")) {
-				if (body.includes("get_settings_from_command_line_args")) {
-					res.sendStatus(400);
+	try {
+		if (req.query.valid) {
+			request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
+				if (error) {
+					if (error.code == "ETIMEDOUT") {
+						res.sendStatus(408);
+						return;
+					}
+					else {
+						res.status(500).send(error);
+						return;
+					}
+				}
+				else if (response.statusCode == 502) {
+					res.sendStatus(502);
 					return;
 				}
-			}
-			res.send(parseLog(body, req.query.logic));
-		});
+				else if (body.includes("Invalid API Key")) {
+					res.sendStatus(401);
+					return;
+				}
+				else if (body.includes("Invalid randomizer settings")) {
+					res.sendStatus(403);
+					return;
+				}
+				else if (body.includes("Game unbeatable")) {
+
+				}
+				else if (body.includes("Traceback")) {
+					if (body.includes("get_settings_from_command_line_args")) {
+						res.sendStatus(400);
+						return;
+					}
+				}
+				res.send(parseLog(body, req.query.logic));
+			});
+		}
+		else {
+			res.sendStatus(403);
+		}
 	}
-	else {
-		res.sendStatus(403);
+	catch(error) {
+		res.status(500).send(error);
 	}
 });
 
@@ -740,6 +875,8 @@ router.post('/uploadlog', function(req, res, next) {
 router.get('/leaderboard', function(req, res, next) {
 	leaderboardModel.estimatedDocumentCount().then(function(count) {
 		res.render("zootr-sim-leaderboard", { meta: meta, count: count });
+	}, function(error) {
+		res.status(500).send(error);
 	});
 });
 
@@ -747,16 +884,22 @@ router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(r
 	var sortObj = {};
 	sortObj[req.params.sortfield] = req.params.ascdesc;
 	leaderboardModel.find({name: new RegExp(regexEscape(req.query.name, "i"))}).limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
-		if (req.query.name) {
-			leaderboardModel.countDocuments().where({ name: new RegExp(regexEscape(req.query.name, "i")) }).then(function(count) {
-				res.send({entries: entries, count: count});
-			})
+		try {
+			if (req.query.name) {
+				leaderboardModel.countDocuments().where({ name: new RegExp(regexEscape(req.query.name, "i")) }).then(function(count) {
+					res.send({entries: entries, count: count});
+				}, function(error) {
+					res.status(500).send(error);
+				});
+			}
+			else {
+				res.send({entries: entries});
+			}
 		}
-		else {
-			res.send({entries: entries});
+		catch(error) {
+			res.status(500).send(error);
 		}
 	}, function(error) {
-		console.error(error);
 		res.status(500).send(error);
 	});
 });

@@ -896,7 +896,7 @@ $scope.hasBossKey = function(dungeon) {
 				$scope.generationError = "Error! Invalid API key! This is not user error - please report this."
 			}
 			else if (response.status == 403) {
-				$scope.generationError = "Error! Multiworld is not supported by the generator. Use the multiworld option."
+				$scope.generationError = "Error! Multiworld is not supported by the generator. Upload a multiworld log instead."
 			}
 			else if (response.status == 408) {
 				$scope.generationError = "Error! Request timed out."

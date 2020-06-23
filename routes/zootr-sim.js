@@ -252,7 +252,7 @@ router.get('/getlobbyinfo/:id', function (req, res, next) {
 
 router.get('/readyup/:id', async function (req, res, next) {
 	playthroughModel.findById(req.params.id).then(function (result) {
-		multiworldModel.findById(result.multiworld_id).then(async function(mw) {
+		multiworldModel.findById(result.multiworld_id).then(async function (mw) {
 			try {
 				mw.players.filter(x => x.id == req.params.id)[0].ready = true;
 				mw.save();
@@ -263,16 +263,41 @@ router.get('/readyup/:id', async function (req, res, next) {
 				}
 				if (mw.players.length == mw.num_players && mw.players.every(x => x.ready)) {
 					await start_multiworld(mw);
-					notify_lobby(mw._id, {starting: true});
+					notify_lobby(mw._id, { starting: true });
 				}
+				res.sendStatus(200);
 			}
 			catch (error) {
 				res.status(500).send(error);
 			}
-		}, function(error) {
+		}, function (error) {
 			res.status(500).send(error);
 		})
-	}, function(error) {
+	}, function (error) {
+		res.status(500).send(error);
+	});
+});
+
+router.get('/unready/:id', async function (req, res, next) {
+	playthroughModel.findById(req.params.id).then(function (result) {
+		multiworldModel.findById(result.multiworld_id).then(async function (mw) {
+			try {
+				mw.players.filter(x => x.id == req.params.id)[0].ready = false;
+				mw.save();
+				if (mw._id in lobby_callbacks) {
+					for (player in lobby_callbacks[mw._id]) {
+						lobby_callbacks[mw._id][player]({ unreadied: result._id });
+					}
+				}
+				res.sendStatus(200);
+			}
+			catch (error) {
+				res.status(500).send(error);
+			}
+		}, function (error) {
+			res.status(500).send(error);
+		})
+	}, function (error) {
 		res.status(500).send(error);
 	});
 });

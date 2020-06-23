@@ -88,6 +88,10 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 				var player = $scope.players.filter(x => x.id == data.readied)[0];
 				player.ready = true;
 			}
+			if ("unreadied" in data) {
+				var player = $scope.players.filter(x => x.id == data.unreadied)[0];
+				player.ready = false;
+			}
 			if ("starting" in data) {
 				if (data.starting) {
 					if ($scope.playthroughId) {
@@ -129,18 +133,33 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		$scope.lobby_source = null;
 	}
 
-	$scope.ready_up = function(id) {
+	$scope.ready_up = function (id) {
 		if ($scope.readying) {
 			return;
 		}
 		$scope.readying = true;
-		$http.get(`/zootr-sim/readyup/${id}`).then(function(result) {
+		$http.get(`/zootr-sim/readyup/${id}`).then(function (result) {
 			$scope.lobby_error = "";
 			$scope.readying = false;
-		}, function(error) {
+		}, function (error) {
 			$scope.readying = false;
 			console.error(error);
 			$scope.lobby_error = "Error! Could not ready up. Please try again and report if this persists.";
+		});
+	}
+
+	$scope.unready = function (id) {
+		if ($scope.readying) {
+			return;
+		}
+		$scope.readying = true;
+		$http.get(`/zootr-sim/unready/${id}`).then(function (result) {
+			$scope.lobby_error = "";
+			$scope.readying = false;
+		}, function (error) {
+			$scope.readying = false;
+			console.error(error);
+			$scope.lobby_error = "Error! Could not unready. Please try again and report if this persists.";
 		});
 	}
 

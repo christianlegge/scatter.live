@@ -139,7 +139,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		}
 		$scope.readying = true;
 		$http.get(`/zootr-sim/readyup/${id}`).then(function (result) {
-			$scope.lobby_error = "";
+			$scope.lobby_error = null;
 			$scope.readying = false;
 		}, function (error) {
 			$scope.readying = false;
@@ -154,7 +154,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		}
 		$scope.readying = true;
 		$http.get(`/zootr-sim/unready/${id}`).then(function (result) {
-			$scope.lobby_error = "";
+			$scope.lobby_error = null;
 			$scope.readying = false;
 		}, function (error) {
 			$scope.readying = false;
@@ -172,7 +172,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			$scope.playthroughId = response.data;
 			localforage.setItem("playthroughId", response.data);
 			$scope.joining = false;
-			$scope.lobby_error = "";
+			$scope.lobby_error = null;
 		}, function(error) {
 			console.error(error);
 			$scope.lobby_error = "Error! Could not join game. Please try again and report if this persists.";
@@ -182,7 +182,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 
 	$scope.getAvailableLocations = function() {
 		$http.get(`/zootr-sim/getlocations/${$scope.playthroughId}/${$scope.current_region}`).then(function(response) {
-			$scope.locations_error = "";
+			$scope.locations_error = null;
 			$scope.available_hints = response.data.locations.filter(x => x.includes("Gossip Stone"));
 			$scope.available_skulltulas = response.data.locations.filter(x => x.startsWith("GS "));
 			$scope.available_locations = response.data.locations.filter(x => !$scope.available_skulltulas.includes(x) && !$scope.available_hints.includes(x));
@@ -199,7 +199,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	$scope.getAvailableEntrances = function() {
 		$http.get(`/zootr-sim/getentrances/${$scope.playthroughId}/${$scope.current_region}`).then(function (response) {
 			$scope.available_entrances = response.data;
-			$scope.entrances_error = "";
+			$scope.entrances_error = null;
 		}, function (error) {
 			console.error(error);
 			$scope.entrances_error = "Error! Could not retreive entrances. Refresh to try again and report if this persists.";
@@ -659,7 +659,7 @@ $scope.hasBossKey = function(dungeon) {
 			var el = document.getElementById("faroreswind");
 			el.classList.add('loadinglink');
 			$http.get(`/zootr-sim/setwind/${$scope.playthroughId}/${$scope.current_age}/${$scope.current_region}`).then(function(response) {
-				$scope.wind_error = "";
+				$scope.wind_error = null;
 				$scope.setting_wind = false;
 				if ($scope.current_age == "child") {
 					$scope.child_wind = $scope.current_region;
@@ -684,7 +684,7 @@ $scope.hasBossKey = function(dungeon) {
 			var el = document.getElementById("faroreswind");
 			el.classList.add('loadinglink');
 			$http.get(`/zootr-sim/recallwind/${$scope.playthroughId}/${$scope.current_age}`).then(function (response) {
-				$scope.wind_error = "";
+				$scope.wind_error = null;
 				$scope.current_region = response.data;
 				$scope.getAvailableLocations();
 				$scope.getAvailableEntrances();
@@ -877,7 +877,7 @@ $scope.hasBossKey = function(dungeon) {
 			method: 'GET',
 			url: url
 		}).then(function successCallback(response) {
-			$scope.generationError = "";
+			$scope.generationError = null;
 			if (response.data.logic_rules != "glitchless" && $scope.use_logic) {
 				$scope.init_data = response.data;
 				$scope.logic_rules = response.data.logic_rules;
@@ -916,7 +916,7 @@ $scope.hasBossKey = function(dungeon) {
 		reader.onload = function(e) {
 			$scope.uploading = true;
 			$http.post("/zootr-sim/uploadlog?logic=" + $scope.use_logic, e.target.result).then(function successCallback(response) {
-				$scope.uploadError = "";
+				$scope.uploadError = null;
 				$scope.uploading = false;
 				if (response.data.multiworld_id) {
 					$scope.load_lobby(response.data.multiworld_id);

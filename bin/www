@@ -32,7 +32,7 @@ sass_files.forEach(function(filename) {
 	var rendered = sass.renderSync({
 		file: `scss/${filename}`,
 		outFile: `public/stylesheets/${name}.css`,
-		outputStyle: "expanded",
+		outputStyle: process.env.DEBUG ? "expanded" : "compressed",
 	});
 	fs.writeFileSync(`public/stylesheets/${name}.css`, rendered.css);
 })

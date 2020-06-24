@@ -84,12 +84,16 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			if ("joined" in data) {
 				$scope.players.push(data.joined);
 			}
+			if ("left" in data) {
+				var player_to_remove = $scope.players.filter(x => x._id == data.left)[0];
+				$scope.players.splice($scope.players.indexOf(player_to_remove), 1);
+			}
 			if ("readied" in data) {
-				var player = $scope.players.filter(x => x.id == data.readied)[0];
+				var player = $scope.players.filter(x => x._id == data.readied)[0];
 				player.ready = true;
 			}
 			if ("unreadied" in data) {
-				var player = $scope.players.filter(x => x.id == data.unreadied)[0];
+				var player = $scope.players.filter(x => x._id == data.unreadied)[0];
 				player.ready = false;
 			}
 			if ("starting" in data) {
@@ -163,20 +167,37 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 		});
 	}
 
-	$scope.join_lobby = function(id, name) {
+	$scope.join_lobby = function (id, name) {
 		if ($scope.joining) {
 			return;
 		}
 		$scope.joining = true;
-		$http.get(`/zootr-sim/joinlobby/${id}/${name}`).then(function(response) {
+		$http.get(`/zootr-sim/joinlobby/${id}/${name}`).then(function (response) {
 			$scope.playthroughId = response.data;
 			localforage.setItem("playthroughId", response.data);
 			$scope.joining = false;
 			$scope.lobby_error = null;
-		}, function(error) {
+		}, function (error) {
 			console.error(error);
 			$scope.lobby_error = "Error! Could not join game. Please try again and report if this persists.";
 			$scope.joining = false;
+		});
+	}
+
+	$scope.leave_lobby = function (multi_id, player_id) {
+		if ($scope.leaving) {
+			return;
+		}
+		$scope.leaving = true;
+		$http.get(`/zootr-sim/leavelobby/${multi_id}/${player_id}`).then(function (response) {
+			$scope.playthroughId = null;
+			localforage.setItem("playthroughId", null);
+			$scope.leaving = false;
+			$scope.lobby_error = null;
+		}, function (error) {
+			console.error(error);
+			$scope.lobby_error = "Error! Could not leave game. Please try again and report if this persists.";
+			$scope.leaving = false;
 		});
 	}
 

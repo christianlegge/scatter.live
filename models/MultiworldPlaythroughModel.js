@@ -1,14 +1,15 @@
 var mongoose = require('mongoose');
 var db = require('./mongoose-connection');
 
+var MultiworldPlayerSchema = new mongoose.Schema({
+	ready: Boolean,
+	name: String,
+	num: Number,
+});
+
 var MultiworldPlaythroughSchema = new mongoose.Schema({
 	num_players: Number,
-	players: [{
-		ready: Boolean,
-		id: mongoose.Types.ObjectId,
-		name: String,
-		num: Number,
-	}],
+	players: [MultiworldPlayerSchema],
 	active: Boolean,
 	log: Map,
 	created_at: Date,

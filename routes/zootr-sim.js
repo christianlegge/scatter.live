@@ -95,7 +95,7 @@ async function start_multiworld(mw_doc) {
 	mw_doc.active = true;
 	await Promise.all(mw_doc.players.map(async function(player) {
 		try {
-			var player_doc = await playthroughModel.findById(player.id);
+			var player_doc = await playthroughModel.findById(player._id);
 			var log = mw_doc.log;
 			player_doc.multiworld_num = player.num;
 			player_doc.missed_items = [];
@@ -229,11 +229,11 @@ router.get('/getmwgames', function (req, res, next) {
 			var games = result.map(x => ({ id: x._id, total_players: x.num_players, current_players: x.players.length, name: x.players.length > 0 ? x.players[0].name : "-", age: toAgeString(x.created_at) }));
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 		res.send(games);
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -243,10 +243,10 @@ router.get('/getlobbyinfo/:id', function (req, res, next) {
 			res.send(result.players);
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -254,7 +254,7 @@ router.get('/readyup/:id', async function (req, res, next) {
 	playthroughModel.findById(req.params.id).then(function (result) {
 		multiworldModel.findById(result.multiworld_id).then(async function (mw) {
 			try {
-				mw.players.filter(x => x.id == req.params.id)[0].ready = true;
+				mw.players.filter(x => x._id == req.params.id)[0].ready = true;
 				mw.save();
 				if (mw._id in lobby_callbacks) {
 					for (player in lobby_callbacks[mw._id]) {
@@ -268,13 +268,13 @@ router.get('/readyup/:id', async function (req, res, next) {
 				res.sendStatus(200);
 			}
 			catch (error) {
-				res.status(500).send(error);
+				res.status(500).send(error.message);
 			}
 		}, function (error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		})
 	}, function (error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -282,7 +282,7 @@ router.get('/unready/:id', async function (req, res, next) {
 	playthroughModel.findById(req.params.id).then(function (result) {
 		multiworldModel.findById(result.multiworld_id).then(async function (mw) {
 			try {
-				mw.players.filter(x => x.id == req.params.id)[0].ready = false;
+				mw.players.filter(x => x._id == req.params.id)[0].ready = false;
 				mw.save();
 				if (mw._id in lobby_callbacks) {
 					for (player in lobby_callbacks[mw._id]) {
@@ -292,13 +292,13 @@ router.get('/unready/:id', async function (req, res, next) {
 				res.sendStatus(200);
 			}
 			catch (error) {
-				res.status(500).send(error);
+				res.status(500).send(error.message);
 			}
 		}, function (error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		})
 	}, function (error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -351,7 +351,7 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 		}
 	};
 	var mw_doc = await MultiworldPlaythroughModel.findById(req.params.multi_id);
-	var player_num = mw_doc.players.filter(x => x.id == req.params.player_id)[0].num;
+	var player_num = mw_doc.players.filter(x => x._id == req.params.player_id)[0].num;
 	multiworld_callbacks[req.params.multi_id][player_num] = callback;
 
 	res.set({
@@ -377,8 +377,8 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 	});
 });
 
-router.get('/joinlobby/:id/:name', function(req, res, next) {
-	multiworldModel.findById(req.params.id).then(function(result) {
+router.get('/joinlobby/:id/:name', function (req, res, next) {
+	multiworldModel.findById(req.params.id).then(function (result) {
 		try {
 			if (result.players.length >= result.num_players) {
 				res.sendStatus(400);
@@ -386,28 +386,57 @@ router.get('/joinlobby/:id/:name', function(req, res, next) {
 			}
 			var new_player = {
 				name: req.params.name,
-				id: new mongoose.Types.ObjectId(),
+				_id: new mongoose.Types.ObjectId(),
 				ready: false,
 				num: result.players.length + 1,
 			};
 			var player_doc = new playthroughModel({
-				_id: new_player.id,
+				_id: new_player._id,
 				multiworld_id: result._id,
 			});
 			player_doc.save();
 
-			notify_lobby(result._id, {joined: new_player});
-			
+			notify_lobby(result._id, { joined: new_player });
+
 			result.players.push(new_player);
 			result.save();
 
-			res.send(new_player.id);
+			res.send(new_player._id);
 		}
-		catch(error) {
-			res.status(500).send(error);
+		catch (error) {
+			res.status(500).send(error.message);
 		}
-	}, function(error) {
-		res.status(500).send(error);
+	}, function (error) {
+		res.status(500).send(error.message);
+	});
+});
+
+router.get('/leavelobby/:multi_id/:player_id', function (req, res, next) {
+	multiworldModel.findById(req.params.multi_id).then(function (result) {
+		try {
+			if (result.players.length <= 0) {
+				res.sendStatus(400);
+				return;
+			}
+			result.players.remove(req.params.player_id);
+			result.save();
+			playthroughModel.findByIdAndDelete(req.params.player_id).then(function () {
+				try {
+					notify_lobby(req.params.multi_id, { left: req.params.player_id });
+					res.sendStatus(200);
+				}
+				catch (error) {
+					res.status(500).send(error.message);
+				}
+			}, function (error) {
+				res.status(500).send(error.message);
+			});
+		}
+		catch (error) {
+			res.status(500).send(error.message);
+		}
+	}, function (error) {
+		res.status(500).send(error.message);
 	});
 });
 
@@ -463,7 +492,7 @@ router.get('/resume', async function(req, res, next) {
 			res.send(info);
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	});
 });
@@ -530,10 +559,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 							res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
 						}
 						catch(error) {
-							res.status(500).send(error);
+							res.status(500).send(error.message);
 						}
 					}, function(error) {
-						res.status(500).send(error);
+						res.status(500).send(error.message);
 					});
 					return;
 				}
@@ -548,8 +577,8 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 					item = item.item;
 					if (player != result.multiworld_num) {
 						other_player = mw_doc.players.filter(x => x.num == player)[0];
-						my_name = mw_doc.players.filter(x => x.id == req.params.playthroughId)[0].name;
-						var other_doc = await playthroughModel.findById(other_player.id);
+						my_name = mw_doc.players.filter(x => x._id == req.params.playthroughId)[0].name;
+						var other_doc = await playthroughModel.findById(other_player._id);
 						other_doc.current_items.push(item);
 						other_doc.save();
 						try {
@@ -615,10 +644,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -626,7 +655,7 @@ router.get('/throwaway/:playthroughId', function(req, res, next) {
 	playthroughModel.deleteOne({_id: req.params.playthroughId}).then(function(result) {
 		res.sendStatus(200);
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -659,10 +688,10 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -679,10 +708,10 @@ router.get('/submitname/:playthroughId/:name', function (req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -713,10 +742,10 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -728,10 +757,10 @@ router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
 			res.send({locations: locs, shops: shops});
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -742,10 +771,10 @@ router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
 			res.send(entrances);
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -767,10 +796,10 @@ router.get('/setwind/:playthroughId/:age/:region', function (req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -804,10 +833,10 @@ router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -832,10 +861,10 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 })
 
@@ -849,7 +878,7 @@ router.get('/getspoiler', function(req, res, next) {
 						return;
 					}
 					else {
-						res.status(500).send(error);
+						res.status(500).send(error.message);
 						return;
 					}
 				}
@@ -882,7 +911,7 @@ router.get('/getspoiler', function(req, res, next) {
 		}
 	}
 	catch(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	}
 });
 
@@ -901,7 +930,7 @@ router.get('/leaderboard', function(req, res, next) {
 	leaderboardModel.estimatedDocumentCount().then(function(count) {
 		res.render("zootr-sim-leaderboard", { meta: meta, count: count });
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 
@@ -914,7 +943,7 @@ router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(r
 				leaderboardModel.countDocuments().where({ name: new RegExp(regexEscape(req.query.name, "i")) }).then(function(count) {
 					res.send({entries: entries, count: count});
 				}, function(error) {
-					res.status(500).send(error);
+					res.status(500).send(error.message);
 				});
 			}
 			else {
@@ -922,10 +951,10 @@ router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(r
 			}
 		}
 		catch(error) {
-			res.status(500).send(error);
+			res.status(500).send(error.message);
 		}
 	}, function(error) {
-		res.status(500).send(error);
+		res.status(500).send(error.message);
 	});
 });
 

@@ -96,7 +96,8 @@ html
 						div(ng-if="loadError != null").error {{loadError}}
 			.multiworldcontainer(ng-show="current_mw_lobby && !playing")
 				a.button(ng-click="unload_lobby()") < Back
-				table#mwparty
+				br
+				table#mwparty.nicetable
 					thead
 						th Name
 						th ID

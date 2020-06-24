@@ -35,7 +35,7 @@ body {
 
 .dark-mode {
 	background-color: $dark-background;
-	color: $dark-text;
+	color: $dark-text !important;
 }
 
 #dark-mode-toggle {
@@ -138,7 +138,6 @@ div.headerbar {
 	a {
 		text-decoration: none;
 		font-weight: bold;
-		color: black;
 		-webkit-user-select: none;
 		-moz-user-select: none;
 		-ms-user-select: none;
@@ -248,13 +247,18 @@ div.mainbody {
 		min-height: 500px;
 		border:0;
 	}
-	
-}
-
-div.startleft {
-	margin:0;
-	justify-content: center;
-	align-items: center;
+	.startleft {
+		margin:0;
+		justify-content: center;
+		align-items: center;
+	}
+	.startright {
+		margin:0;
+		input {
+			font-family: 'scatter OpenSans', sans-serif;
+			font-size: 1em;
+		}
+	}
 }
 
 div.generateform {
@@ -390,24 +394,6 @@ div.error {
 	background-color: #560000;
 	border-color: #7a4444;
 	border-left: 6px solid #7a4444;
-}
-
-div.startright {
-	margin:0;
-	input {
-		font-family: 'scatter OpenSans', sans-serif;
-		font-size: 1em;
-	}
-}
-
-.dark-mode div.startleft {
-	border-right: 1px solid $dark-text;
-	border-bottom: 1px solid $dark-text;
-}
-
-.dark-mode div.startright {
-	border-left: 1px solid $dark-text;
-	border-top: 1px solid $dark-text;
 }
 
 @keyframes fadeoutin {

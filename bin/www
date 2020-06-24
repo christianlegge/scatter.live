@@ -28,6 +28,9 @@ if (process.env.NODE_ENV == 'production') {
 
 var sass_files = fs.readdirSync("scss");
 sass_files.forEach(function(filename) {
+	if (filename.charAt(0) == "_") {
+		return;
+	}
 	var name = filename.split(".")[0];
 	var rendered = sass.renderSync({
 		file: `scss/${filename}`,

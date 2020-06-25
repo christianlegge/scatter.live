@@ -125,6 +125,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			$scope.subscribe_lobby(id);
 		}, function(error) {
 			console.error(error);
+			$scope.get_lobbies();
 			$scope.show_modal("lobbyLoadErrorModal", true);
 		});
 	}

@@ -212,6 +212,37 @@ function parseLog(logfile, use_logic) {
 			use_logic: use_logic,
 		});
 		mw_doc.save();
+		setTimeout(function () {
+			multiworldModel.findById(mw_doc._id).then(function (result) {
+				try {
+					if (result.players.length == 0) {
+						multiworldModel.findByIdAndDelete(result._id).exec();
+					}
+				}
+				catch (error) {
+					console.error(error.message);
+				}
+			}, function (error) {
+				console.error(error.message);
+			});
+		}, 1000 * 60 * 10);
+		setTimeout(function () {
+			multiworldModel.findById(mw_doc._id).then(function (result) {
+				try {
+					if (!result.active) {
+						result.players.forEach(function(player) {
+							playthroughModel.findByIdAndDelete(player._id).exec();
+						})
+						multiworldModel.findByIdAndDelete(result._id).exec();
+					}
+				}
+				catch (error) {
+					console.error(error.message);
+				}
+			}, function (error) {
+				console.error(error.message);
+			});
+		}, 1000 * 60 * 60 * 24);
 		return {
 			multiworld_id: mw_doc._id,
 			players: mw_doc.players,

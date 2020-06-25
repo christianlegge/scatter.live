@@ -420,6 +420,7 @@ router.get('/joinlobby/:id/:name', function (req, res, next) {
 				_id: new mongoose.Types.ObjectId(),
 				ready: false,
 				num: result.players.length + 1,
+				finished: false,
 			};
 			var player_doc = new playthroughModel({
 				_id: new_player._id,
@@ -578,6 +579,24 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				}
 				else if (req.params.location == "Ganon") {
 					result.finished = true;
+					if (result.multiworld_id) {
+						multiworldModel.updateOne({_id: result.multiworld_id, "players._id": result._id}, {$set: {"players.$.finished": true}}).then(function() {
+							multiworldModel.findById(result.multiworld_id).then(function(inner_mw_doc) {
+								try {
+									if (inner_mw_doc.players.every(x => x.finished)) {
+										multiworldModel.findByIdAndDelete(inner_mw_doc._id).exec();
+									}
+								}
+								catch (error) {
+									res.status(500).send(error.message);
+								}
+							}, function(error) {
+								res.status(500).send(error.message);
+							});
+						}, function(error) {
+							res.status(500).send(error.message);
+						});
+					}
 					result.playtime = Date.now() - result.start_time;
 					result.num_checks_made = result.checked_locations.length;
 					result.total_checks = Array.from(result.locations.keys()).length;

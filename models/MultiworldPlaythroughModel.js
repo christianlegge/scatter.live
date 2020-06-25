@@ -5,6 +5,7 @@ var MultiworldPlayerSchema = new mongoose.Schema({
 	ready: Boolean,
 	name: String,
 	num: Number,
+	finished: Boolean,
 });
 
 var MultiworldPlaythroughSchema = new mongoose.Schema({

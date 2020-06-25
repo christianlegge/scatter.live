@@ -109,7 +109,7 @@ async function start_multiworld(mw_doc) {
 			player_doc.hash = log.get("file_hash");
 			player_doc.hints = log.get("gossip_stones")[`World ${player.num}`];
 			player_doc.known_hints = { };
-			player_doc.current_age = player_doc.settings.starting_age == "random" ? log.get("randomized_settings")[`World ${player.num}`]["starting_age"] : player_doc.settings.starting_age;
+			player_doc.current_age = player_doc.settings.get("starting_age") == "random" ? log.get("randomized_settings")[`World ${player.num}`]["starting_age"] : player_doc.settings.get("starting_age");
 			player_doc.known_medallions = new Map();
 			player_doc.dungeons = log.get("dungeons")[`World ${player.num}`];
 			player_doc.trials = log.get("trials")[`World ${player.num}`];

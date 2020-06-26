@@ -456,25 +456,19 @@ a {
 	cursor: pointer;
 }
 
-a#reset {
-	background-color:#ee0000;
-}
-
 a.disabled-button {
 	background-color: #888888 !important;
 	cursor:default !important;
 }
 
-a#undo {
-	background-color: #0061ff;
-}
-
 a.button.blue {
 	background-color: #0061ff;
+	color: white;
 }
 
 a.button.red {
 	background-color: #ee0000;
+	color: white;
 }
 
 .peekicon {

@@ -205,7 +205,7 @@ html
 				br
 				br
 				p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
-				a.button#reset(ng-click="show_modal('throwAwayModal', true)")
+				a.button.red#reset(ng-click="show_modal('throwAwayModal', true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")
 				h1 Congratulations!
@@ -235,7 +235,13 @@ html
 						span(ng-show="copying")#copied.copied-anim Copied!
 				br 
 				br 
-				a(ng-click="throwAway()").button#reset Finish
+				span This playthrough will be deleted in 24 hours. Until then, you can go back to check more locations by clicking here:
+				br
+				br
+				a(ng-click="finished = false").button.blue Go back
+				br
+				br
+				a(ng-click="throwAway()").button.red Finish
 			
 			
 		.footer 

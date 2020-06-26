@@ -578,7 +578,6 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 					return;
 				}
 				else if (req.params.location == "Ganon") {
-					result.finished = true;
 					if (result.multiworld_id) {
 						multiworldModel.updateOne({_id: result.multiworld_id, "players._id": result._id}, {$set: {"players.$.finished": true}}).then(function() {
 							multiworldModel.findById(result.multiworld_id).then(function(inner_mw_doc) {
@@ -600,10 +599,19 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 					result.playtime = Date.now() - result.start_time;
 					result.num_checks_made = result.checked_locations.length;
 					result.total_checks = Array.from(result.locations.keys()).length;
-					result.save();
-					if (result.use_logic) {
+					if (result.use_logic && !result.finished) {
 						submitToLeaderboard(result);
+						setTimeout(function() {
+							try {
+								playthroughModel.findByIdAndDelete(result.id).exec();
+							}
+							catch (error) {
+								console.error(error.message);
+							}
+						}, 1000*60*60*24);
 					}
+					result.finished = true;
+					result.save();
 					getPercentiles(result).then(function(percentiles) {
 						try {
 							res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });

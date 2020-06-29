@@ -998,12 +998,16 @@ router.post('/uploadlog', function(req, res, next) {
 	}
 });
 
-router.get('/leaderboard', function(req, res, next) {
-	leaderboardModel.estimatedDocumentCount().then(function(count) {
+router.get('/leaderboard', function (req, res, next) {
+	leaderboardModel.estimatedDocumentCount().then(function (count) {
 		res.render("zootr-sim-leaderboard", { meta: meta, count: count });
-	}, function(error) {
+	}, function (error) {
 		res.status(500).send(error.message);
 	});
+});
+
+router.get('/changelog', function (req, res, next) {
+	res.render("zootr-sim-changelog", {meta: meta});
 });
 
 router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {

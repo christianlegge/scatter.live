@@ -950,3 +950,30 @@ a.useChu {
 #mwgames tr:hover {
 	cursor: pointer;
 }
+
+$avi-size: 48px;
+
+.updatepost {
+	min-width: 500px;
+	max-width: 800px;
+	width: 50%;
+	text-align: left;
+	position: relative;
+	padding-bottom: $avi-size;
+}
+
+.signature {
+	height: $avi-size;
+	line-height: $avi-size;
+	background: {
+		repeat: no-repeat;
+		size: $avi-size;
+		image: url('/images/avi.png')
+	};
+	position: absolute;
+	padding: {
+		left: $avi-size + 8px;
+	};
+	right: 0;
+	bottom: 0;
+}

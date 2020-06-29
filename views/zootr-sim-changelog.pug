@@ -1,0 +1,114 @@
+include head
+
+doctype html
+html
+	head
+		+meta(meta)
+		+ga
+		title ZOoTR Sim
+		link(rel="stylesheet",type="text/css",href="/stylesheets/zootr-sim.css")
+		link(rel="shortcut icon",href="/favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		link(rel="icon",href="/favicon/zootr-sim/favicon.ico", type="image/x-icon")
+		
+	body(ng-app="zootr-sim-changelog",ng-controller="changelog-controller",class="{{darkModeOn ? 'dark-mode' : ''}}")
+		.headerbar.noselect
+			.title(ng-click="load_home()",style="cursor:pointer;")
+				img(src="/images/zootr-sim/ocarina.png",width="50px",height="50px",draggable="false",ng-href="..")
+				span ZOoTR Sim
+			span.credit made by scatter
+		a(href="",ng-click="toggleDarkMode()")#dark-mode-toggle {{darkModeOn ? 'Light' : 'Dark'}} Mode
+		.mainbody
+			h1 Changelog
+			h5 July XXXXXXXXX 2020
+			.updatepost
+				p.
+					Hi! It's been a little while. Unfortunately, I hadn't been able to find much time to work on this project until recently.
+					Fortunately, I've had a lot of spare time lately. I see how many people continue to use the sim and I'm glad I can provide fun and practice for everyone.
+				p.
+					However, it's been crucially lacking in features; I wrote it initially just to have something to practice when I don't have time to play a full seed,
+					and it never really grew out of that alpha phase.
+				p.
+					I hope I've done enough to change that.
+				h2 Logic
+				p.
+					You asked, you received! You now have the option to enforce logic to all the checks in the game. If that sounds more annoying than useful, don't worry, you can always play without it.
+					Here are some details:
+				ul
+					li The sim assumes you are allowed to do all of the optional tricks at all times. What was allowed in the placement settings of the seed is not considered.
+					li The sim assumes full consumables always. I'm not going to make you farm rupees to buy sticks, that would be far too tedious. You'll still need an appropriately sized wallet to buy items, of course.
+					li The sim completely ignores key logic. Again, it would be too tedious to have to open every door individually, plus the logic assumes worst key usage, which makes it a bit tricky to apply to real gameplay.
+					li If you're playing a glitched or no logic seed, you'll have to play without it - it's an entirely different set of logic and the sim is not programmed to handle it.
+					li I've #[strong removed the option to use bombchus] - your bombchu count is now decreased whenever a check requires using one. If the Bombchus in Logic setting is active, the sim assumes you have infinite chus.
+					li Logic applies to regions as well as checks. You won't be able to take the River warp without a scale, for example.
+				p.
+					This is a big game and there's a lot of logic - there's not a chance that I didn't mess something up. If you can't access a location you think you should be able to access 
+					(or can access a location you shouldn't), please 
+					#[a(href="https://github.com/scatter-dev/scatter.live/issues/new?title=[zootr-sim]") report it]
+					 - you can press F12 and click Console to see the logic that's being asked of you.
+				p.
+					The logic is handled serverside for a couple reasons - mostly that it's relatively intensive, but also it's hard (if not impossible) to cheat.
+					The server keeps track of the items you have and only gives items when it determines you can logically access the location it's in.
+					Due to this, you will need an active internet connection to play. I thought this was a fair concession given that it's a browser game.
+					If this is not possible for you, you can download the offline version, which won't enforce logic.
+				h2 Leaderboards
+				p.
+					To be honest, I don't know if anyone wanted this, but I thought it would be fun! There's now a leaderboard that saves all of the runs that are played on the sim.
+					It saves how much time it took, start to finish, and how many items were randomized and checked. Settings are saved too, for fair comparisons.
+				p.
+					Runs are only saved to the leaderboard if logic was enforced. This kinda makes sense to me, given how if logic isn't enforced, you can just walk right into Ganon's Castle and beat him.
+					Either way I hope people can have some fun trying to get their times down or beat their friends!
+				h2 Multiworld
+				p.
+					This is easily the new feature I'm most excited about, and it's kind of surreal to me that it actually works. You can now play multiworld seeds, on the sim, in real time.
+				p.
+					You have to upload the log yourself, since the ootrandomizer.com admins don't allow multiworld seeds to be generated via the API. 
+					This won't change anything about how the sim treats the game, but it may be slightly inconvenient.
+				p.
+					Just upload the log and you'll join a multiworld lobby. There you can join the game and see other players who join. When enough players are in and everyone is ready, the game will start.
+					When it starts, you're connected to each other via the server - finding someone else's item will send it to them right away.
+				p.
+					If someone logs off during the playthrough, they'll get all of their items when they log back on, so there's no need to worry about losing your connection.
+					If it seems like you've gone a long time without getting items, you may have gotten disconnected - just refresh to get what you've been missing.
+				h2 Other changes
+				p.
+					I've also made a bunch of small improvements and changes.
+				h3 Full v5.2 support
+				p I've confirmed that the sim is now fully compatible with v5.2 seeds. Future updates to the randomizer should see the sim being updated much more quickly.
+				h3 Way of the Hero/Foolish Choice hints now appear at the top of the list
+				p As requested by juwk way back in January. Sorry it took this long!
+				h3 Loading in-progress playthroughs
+				p.
+					Now that everything is serverside, you can load playthroughs from the main page using a playthrough ID, available at the bottom of the screen during your seed.
+					
+				h3 Added offline version
+				p.
+					Added due to a user in the Discord with strange DNS issues who couldn't access the site. As explained above, the offline sim doesn't use logic, 
+					and is in fact now structured completely differently than the online version. As such, I probably won't update it in the future. But it's there if you want it.
+				h3 Removed Download Spoiler Log option
+				p.
+					I don't have the server space to save the entire spoiler log for every playthrough, unfortunately. 
+					The seed and settings string are still available if you want to generate the spoiler on ootrandomizer.com.
+				h3 Removed Undo option
+				p This never quite worked right and the main reason people wanted it was accidentally checking things they shouldn't. Logic fixes that.
+				h2 Still missing?
+				p The one thing I'm not fully happy with here is entrance shuffle. It's not supported, and I spent a long time debating whether to change that.
+				p.
+					The thing about entrance shuffle is that it shuffles a #[em lot] of entrances. Even the grottos. That seems, to me, incredibly tedious and unfun to play in a sim setting.
+					That plus the fact that it'd be a significant amount of work to get working right led me to decide to leave it out.
+				p.
+					If you want entrance shuffle support in the sim, let me know, but please understand what you're asking for. 
+					If I see enough desire for it, or if I figure out a way to do it well, I'll add it. Until then, unfortunately, consider it officially unsupported.
+				h2 Closing
+				p.
+					If you have ever played a seed on here, thank you. It means the world to me that I've been able to help so many people with this, whether you're playing just for fun or training to become the next champion.
+				p.
+					I hope you're as excited about this new update as I am. I spent a lot of time on it over the past couple months and I'm extremely excited to finally get it out there. 
+					I debated putting a donate link here, but I'll spare you the guilt. (Although if you're hiring developers, let me know!)
+				p.
+					I'm not sure what comes next for the sim. I've got some crazy ideas, but time will tell if I end up getting the opportunity to implement them. 
+					For now, I'm happy with this, and I hope you will be too. Stay safe, everyone. 
+				p Happy hunting!
+				.signature scatter
+		+angular
+		+localforage
+		script(type="text/javascript",src="/javascripts/zootr-sim/changelog_controller.js")

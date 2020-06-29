@@ -1132,14 +1132,28 @@ function checkPedestal(save_file, age, known_medallions) {
 	var stones = ["Kokiri Emerald", "Goron Ruby", "Zora Sapphire"];
 	var medallions = ["Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"];
 	if (age == "child") {
-		Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x))).forEach(function (loc) {
-			known_medallions.set(bosses[loc], save_file["locations"].get(loc));
-		})
+		if (save_file.multiworld_id) {
+			Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x).item)).forEach(function (loc) {
+				known_medallions.set(bosses[loc], save_file["locations"].get(loc).item);
+			})
+		}
+		else {
+			Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x))).forEach(function (loc) {
+				known_medallions.set(bosses[loc], save_file["locations"].get(loc));
+			});
+		}
 	}
 	else if (age == "adult") {
-		Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x)) || medallions.includes(save_file.locations.get(x))).forEach(function (loc) {
-			known_medallions.set(bosses[loc], save_file["locations"].get(loc));
-		})
+		if (save_file.multiworld_id) {
+			Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x).item) || medallions.includes(save_file.locations.get(x).item)).forEach(function (loc) {
+				known_medallions.set(bosses[loc], save_file["locations"].get(loc).item);
+			});
+		}
+		else {
+			Object.keys(bosses).filter(x => stones.includes(save_file.locations.get(x)) || medallions.includes(save_file.locations.get(x))).forEach(function (loc) {
+				known_medallions.set(bosses[loc], save_file["locations"].get(loc));
+			});
+		}
 	}
 	return known_medallions;
 }

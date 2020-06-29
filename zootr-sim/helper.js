@@ -421,6 +421,7 @@ var hintLocationsMeanings = {
 	"the croaking choir's magnum opus awards": "Frog Ocarina Game",
 	"the froggy finale yields": "Frog Ocarina Game",
 	"the final reward from the Frogs of Zora's River is": "Frog Ocarina Game",
+	"shooting in maturity": "Adult Shooting Gallery",
 	"fishing in youth bestows": "Child Fishing",
 	"fishing in maturity bestows": "Adult Fishing",
 	"gambling grants": "Treasure Chest Game",

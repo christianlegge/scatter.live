@@ -49,6 +49,17 @@ app.directive('customOnChange', function() {
 });
 
 app.controller('simController', ['$scope', '$http', '$interval', '$document', function($scope, $http, $interval, $document) {
+	localforage.getItem("darkModeOn").then(function (result) {
+		if (result) {
+			$scope.darkModeOn = result;
+		}
+	});
+
+	localforage.getItem("playthroughId").then(function (result) {
+		if (result) {
+			$scope.resumeFromId(result);
+		}
+	});
 
 	$document[0].onclick = function(event) {
 		if (event.target.id != "reset" && !document.getElementsByClassName("modal-content")[0].contains(event.target)) {
@@ -1040,18 +1051,6 @@ $scope.hasBossKey = function(dungeon) {
 		'Zora Shop': 'zoranpc.png',
 		'Goron Shop': 'goronnpc.png',
 	};
-
-	localforage.getItem("playthroughId").then(function (result) {
-		if (result) {
-			$scope.resumeFromId(result);
-		}
-	});
-
-	localforage.getItem("darkModeOn").then(function (result) {
-		if (result) {
-			$scope.darkModeOn = result;
-		}
-	});
 }]);
 
 var shopItemImages = {

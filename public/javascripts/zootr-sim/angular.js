@@ -934,7 +934,12 @@ $scope.hasBossKey = function(dungeon) {
 		}, function errorCallback(response) {
 			$scope.generating = false;
 			if (response.status == 400) {
-				$scope.generationError = "Error! Invalid settings string."
+				if (response.data == "Entrance shuffle is not supported.") {
+					$scope.generationError = "Error! Entrance shuffle is not supported."
+				}
+				else {
+					$scope.generationError = "Error! Invalid settings string."
+				}
 			}
 			else if (response.status == 401) {
 				$scope.generationError = "Error! Invalid API key! This is not user error - please report this."
@@ -981,7 +986,12 @@ $scope.hasBossKey = function(dungeon) {
 					$scope.uploadError = "Error! File size too large. If this is a v5.2 spoiler log, report this so the limit can be increased.";
 				}
 				else if (response.status == 400) {
-					$scope.uploadError = "Error! Parsing file failed. If this is a v5.2 spoiler log, please report this."
+					if (response.data == "Entrance shuffle is not supported.") {
+						$scope.uploadError = "Error! Entrance shuffle is not supported.";
+					}
+					else {
+						$scope.uploadError = "Error! Parsing file failed. If this is a v5.2 spoiler log, please report this."
+					}
 				}
 				else {
 					$scope.uploadError = "Unknown error. Please try again and report if this persists.";

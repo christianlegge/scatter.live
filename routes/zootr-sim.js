@@ -146,7 +146,9 @@ function parseLog(logfile, use_logic) {
 	if(!(":version" in logfile) || logfile[":version"] != "5.2.0 Release") {
 		throw "Incorrect version.";
 	}
-
+	if (logfile.settings.entrance_shuffle != "off") {
+		throw "Entrance shuffle is not supported.";
+	}
 	if (logfile.settings.world_count == 1) {
 		for (loc in logfile.locations) {
 			if (typeof logfile.locations[loc] == "object") {
@@ -953,38 +955,48 @@ router.get('/getspoiler', function(req, res, next) {
 	try {
 		if (req.query.valid) {
 			request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
-				if (error) {
-					if (error.code == "ETIMEDOUT") {
-						res.sendStatus(408);
+				try {
+					if (error) {
+						if (error.code == "ETIMEDOUT") {
+							res.sendStatus(408);
+							return;
+						}
+						else {
+							res.status(500).send(error.message);
+							return;
+						}
+					}
+					else if (response.statusCode == 502) {
+						res.sendStatus(502);
 						return;
+					}
+					else if (body.includes("Invalid API Key")) {
+						res.sendStatus(401);
+						return;
+					}
+					else if (body.includes("Invalid randomizer settings")) {
+						res.sendStatus(403);
+						return;
+					}
+					else if (body.includes("Game unbeatable")) {
+
+					}
+					else if (body.includes("Traceback")) {
+						if (body.includes("get_settings_from_command_line_args")) {
+							res.sendStatus(400);
+							return;
+						}
+					}
+					res.send(parseLog(body, req.query.logic));
+				}
+				catch (error) {
+					if (error == "Entrance shuffle is not supported.") {
+						res.status(400).send(error);
 					}
 					else {
 						res.status(500).send(error.message);
-						return;
 					}
 				}
-				else if (response.statusCode == 502) {
-					res.sendStatus(502);
-					return;
-				}
-				else if (body.includes("Invalid API Key")) {
-					res.sendStatus(401);
-					return;
-				}
-				else if (body.includes("Invalid randomizer settings")) {
-					res.sendStatus(403);
-					return;
-				}
-				else if (body.includes("Game unbeatable")) {
-
-				}
-				else if (body.includes("Traceback")) {
-					if (body.includes("get_settings_from_command_line_args")) {
-						res.sendStatus(400);
-						return;
-					}
-				}
-				res.send(parseLog(body, req.query.logic));
 			});
 		}
 		else {

@@ -916,7 +916,7 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		$scope.generating = true;
 		$scope.generationError = null;
-		var url = '/zootr-sim/getspoiler?logic='+$scope.use_logic+'&valid=true&settings='+$scope.settingsString+'&seed='+($scope.seed || '');
+		var url = '/zootr-sim/getspoiler?logic='+$scope.use_logic+'&valid=true&settings='+$scope.settingsString+'&seed='+($scope.form_seed || '');
 		$http({
 			method: 'GET',
 			url: url

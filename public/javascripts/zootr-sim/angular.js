@@ -281,6 +281,10 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.checkingLocation = false;
 				}
 				else if (loc == "Ganon") {
+					if ("mw_players" in response.data && response.data.mw_players) {
+						$scope.finished_mw_players = response.data.mw_players;
+						$scope.everyone_finished = response.data.mw_players.every(x => x.finished);
+					}
 					$scope.finished = response.data.finished;
 					$scope.playtime = response.data.playtime;
 					$scope.num_checks_made = response.data.num_checks_made;
@@ -650,6 +654,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.headline = "";
 		$scope.playing = false;
 		$scope.finished = false;
+		$scope.finished_mw_players = null;
 		$scope.shops = {};
 		$scope.current_mw_lobby = null;
 		$scope.show_modal("throwAwayModal", false);
@@ -874,12 +879,16 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.getAvailableLocations();
 			$scope.getAvailableEntrances();
 		}
-		if ("multiworld_id" in data) {
+		if (data.multiworld_id) {
 			if ($scope.playing) {
 				$scope.subscribe_multiworld(data.multiworld_id, $scope.playthroughId);
 			}
 			else {
 				$scope.load_lobby(data.multiworld_id);
+			}
+			if (data.mw_players) {
+				$scope.finished_mw_players = data.mw_players;
+				$scope.everyone_finished = data.mw_players.every(x => x.finished);
 			}
 		}
 		if (data.missed_items && data.missed_items.length > 0) {

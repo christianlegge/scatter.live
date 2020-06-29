@@ -493,6 +493,7 @@ router.get('/resume', async function(req, res, next) {
 			}
 			var info = {
 				playing: mw_doc ? mw_doc.active : true,
+				mw_players: mw_doc ? mw_doc.players.map(x => ({name: x.name, finished: x.finished})) : null,
 				multiworld_id: result.multiworld_id,
 				id: result._id,
 				players: mw_doc ? mw_doc.players : [],
@@ -579,42 +580,55 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				}
 				else if (req.params.location == "Ganon") {
 					if (result.multiworld_id) {
-						multiworldModel.updateOne({_id: result.multiworld_id, "players._id": result._id}, {$set: {"players.$.finished": true}}).then(function() {
-							multiworldModel.findById(result.multiworld_id).then(function(inner_mw_doc) {
-								try {
-									if (inner_mw_doc.players.every(x => x.finished)) {
-										multiworldModel.findByIdAndDelete(inner_mw_doc._id).exec();
-									}
-								}
-								catch (error) {
-									res.status(500).send(error.message);
-								}
-							}, function(error) {
-								res.status(500).send(error.message);
-							});
-						}, function(error) {
-							res.status(500).send(error.message);
-						});
+						await multiworldModel.updateOne({_id: result.multiworld_id, "players._id": result._id}, {$set: {"players.$.finished": true}});
 					}
 					result.playtime = Date.now() - result.start_time;
 					result.num_checks_made = result.checked_locations.length;
 					result.total_checks = Array.from(result.locations.keys()).length;
+					var mw_players;
 					if (result.use_logic && !result.finished) {
 						submitToLeaderboard(result);
-						setTimeout(function() {
-							try {
-								playthroughModel.findByIdAndDelete(result.id).exec();
+						if (result.multiworld_id) {
+							var mw_doc = await multiworldModel.findById(result.multiworld_id);
+							mw_players = mw_doc.players.map(x => ({name: x.name, finished: x.finished}));
+							var all_players_finished = mw_doc.players.every(x => x.finished);
+							if (all_players_finished) {
+								mw_doc.players.forEach(function(player) {
+									setTimeout(function() {
+										try {
+											playthroughModel.findByIdAndDelete(player._id).exec();
+										}
+										catch (error) {
+											console.error(error.message);
+										}
+									}, 1000*60*60*24);
+								});
+								setTimeout(function () {
+									try {
+										multiworldModel.findByIdAndDelete(mw_doc._id).exec();
+									}
+									catch (error) {
+										console.error(error.message);
+									}
+								}, 1000 * 60 * 60 * 24);
 							}
-							catch (error) {
-								console.error(error.message);
-							}
-						}, 1000*60*60*24);
+						}
+						else {
+							setTimeout(function() {
+								try {
+									playthroughModel.findByIdAndDelete(result._id).exec();
+								}
+								catch (error) {
+									console.error(error.message);
+								}
+							}, 1000*60*60*24);
+						}
 					}
 					result.finished = true;
 					result.save();
 					getPercentiles(result).then(function(percentiles) {
 						try {
-							res.send({ percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
+							res.send({ mw_players: mw_players, percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
 						}
 						catch(error) {
 							res.status(500).send(error.message);

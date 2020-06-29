@@ -8,6 +8,7 @@ var SimLeaderboardSchema = new mongoose.Schema({
 	checked_locations: Number,
 	total_locations: Number,
 	settings: Map,
+	seed: String,
 });
 var SimLeaderboardModel = mongoose.model('SimLeaderboard', SimLeaderboardSchema);
 

@@ -859,6 +859,8 @@ $scope.hasBossKey = function(dungeon) {
 
 	$scope.initializeFromServer = function(data) {
 		$scope.generating = false;
+		$scope.seed = data.seed;
+		$scope.settings_string = data.settings_string;
 		$scope.locations = data["locations"];
 		$scope.players = data["players"];
 		$scope.current_items = data["current_items"];

@@ -337,6 +337,7 @@ button, a.button {
 	font-family: 'scatter OpenSans', sans-serif;
 	border-radius: 6px;
 	border: 1px solid #ccc;
+	display: inline-block;
 }
 
 span.loading {
@@ -832,10 +833,11 @@ a.useChu {
 	to { opacity: 0; }
 }
 
-.playthroughid {
+.playthroughinfo {
 	font-size: 14px;
 	text-align: center;
 	opacity: 0.7;
+	margin:0;
 }
 
 .modal {

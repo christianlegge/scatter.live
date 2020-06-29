@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var db = require('./mongoose-connection');
 
 var SimPlaythroughSchema = new mongoose.Schema({
+	seed: String,
+	settings_string: String,
 	use_logic: Boolean,
 	locations: Map,
 	entrances: Map,

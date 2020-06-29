@@ -79,6 +79,7 @@ function submitToLeaderboard(playthrough) {
 		settings: playthrough.settings,
 		playtime: playthrough.playtime,
 		finish_date: playthrough.start_time + playthrough.playtime,
+		seed: playthrough.seed,
 	});
 	lb.save();
 }
@@ -97,6 +98,8 @@ async function start_multiworld(mw_doc) {
 		try {
 			var player_doc = await playthroughModel.findById(player._id);
 			var log = mw_doc.log;
+			player_doc.seed = log.get(":seed");
+			player_doc.settings_string = log.get(":settings_string");
 			player_doc.multiworld_num = player.num;
 			player_doc.missed_items = [];
 			player_doc.settings = mw_doc.log.get("settings");
@@ -152,6 +155,8 @@ function parseLog(logfile, use_logic) {
 			}
 		}
 		var doc = new playthroughModel({
+			seed: logfile[":seed"],
+			settings_string: logfile[":settings_string"],
 			use_logic: use_logic,
 			locations: logfile["locations"],
 			entrances: logfile.entrances,
@@ -183,6 +188,8 @@ function parseLog(logfile, use_logic) {
 		doc.save();
 
 		return {
+			seed: doc.seed,
+			settings_string: doc.settings_string,
 			playing: true,
 			id: doc._id,
 			start_time: doc.start_time,
@@ -495,6 +502,8 @@ router.get('/resume', async function(req, res, next) {
 				playing: mw_doc ? mw_doc.active : true,
 				mw_players: mw_doc ? mw_doc.players.map(x => ({name: x.name, finished: x.finished})) : null,
 				multiworld_id: result.multiworld_id,
+				seed: result.seed,
+				settings_string: result.settings_string,
 				id: result._id,
 				players: mw_doc ? mw_doc.players : [],
 				in_mw_party: mw_doc ? true : false,

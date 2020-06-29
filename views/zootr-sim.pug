@@ -204,7 +204,9 @@ html
 							br
 				br
 				br
-				p(ng-show="playing").playthroughid Playthrough ID: {{playthroughId}}
+				p.playthroughinfo Seed: {{seed}}
+				p.playthroughinfo Settings: {{settings_string}}
+				p.playthroughinfo Playthrough ID: {{playthroughId}}
 				a.button.red#reset(ng-click="show_modal('throwAwayModal', true)")
 					| This seed sucks, throw it away
 			span(ng-show="finished")

@@ -12,6 +12,33 @@ function regexEscape(str) {
 	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
+var warp_songs = {
+	"Prelude of Light": {
+		region: "Temple of Time",
+		subregion: "Temple of Time",
+	},
+	"Minuet of Forest": {
+		region: "Sacred Forest Meadow",
+		subregion: "Sacred Forest Meadow",
+	},
+	"Bolero of Fire": {
+		region: "Death Mountain Crater",
+		subregion: "Death Mountain Crater Lower Local",
+	},
+	"Serenade of Water": {
+		region: "Lake Hylia",
+		subregion: "Lake Hylia",
+	},
+	"Nocturne of Shadow": {
+		region: "Graveyard",
+		subregion: "Shadow Temple Warp Region",
+	},
+	"Requiem of Spirit": {
+		region: "Desert Colossus",
+		subregion: "Desert Colossus",
+	},
+}
+
 var multiworld_callbacks = {};
 var lobby_callbacks = {};
 
@@ -814,6 +841,12 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 				res.send({ region: result.current_region, subregion: result.current_subregion });
 				return;
 			}
+			else if (req.params.entrance in warp_songs && simHelper.canPlay(result, req.params.entrance)) {
+				result.current_region = warp_songs[req.params.entrance].region;
+				result.current_subregion = warp_songs[req.params.entrance].subregion;
+				result.save();
+				res.send({ region: result.current_region, subregion: result.current_subregion });
+			}
 			if (simHelper.canCheckLocation(result, req.params["entrance"])) {
 				result.current_region = simHelper.getParentRegion(req.params["entrance"]);
 				result.current_subregion = req.params["entrance"];
@@ -927,17 +960,21 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
 		try {
 			if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`)) {
+				var item = result.locations.get(req.params.location);
+				if (typeof item == "object") {
+					item = item.item;
+				}
 				if (result.known_hints.has(req.params.location)) {
-					result.known_hints.get(req.params.location).push(result.locations.get(req.params.location));
+					result.known_hints.get(req.params.location).push(item);
 				}
 				else {
-					result.known_hints.set(req.params.location, [result.locations.get(req.params.location)]);
+					result.known_hints.set(req.params.location, [item]);
 				}
 				if (simHelper.needChus(result, simHelper.subregionFromLocation(req.params.location))) {
 					result.bombchu_count--;
 				}
 				result.save();
-				res.send({bombchu_count: result.bombchu_count, known_hints: result.known_hints, item: result.locations.get(req.params.location)});
+				res.send({bombchu_count: result.bombchu_count, known_hints: result.known_hints, item: item});
 			}
 			else {
 				res.sendStatus(403);

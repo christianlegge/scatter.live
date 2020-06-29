@@ -610,7 +610,7 @@ function parseLogicRule(save_file, rule) {
 		is_child: () => age == "child",
 		is_adult: () => age == "adult",
 		can_plant_bugs: () => logicEvaluation.is_child() && logicEvaluation.has_bottle(),
-		can_plant_bean: () => logicEvaluation.is_child() && (!save_file.settings.get("shuffle_beans") || logicEvaluation.has("Magic Bean Pack")),
+		can_plant_bean: () => logicEvaluation.is_child() && ((!save_file.settings.get("shuffle_beans") && (logicEvaluation.has("Bomb Bag") || logicEvaluation.has("Progressive Scale"))) || logicEvaluation.has("Magic Bean Pack")),
 		can_cut_shrubs: () => logicEvaluation.is_adult() || logicEvaluation.has("Kokiri Sword") || logicEvaluation.Boomerang() || logicEvaluation.has_explosives(),
 		can_ride_epona: () => logicEvaluation.is_adult() && logicEvaluation.can_play("Eponas Song"),
 		found_bombchus: () => settings.get("bombchus_in_logic") ? items.filter(x => x.includes("Bombchus")).length > 0 : logicEvaluation.has("Bomb Bag"),
@@ -1266,6 +1266,10 @@ function needChus(save_file, location) {
 	return false;
 }
 
+function canPlay(save_file, song) {
+	return save_file.current_items.filter(x => x.includes("Ocarina")).length > 0 && save_file.current_items.includes(song);
+}
+
 var region_changing_checks = {
 	'Impa at Castle': ['Hyrule Field', 'Hyrule Field'],
 	'Queen Gohma': ['Kokiri Forest', 'Outside Deku Tree'],
@@ -1291,3 +1295,4 @@ module.exports.needChus = needChus;
 module.exports.subregionFromLocation = subregionFromLocation;
 module.exports.isEssentialItem = isEssentialItem;
 module.exports.region_changing_checks = region_changing_checks;
+module.exports.canPlay = canPlay;

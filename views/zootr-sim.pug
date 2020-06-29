@@ -96,7 +96,7 @@ html
 						div(ng-if="loadError != null").error {{loadError}}
 			.multiworldcontainer(ng-show="current_mw_lobby && !playing")
 				h1 Multiworld Lobby ({{players.length}}/{{current_mw_game.total_players}} Players)
-				a.button(ng-click="unload_lobby()") < Back
+				a.button(ng-if="!playthroughId", ng-click="unload_lobby()") < Back
 				a.button.red(ng-if="playthroughId",ng-click="leave_lobby(current_mw_lobby, playthroughId)") Leave
 				br
 				br

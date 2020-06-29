@@ -280,7 +280,7 @@ router.get('/getmwgames', function (req, res, next) {
 router.get('/getlobbyinfo/:id', function (req, res, next) {
 	multiworldModel.findById(req.params.id).then(function (result) {
 		try {
-			res.send(result.players);
+			res.send({players: result.players, total_players: result.num_players, id: result._id});
 		}
 		catch(error) {
 			res.status(500).send(error.message);

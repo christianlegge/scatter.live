@@ -130,9 +130,9 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 
 	$scope.load_lobby = function(id) {
 		$http.get(`/zootr-sim/getlobbyinfo/${id}`).then(function(response) {
-			$scope.players = response.data;
-			$scope.current_mw_lobby = id;
-			$scope.current_mw_game = $scope.mwgames.filter(x => x.id == id)[0];
+			$scope.players = response.data.players;
+			$scope.current_mw_lobby = response.data.id;
+			$scope.current_mw_game = response.data;
 			$scope.subscribe_lobby(id);
 		}, function(error) {
 			console.error(error);

@@ -245,15 +245,12 @@ html
 						tr(ng-repeat="player in finished_mw_players")
 							td {{player.name}}
 							td {{player.finished ? "✔️" : "❌"}}
-				br
-				br
+				br(ng-if="finished_mw_players")
 				span(ng-if="!finished_mw_players") This playthrough will be deleted in 24 hours. Until then, you can go back to check more locations by clicking here:
 				span(ng-if="finished_mw_players && everyone_finished") Everyone is now finished! Your playthroughs will be deleted in 24 hours. Until then, you can go back to check more locations by clicking here:
 				span(ng-if="finished_mw_players && !everyone_finished") Not everyone is finished! Go back to keep finding items by clicking here:
 				br
-				br
 				a(ng-click="finished = false").button.blue Go back
-				br
 				br
 				a(ng-click="throwAway()").button.red Finish and end playthrough
 			

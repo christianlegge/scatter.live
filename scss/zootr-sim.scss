@@ -960,9 +960,21 @@ $avi-size: 48px;
 	text-align: left;
 	position: relative;
 	padding-bottom: $avi-size;
+	margin-bottom: $avi-size;
 }
 
 .signature {
+	.emdash {
+		position: absolute;
+		left:-24px;
+		top: $avi-size/2;
+		width: 16px;
+		height: 1px;
+		background-color: $light-text;
+		.dark-mode & {
+			background-color: $dark-text;
+		}
+	}
 	height: $avi-size;
 	line-height: $avi-size;
 	background: {

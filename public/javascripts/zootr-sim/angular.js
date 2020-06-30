@@ -1117,6 +1117,7 @@ var shopItemImages = {
 	'Deku Stick (1)': 'stick.png',
 	'Deku Stick Capacity': 'stickupgrade.png',
 	'Dins Fire': 'din.png',
+	'Double Defense': 'doubledefense.png',
 	'Eponas Song': 'epona.png',
 	'Eyeball Frog': 'frog.png',
 	'Eyedrops': 'eyedrops.png',

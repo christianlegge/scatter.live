@@ -1578,7 +1578,8 @@ var logic = {
 			"scene": "Death Mountain Crater",
 			"hint": "Death Mountain Crater",
 			"exits": {
-				"Fire Temple Lower": "True"
+				"Fire Temple Lower": "True",
+				"Death Mountain Crater Central Local": "True",
 			}
 		},
 		"Crater Fairy": {

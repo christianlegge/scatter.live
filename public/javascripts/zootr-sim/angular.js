@@ -644,6 +644,9 @@ $scope.hasBossKey = function(dungeon) {
 		else if (item == "Bottle") {
 			return $scope.current_items.filter(x => x.startsWith("Bottle")).length > 0;
 		}
+		else if (item == "Bombchus") {
+			return $scope.bombchu_count > 0;
+		}
 		else {
 			return $scope.getCount(item) > 0;
 		}

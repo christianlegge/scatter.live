@@ -284,7 +284,7 @@ html
 		.modal.hidden#missedItemsModal
 			.modal-content
 				h2 While you were away
-				p(ng-repeat="item in missed_items") {{item}}
+				p(ng-repeat="item in missed_items track by $index") {{item}}
 				a.button.blue(ng-click="show_modal('missedItemsModal', false)") OK
 		.modal.hidden#lobbyLoadErrorModal
 			.modal-content

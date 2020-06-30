@@ -1,5 +1,7 @@
 var logic = require("./logic.js");
 
+var adult_trade = ["Pocket Egg", "Pocket Cucco", "Cojiro", "Odd Mushroom", "Poachers Saw", "Broken Sword", "Prescription", "Eyeball Frog", "Eyedrops", "Claim Check"];
+
 var gossipStoneMap = {
 	"Death Mountain Crater Gossip Stone": "Death Mountain Crater (Bombable Wall)",
 	"Death Mountain Trail Gossip Stone": "Death Mountain Trail (Biggoron)",
@@ -587,7 +589,7 @@ function parseLogicRule(save_file, rule) {
 		Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
 		Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
 		Eyedrops: () => logicEvaluation.has("Eyedrops"),
-		Claim_Check: () => logicEvaluation.has("Claim Check"),
+		Claim_Check: () => items.filter(x => adult_trade.includes(x)).length > 0,
 		Forest_Medallion: () => logicEvaluation.has("Forest Medallion"),
 		Fire_Medallion: () => logicEvaluation.has("Fire Medallion"),
 		Water_Medallion: () => logicEvaluation.has("Water Medallion"),

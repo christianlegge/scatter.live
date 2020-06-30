@@ -121,9 +121,8 @@ function getPercentiles(playthrough) {
 
 async function start_multiworld(mw_doc) {
 	mw_doc.active = true;
-	await Promise.all(mw_doc.players.map(async function(player) {
-		try {
-			var player_doc = await playthroughModel.findById(player._id);
+	await Promise.all(mw_doc.players.map(function(player) {
+		return playthroughModel.findById(player._id).then(function(player_doc) {
 			var log = mw_doc.log;
 			var locations = log.get("locations")[`World ${player.num}`];
 			for (loc in locations) {
@@ -145,7 +144,7 @@ async function start_multiworld(mw_doc) {
 			player_doc.start_time = Date.now();
 			player_doc.hash = log.get("file_hash");
 			player_doc.hints = log.get("gossip_stones")[`World ${player.num}`];
-			player_doc.known_hints = { };
+			player_doc.known_hints = {};
 			player_doc.current_age = player_doc.settings.get("starting_age") == "random" ? log.get("randomized_settings")[`World ${player.num}`]["starting_age"] : player_doc.settings.get("starting_age");
 			player_doc.known_medallions = new Map();
 			player_doc.dungeons = log.get("dungeons")[`World ${player.num}`];
@@ -165,10 +164,7 @@ async function start_multiworld(mw_doc) {
 			player_doc.current_subregion = player_doc.current_age == "child" ? "Links House" : "Temple of Time";
 			player_doc.known_medallions.set("Free", player_doc.locations.get("Links Pocket").item);
 			player_doc.save();
-		}
-		catch (error) {
-			console.error(error);
-		}
+		});
 	}));
 	mw_doc.save();
 }

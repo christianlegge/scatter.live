@@ -671,6 +671,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.finished_mw_players = null;
 		$scope.shops = {};
 		$scope.current_mw_lobby = null;
+		$scope.get_lobbies();
 		$scope.show_modal("throwAwayModal", false);
 		localforage.setItem("playthroughId", null);
 	};

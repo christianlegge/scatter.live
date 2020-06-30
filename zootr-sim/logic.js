@@ -2885,7 +2885,7 @@ var logic = {
 				"dungeon": "Gerudo Training Grounds",
 				"locations": {
 					"Gerudo Training Grounds Hammer Room Clear Chest": "True",
-					"Gerudo Training Grounds Hammer Room Switch Chest": "can_use(Hammer)"
+					"Gerudo Training Grounds Hammer Room Switch Chest": "True"
 				},
 				"exits": {
 					"Gerudo Training Grounds Eye Statue Lower": "can_use(Hammer) and Bow",

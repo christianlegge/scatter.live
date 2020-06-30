@@ -23,7 +23,7 @@ var warp_songs = {
 	},
 	"Bolero of Fire": {
 		region: "Death Mountain Crater",
-		subregion: "Death Mountain Crater Lower Local",
+		subregion: "Death Mountain Crater Central Local",
 	},
 	"Serenade of Water": {
 		region: "Lake Hylia",

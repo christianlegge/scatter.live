@@ -580,7 +580,6 @@ a.useChu {
 	display:grid;
 }
 
-
 .item {
 	display: inline-grid;
 	width: 32px;
@@ -591,6 +590,13 @@ a.useChu {
 	background-repeat: no-repeat;
 	padding:4px;
 	border:0;
+	position: relative;
+}
+
+.songcheckmark {
+	position: absolute;
+	right: 0;
+	bottom: 0;
 }
 
 .dark-mode .items {

@@ -1001,6 +1001,10 @@ $scope.hasBossKey = function(dungeon) {
 		}
 		reader.readAsText(event.target.files[0]);
 	}
+
+	$scope.show_song_check = function(song) {
+		return song in song_locations && $scope.checked_locations.includes(song_locations[song]);
+	}
 	
 	$scope.checkHint = function(stone) {
 		if (!$scope.checkingLocation) {

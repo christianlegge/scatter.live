@@ -145,6 +145,21 @@ hashImages = {
 
 var warpSongs = ['Minuet of Forest', 'Bolero of Fire', 'Serenade of Water', 'Nocturne of Shadow', 'Requiem of Spirit', 'Prelude of Light'];
 
+var song_locations = {
+  "Zeldas Lullaby": "Impa at Castle",
+  "Eponas Song": "Song from Malon",
+  "Sarias Song": "Song from Saria",
+  "Suns Song": "Song from Composer Grave",
+  "Song of Time": "Song from Ocarina of Time",
+  "Song of Storms": "Song at Windmill",
+  "Minuet of Forest": "Sheik Forest Song",
+  "Bolero of Fire": "Sheik in Crater",
+  "Serenade of Water": "Sheik in Ice Cavern",
+  "Requiem of Spirit": "Sheik at Colossus",
+  "Nocturne of Shadow": "Sheik in Kakariko",
+  "Prelude of Light": "Sheik at Temple"
+}
+
 var songTargets = {
   'Minuet of Forest': 'Sacred Forest Meadow',
   'Bolero of Fire': 'Death Mountain Crater',

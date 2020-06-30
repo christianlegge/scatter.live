@@ -125,7 +125,9 @@ html
 				.main.tracker
 					.trackerinner
 						.items
-							div(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}",style="background-image: url('images/zootr-sim/{{getImage(x)}}')",class="{{lightUpTracker(x) ? '' : 'disable'}}").item
+							.item(ng-repeat="x in itemgrid track by $index",ng-if="x != 'break'",id="{{x}}")
+								div(class="{{lightUpTracker(x) ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{getImage(x)}}')")
+								.noselect.songcheckmark(ng-if="show_song_check(x)") ✔️
 						.dungeons
 							div(ng-repeat="dungeon in dungeongrid",id="{{dungeon | removeSpaces}}").dungeon
 								div(style="background-image:url('images/zootr-sim/{{nameToImageTitle[dungeon]}}')").dungeontitle

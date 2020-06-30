@@ -125,13 +125,20 @@ async function start_multiworld(mw_doc) {
 		try {
 			var player_doc = await playthroughModel.findById(player._id);
 			var log = mw_doc.log;
+			var locations = log.get("locations")[`World ${player.num}`];
+			for (loc in locations) {
+				if (typeof locations[loc] == "object") {
+					var newname = locations[loc].item.split("[")[0].trim();
+					locations[loc].item = newname;
+				}
+			}
 			player_doc.seed = log.get(":seed");
 			player_doc.settings_string = log.get(":settings_string");
 			player_doc.multiworld_num = player.num;
 			player_doc.missed_items = [];
 			player_doc.settings = mw_doc.log.get("settings");
 			player_doc.use_logic = mw_doc.use_logic;
-			player_doc.locations = log.get("locations")[`World ${player.num}`];
+			player_doc.locations = locations;
 			player_doc.entrances = log.get("entrances")[`World ${player.num}`];
 			player_doc.checked_locations = ["Links Pocket"];
 			player_doc.current_items = Object.keys(log.get("starting_items")[`World ${player.num}`]).concat(player_doc.locations.get("Links Pocket").item);

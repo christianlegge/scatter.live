@@ -1066,7 +1066,7 @@ function getLocations(save_file, region) {
 	return all_locs.filter(x => !x.includes("Shop Item") && !x.includes("Bazaar Item") && (location_exceptions.includes(x) || Array.from(save_file.locations.keys()).includes(x) || x.startsWith("GS ") || (x.includes("Gossip Stone") && x != "Gossip Stone Fairy")));
 }
 
-var child_only_shops = ["Kokiri Shop", "Castle Town Bazaar", "Castle Town Potion Shop", "Bombchu Shop"];
+var child_only_shops = ["Castle Town Bazaar", "Castle Town Potion Shop", "Bombchu Shop"];
 var adult_only_shops = ["Kakariko Bazaar", "Kakariko Potion Shop"];
 
 function getShops(save_file, region) {

@@ -424,13 +424,11 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 	var player_num = mw_doc.players.filter(x => x._id == req.params.player_id)[0].num;
 	multiworld_callbacks[req.params.multi_id][player_num] = callback;
 
-	res.set({
+	res.writeHead(200, {
 		"Cache-Control": "no-cache",
 		"Content-Type": "text/event-stream",
 		"Connection": "keep-alive",
 	});
-	res.flushHeaders();
-	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
 		try {

@@ -446,6 +446,10 @@ router.get('/multiworldconnect/:multi_id/:player_id', async function (req, res, 
 });
 
 router.get('/joinlobby/:id/:name', function (req, res, next) {
+	if (req.params.name.length > 20) {
+		res.status(400).send("Name too long!");
+		return;
+	}
 	multiworldModel.findById(req.params.id).then(function (result) {
 		try {
 			if (result.players.length >= result.num_players) {
@@ -810,6 +814,10 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 });
 
 router.get('/submitname/:playthroughId/:name', function (req, res, next) {
+	if (req.params.name.length > 20) {
+		res.status(400).send("Name too long!");
+		return;
+	}
 	leaderboardModel.findById(req.params["playthroughId"]).then(function (result) {
 		try {
 			if (!result.name) {

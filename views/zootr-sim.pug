@@ -113,9 +113,10 @@ html
 						td(ng-if="player._id != playthroughId") {{player.ready ? "✔️" : "❌"}}
 					tr(ng-if="!playthroughId")
 						td
-							input(type="text",placeholder="Name",ng-model="lobby_name")
+							input(type="text",placeholder="Name",ng-model="lobby_name",maxlength=20)
 						td
 							a.button(ng-click="join_lobby(current_mw_lobby, lobby_name)") Join
+				br
 				.error(ng-if="lobby_error") {{lobby_error}}
 			span(ng-if="playing && !finished")
 				span {{(now - start_time) | formatDuration}}
@@ -225,7 +226,7 @@ html
 				br(ng-if="used_logic")
 				div.loadfromid(ng-if="used_logic")
 					form(ng-submit="submitToLb(lbName)")
-						input(type="text",ng-model="lbName",placeholder="Name",required)
+						input(type="text",ng-model="lbName",placeholder="Name",maxlength=20,required)
 						input(type="submit",value="Submit")
 						span(ng-if="submitting").loading Submitting...
 						span(ng-if="submitted",style="position:absolute;font-size:2em") ✔️

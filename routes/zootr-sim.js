@@ -711,7 +711,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (typeof item == "object") {
 					item = item["item"];
 				}
-				if (!(result.locations.has(req.params.location)) && req.params["location"].startsWith("GS ")) {
+				if (!result.locations.has(req.params.location) && req.params["location"].startsWith("GS ")) {
 					item = "Gold Skulltula Token";
 				}
 				if (!(result.locations.has(req.params.location)) && req.params["location"] == "Gift from Saria") {

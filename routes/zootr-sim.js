@@ -728,17 +728,18 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 
 				if (!other_player) {
 					result.current_items.push(item);
+					if (item.includes("Bombchu")) {
+						result.bombchu_count += parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10);
+						if (result.settings.get("bombchus_in_logic")) {
+							result.bombchu_count += 10000;
+						}
+					}
 				}
 				
 				if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
 					result.known_medallions.set(result.current_region, item);
 				}
-				if (item.includes("Bombchu")) {
-					result.bombchu_count += parseInt(item.substring(item.lastIndexOf('(') + 1, item.lastIndexOf(')')), 10);
-					if (result.settings.get("bombchus_in_logic")) {
-						result.bombchu_count += 10000;
-					}
-				}
+				
 				if (simHelper.needChus(result, req.params.location)) {
 					result.bombchu_count--;
 				}

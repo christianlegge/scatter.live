@@ -628,7 +628,6 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 						await multiworldModel.updateOne({_id: result.multiworld_id, "players._id": result._id}, {$set: {"players.$.finished": true}});
 					}
 					result.playtime = Date.now() - result.start_time;
-					result.num_checks_made = result.checked_locations.length;
 					result.total_checks = Array.from(result.locations.keys()).length;
 					var mw_players;
 					if (result.use_logic && !result.finished) {
@@ -687,6 +686,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (/Clear .* Trial/.test(req.params.location)) {
 					item = req.params.location;
 				}
+				if (result.locations.has(req.params.location)) {
+					result.num_checks_made++;
+				}
 				var other_player;
 				if (item && result.multiworld_id) {
 					var mw_doc = await MultiworldPlaythroughModel.findById(result.multiworld_id);
@@ -709,10 +711,10 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (typeof item == "object") {
 					item = item["item"];
 				}
-				if (!(req.params["location"] in result.locations) && req.params["location"].startsWith("GS ")) {
+				if (!(result.locations.has(req.params.location)) && req.params["location"].startsWith("GS ")) {
 					item = "Gold Skulltula Token";
 				}
-				if (!(req.params["location"] in result.locations) && req.params["location"] == "Gift from Saria") {
+				if (!(result.locations.has(req.params.location)) && req.params["location"] == "Gift from Saria") {
 					item = "Ocarina";
 				}
 				if (req.params.location == "Impa at Castle") {

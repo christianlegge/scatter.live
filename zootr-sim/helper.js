@@ -550,7 +550,8 @@ function parseLogicRule(save_file, rule) {
 			(x == "Longshot" && logicEvaluation.is_adult() && items.filter(x => x == "Progressive Hookshot").length >= 2) ||
 			(x.replace(/_/g, " ") == "Silver Gauntlets" && logicEvaluation.is_adult() && items.filter(x => x == "Progressive Strength Upgrade").length >= 2) ||
 			(x.replace(/_/g, " ") == "Golden Gauntlets" && logicEvaluation.is_adult() && items.filter(x => x == "Progressive Strength Upgrade").length >= 3) ||
-			(x == "Scarecrow" && logicEvaluation.Ocarina()) ||
+			(x == "Scarecrow" && logicEvaluation.Ocarina() && logicEvaluation.can_use("Hookshot")) ||
+			((x == "Distant Scarecrow" || x == "Distant_Scarecrow") && logicEvaluation.Ocarina() && logicEvaluation.can_use("Longshot")) ||
 			(x.replace(/_/g, " ") == "Goron Tunic" || x.replace(/_/g, " ") == "Zora Tunic"),
 		is_magic_item: x => x == "Dins Fire" || x == "Farores Wind" || x == "Nayrus Love" || x == "Lens of Truth",
 		is_magic_arrow: x => x == "Fire Arrows" || x == "Light Arrows",

@@ -877,7 +877,7 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 				result.save();
 				res.send({ region: result.current_region, subregion: result.current_subregion });
 			}
-			if (simHelper.canCheckLocation(result, req.params["entrance"])) {
+			else if (simHelper.canCheckLocation(result, req.params["entrance"])) {
 				if (simHelper.needChus(result, req.params.entrance)) {
 					result.bombchu_count--;
 				}

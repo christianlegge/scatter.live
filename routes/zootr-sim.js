@@ -108,6 +108,7 @@ function submitToLeaderboard(playthrough) {
 		playtime: playthrough.playtime,
 		finish_date: playthrough.start_time + playthrough.playtime,
 		seed: playthrough.seed,
+		name: "",
 	});
 	lb.save();
 }

@@ -36,7 +36,7 @@ html
 								a(ng-click="get_entries(per_page, field, current_sort == field && sort_direction == 'asc' ? 'desc' : 'asc', current_page, search_name)",class="{{current_sort == field ? (sort_direction == 'asc' ? 'sortasc' : 'sortdesc') : ''}}") {{field.replace("_", " ")}}
 					tbody
 						tr(ng-if="!loading",ng-repeat="entry in entries").entry
-							td {{entry.name}}
+							td {{entry.name ? entry.name : "-"}}
 							td {{entry.checked_locations}}
 							td {{entry.total_locations}}
 							td {{entry.playtime}}

@@ -1867,15 +1867,6 @@ var logic = {
 	},
 	"Ganons Castle": {
 		"vanilla": {
-			"Ganons Castle Tower": {
-				"region_name": "Ganons Castle Tower",
-				"dungeon": "Ganons Castle",
-				"locations": {
-					"Ganons Tower Boss Key Chest": "True",
-					"Ganondorf Hint": "Boss_Key_Ganons_Castle",
-					"Ganon": "Boss_Key_Ganons_Castle and can_use(Light_Arrows)"
-				}
-			},
 			"Ganons Castle Lobby": {
 				"region_name": "Ganons Castle Lobby",
 				"dungeon": "Ganons Castle",
@@ -1979,7 +1970,16 @@ var logic = {
 					"Ganons Castle Light Trial Lullaby Chest": " can_play(Zeldas_Lullaby) and (Small_Key_Ganons_Castle, 1)",
 					"Clear Light Trial": "(can_use(Light_Arrows) and Progressive_Hookshot and (Small_Key_Ganons_Castle, 2) and can_see_with_lens)"
 				}
-			}
+			},
+			"Ganons Castle Tower": {
+				"region_name": "Ganons Castle Tower",
+				"dungeon": "Ganons Castle",
+				"locations": {
+					"Ganons Tower Boss Key Chest": "True",
+					"Ganondorf Hint": "Boss_Key_Ganons_Castle",
+					"Ganon": "Boss_Key_Ganons_Castle and can_use(Light_Arrows)"
+				}
+			},
 		},
 		"mq": {
 			"Ganons Castle Lobby": {
@@ -2083,7 +2083,16 @@ var logic = {
 					"Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby)",
 					"Clear Light Trial": " can_use(Light_Arrows) and (Small_Key_Ganons_Castle, 3) and can_see_with_lens"
 				}
-			}
+			},
+			"Ganons Castle Tower": {
+				"region_name": "Ganons Castle Tower",
+				"dungeon": "Ganons Castle",
+				"locations": {
+					"Ganons Tower Boss Key Chest": "True",
+					"Ganondorf Hint": "Boss_Key_Ganons_Castle",
+					"Ganon": "Boss_Key_Ganons_Castle and can_use(Light_Arrows)"
+				}
+			},
 		}
 	},
 	"Bottom of the Well": {
@@ -2843,6 +2852,70 @@ var logic = {
 					"Gerudo Training Grounds Central Maze": "True"
 				}
 			},
+			"Gerudo Training Grounds Heavy Block Room": {
+				"region_name": "Gerudo Training Grounds Heavy Block Room",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Before Heavy Block Chest": "True"
+				},
+				"exits": {
+					"Gerudo Training Grounds Eye Statue Upper": " can_see_with_lens and (can_use(Hookshot) or (logic_gtg_fake_wall and can_use(Hover_Boots)))",
+					"Gerudo Training Grounds Like Like Room": " can_use(Silver_Gauntlets) and can_see_with_lens and (can_use(Hookshot) or (logic_gtg_fake_wall and can_use(Hover_Boots)))"
+				}
+			},
+			"Gerudo Training Grounds Like Like Room": {
+				"region_name": "Gerudo Training Grounds Like Like Room",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Heavy Block First Chest": "True",
+					"Gerudo Training Grounds Heavy Block Second Chest": "True",
+					"Gerudo Training Grounds Heavy Block Third Chest": "True",
+					"Gerudo Training Grounds Heavy Block Fourth Chest": "True"
+				}
+			},
+			"Gerudo Training Grounds Eye Statue Lower": {
+				"region_name": "Gerudo Training Grounds Eye Statue Lower",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Eye Statue Chest": "can_use(Bow)"
+				},
+				"exits": {
+					"Gerudo Training Grounds Hammer Room": "True"
+				}
+			},
+			"Gerudo Training Grounds Eye Statue Upper": {
+				"region_name": "Gerudo Training Grounds Eye Statue Upper",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Near Scarecrow Chest": "can_use(Bow)"
+				},
+				"exits": {
+					"Gerudo Training Grounds Eye Statue Lower": "True"
+				}
+			},
+			"Gerudo Training Grounds Hammer Room": {
+				"region_name": "Gerudo Training Grounds Hammer Room",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Hammer Room Clear Chest": "True",
+					"Gerudo Training Grounds Hammer Room Switch Chest": "True"
+				},
+				"exits": {
+					"Gerudo Training Grounds Eye Statue Lower": "can_use(Hammer) and Bow",
+					"Gerudo Training Grounds Lava Room": "True"
+				}
+			},
+			"Gerudo Training Grounds Lava Room": {
+				"region_name": "Gerudo Training Grounds Lava Room",
+				"dungeon": "Gerudo Training Grounds",
+				"locations": {
+					"Gerudo Training Grounds Underwater Silver Rupee Chest": " can_use(Hookshot) and can_play(Song_of_Time) and Iron_Boots and (logic_fewer_tunic_requirements or can_use(Zora_Tunic))"
+				},
+				"exits": {
+					"Gerudo Training Grounds Central Maze Right": "can_play(Song_of_Time) or is_child",
+					"Gerudo Training Grounds Hammer Room": " can_use(Longshot) or (can_use(Hookshot) and can_use(Hover_Boots))"
+				}
+			},
 			"Gerudo Training Grounds Central Maze": {
 				"region_name": "Gerudo Training Grounds Central Maze",
 				"dungeon": "Gerudo Training Grounds",
@@ -2870,70 +2943,6 @@ var logic = {
 					"Gerudo Training Grounds Lava Room": "True"
 				}
 			},
-			"Gerudo Training Grounds Lava Room": {
-				"region_name": "Gerudo Training Grounds Lava Room",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Underwater Silver Rupee Chest": " can_use(Hookshot) and can_play(Song_of_Time) and Iron_Boots and (logic_fewer_tunic_requirements or can_use(Zora_Tunic))"
-				},
-				"exits": {
-					"Gerudo Training Grounds Central Maze Right": "can_play(Song_of_Time) or is_child",
-					"Gerudo Training Grounds Hammer Room": " can_use(Longshot) or (can_use(Hookshot) and can_use(Hover_Boots))"
-				}
-			},
-			"Gerudo Training Grounds Hammer Room": {
-				"region_name": "Gerudo Training Grounds Hammer Room",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Hammer Room Clear Chest": "True",
-					"Gerudo Training Grounds Hammer Room Switch Chest": "True"
-				},
-				"exits": {
-					"Gerudo Training Grounds Eye Statue Lower": "can_use(Hammer) and Bow",
-					"Gerudo Training Grounds Lava Room": "True"
-				}
-			},
-			"Gerudo Training Grounds Eye Statue Lower": {
-				"region_name": "Gerudo Training Grounds Eye Statue Lower",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Eye Statue Chest": "can_use(Bow)"
-				},
-				"exits": {
-					"Gerudo Training Grounds Hammer Room": "True"
-				}
-			},
-			"Gerudo Training Grounds Eye Statue Upper": {
-				"region_name": "Gerudo Training Grounds Eye Statue Upper",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Near Scarecrow Chest": "can_use(Bow)"
-				},
-				"exits": {
-					"Gerudo Training Grounds Eye Statue Lower": "True"
-				}
-			},
-			"Gerudo Training Grounds Heavy Block Room": {
-				"region_name": "Gerudo Training Grounds Heavy Block Room",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Before Heavy Block Chest": "True"
-				},
-				"exits": {
-					"Gerudo Training Grounds Eye Statue Upper": " can_see_with_lens and (can_use(Hookshot) or (logic_gtg_fake_wall and can_use(Hover_Boots)))",
-					"Gerudo Training Grounds Like Like Room": " can_use(Silver_Gauntlets) and can_see_with_lens and (can_use(Hookshot) or (logic_gtg_fake_wall and can_use(Hover_Boots)))"
-				}
-			},
-			"Gerudo Training Grounds Like Like Room": {
-				"region_name": "Gerudo Training Grounds Like Like Room",
-				"dungeon": "Gerudo Training Grounds",
-				"locations": {
-					"Gerudo Training Grounds Heavy Block First Chest": "True",
-					"Gerudo Training Grounds Heavy Block Second Chest": "True",
-					"Gerudo Training Grounds Heavy Block Third Chest": "True",
-					"Gerudo Training Grounds Heavy Block Fourth Chest": "True"
-				}
-			}
 		},
 		"mq": {
 			"Gerudo Training Grounds Lobby": {
@@ -3601,22 +3610,6 @@ var logic = {
 					"Water Temple Highest Water Level": "is_adult"
 				}
 			},
-			"Water Temple Highest Water Level": {
-				"region_name": "Water Temple Highest Water Level",
-				"dungeon": "Water Temple",
-				"events": {
-					"Water Temple Clear": "Boss_Key_Water_Temple and can_use(Longshot)"
-				},
-				"locations": {
-					"Morpha": "Boss_Key_Water_Temple and can_use(Longshot)",
-					"Morpha Heart": "Boss_Key_Water_Temple and can_use(Longshot)",
-					"Fairy Pot": "has_bottle and can_use(Longshot)"
-				},
-				"exits": {
-					"Water Temple Dark Link Region": "(Small_Key_Water_Temple, 5) and can_use(Hookshot)",
-					"Water Temple Dive": " (can_use(Zora_Tunic) or logic_fewer_tunic_requirements) and ((logic_water_temple_torch_longshot and can_use(Longshot)) or Iron_Boots)"
-				}
-			},
 			"Water Temple Dive": {
 				"region_name": "Water Temple Dive",
 				"dungeon": "Water Temple",
@@ -3681,25 +3674,25 @@ var logic = {
 				"exits": {
 					"Water Temple Dragon Statue": " (Small_Key_Water_Temple, 6) and can_play(Song_of_Time) and Bow and ((Iron_Boots and (can_use(Zora_Tunic) or logic_fewer_tunic_requirements)) or logic_water_dragon_jump_dive or (logic_water_dragon_bombchu and has_bombchus and can_dive))"
 				}
-			}
-		},
-		"mq": {
-			"Water Temple Lobby": {
-				"region_name": "Water Temple Lobby",
+			},
+			"Water Temple Highest Water Level": {
+				"region_name": "Water Temple Highest Water Level",
 				"dungeon": "Water Temple",
 				"events": {
 					"Water Temple Clear": "Boss_Key_Water_Temple and can_use(Longshot)"
 				},
 				"locations": {
+					"Morpha": "Boss_Key_Water_Temple and can_use(Longshot)",
 					"Morpha Heart": "Boss_Key_Water_Temple and can_use(Longshot)",
-					"Morpha": "Boss_Key_Water_Temple and can_use(Longshot)"
+					"Fairy Pot": "has_bottle and can_use(Longshot)"
 				},
 				"exits": {
-					"Lake Hylia": "True",
-					"Water Temple Dive": " (can_use(Zora_Tunic) or logic_fewer_tunic_requirements) and can_use(Iron_Boots)",
-					"Water Temple Dark Link Region": " Small_Key_Water_Temple and can_use(Longshot)"
+					"Water Temple Dark Link Region": "(Small_Key_Water_Temple, 5) and can_use(Hookshot)",
+					"Water Temple Dive": " (can_use(Zora_Tunic) or logic_fewer_tunic_requirements) and ((logic_water_temple_torch_longshot and can_use(Longshot)) or Iron_Boots)"
 				}
 			},
+		},
+		"mq": {
 			"Water Temple Dive": {
 				"region_name": "Water Temple Dive",
 				"dungeon": "Water Temple",
@@ -3742,7 +3735,23 @@ var logic = {
 					"GS Water Temple MQ South Basement": " can_use(Fire_Arrows) and (Hover_Boots or can_use(Scarecrow))",
 					"GS Water Temple MQ North Basement": " (Small_Key_Water_Temple, 2) and (Hover_Boots or can_use(Scarecrow) or logic_water_north_basement_ledge_jump)"
 				}
-			}
+			},
+			"Water Temple Lobby": {
+				"region_name": "Water Temple Lobby",
+				"dungeon": "Water Temple",
+				"events": {
+					"Water Temple Clear": "Boss_Key_Water_Temple and can_use(Longshot)"
+				},
+				"locations": {
+					"Morpha Heart": "Boss_Key_Water_Temple and can_use(Longshot)",
+					"Morpha": "Boss_Key_Water_Temple and can_use(Longshot)"
+				},
+				"exits": {
+					"Lake Hylia": "True",
+					"Water Temple Dive": " (can_use(Zora_Tunic) or logic_fewer_tunic_requirements) and can_use(Iron_Boots)",
+					"Water Temple Dark Link Region": " Small_Key_Water_Temple and can_use(Longshot)"
+				}
+			},
 		}
 	}
 };

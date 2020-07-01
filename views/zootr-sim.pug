@@ -142,6 +142,8 @@ html
 								div(ng-if="hasKeys(dungeon)",class="{{getCount('Small Key ('+dungeon+')') > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/{{getCount('Small Key ('+dungeon+')') > 0 ? getCount('Small Key ('+dungeon+')') : 'small_key'}}.png')").smallkeyimage
 								div(ng-if="hasBossKey(dungeon)",class="{{getCount('Boss Key ('+dungeon+')') > 0 ? '' : 'disable'}}",style="background-image: url('images/zootr-sim/boss_key.png')").bosskeyimage
 					br
+					span(ng-repeat-start="item in recent_items track by $index") {{item}}
+					br(ng-repeat-end)
 					br
 					span(ng-if="bombchu_count > 0") Bombchus: {{bombchu_count > 1000 ? "∞" : bombchu_count}}
 					br

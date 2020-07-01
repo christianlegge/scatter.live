@@ -80,6 +80,7 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 	$scope.known_medallions = {};
 	$scope.current_items = [];
 	$scope.use_logic = true;
+	$scope.recent_items = [];
 
 	$scope.now = Date.now();
 	$interval(() => $scope.now = Date.now(), 1000);
@@ -123,7 +124,12 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			var data = JSON.parse(event.data);
 			if ("item" in data) {
 				$scope.current_items.push(data.item);
-				$scope.headline = `Received from ${data.from}: ${data.item}`;
+				$scope.recent_items.unshift(`Received from ${data.from}: ${data.item}`);
+				$scope.$apply();
+				setTimeout(function() {
+					$scope.recent_items.pop();
+				}, 5000);
+				
 			}
 		};
 	}

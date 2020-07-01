@@ -41,6 +41,7 @@ var warp_songs = {
 
 var multiworld_callbacks = {};
 var lobby_callbacks = {};
+var playthrough_timeouts = {};
 
 var meta = {
 	title: "ZOoTR Sim",
@@ -527,6 +528,10 @@ router.get('/resume', async function(req, res, next) {
 			return;
 		}
 		try {
+			if (result._id in playthrough_timeouts) {
+				clearTimeout(playthrough_timeouts[result._id]);
+				delete playthrough_timeouts[result._id];
+			}
 			var percentiles, mw_doc;
 			if (result.finished) {
 				percentiles = await getPercentiles(result);
@@ -772,11 +777,12 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 });
 
 router.get('/throwaway/:playthroughId', function(req, res, next) {
-	playthroughModel.deleteOne({_id: req.params.playthroughId}).then(function(result) {
-		res.sendStatus(200);
-	}, function(error) {
-		res.status(500).send(error.message);
-	});
+	playthrough_timeouts[req.params.playthroughId] = setTimeout(function () {
+		playthroughModel.findByIdAndDelete(req.params.playthroughId).catch(function (error) {
+			console.error(error.message);
+		});
+	}, 1000 * 60 * 60 * 24);
+	res.sendStatus(200);
 });
 
 router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {

@@ -269,11 +269,18 @@ html
 			a(href="../zootr-sim-offline.zip",target="_blank") Download for Offline Use
 	
 		.modal.hidden#throwAwayModal
-			.modal-content
+			.modal-content(ng-if="!is_multiworld")
 				p Really throw the seed away?
-				p You won't be able to get it back!
+				p You'll be able to reload it for the next 24 hours by loading the ID:
+				p {{playthroughId}}
 				a.button.red(ng-click="throwAway()")
 					| Get it outta here
+			.modal-content(ng-if="is_multiworld")
+				p This is a multiworld, your team needs you!
+				p Save this ID so you can continue where you left off:
+				p {{playthroughId}}
+				a.button.red(ng-click="throwAway(false)")
+					| Quit to home screen
 		.modal.hidden#logicWarningModal
 			.modal-content
 				h1 Hold up!

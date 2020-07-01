@@ -667,8 +667,10 @@ $scope.hasBossKey = function(dungeon) {
 		}
 	}
 
-	$scope.throwAway = function(item) {
-		$http.get(`/zootr-sim/throwaway/${$scope.playthroughId}`);
+	$scope.throwAway = function(delete_doc = true) {
+		if (delete_doc) {
+			$http.get(`/zootr-sim/throwaway/${$scope.playthroughId}`);
+		}
 		$scope.playthroughId = null;
 		$scope.headline = "";
 		$scope.playing = false;
@@ -896,6 +898,7 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.child_wind = data.child_wind;
 		$scope.adult_wind = data.adult_wind;
 		$scope.playing = data.playing;
+		$scope.is_multiworld = data.multiworld_id ? true : false;
 		localforage.setItem("playthroughId", data["id"]);
 		if ($scope.playing) {
 			$scope.getAvailableLocations();

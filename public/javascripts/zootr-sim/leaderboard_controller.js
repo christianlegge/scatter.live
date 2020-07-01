@@ -25,7 +25,7 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 		$window.location.href = $window.location.origin + "/zootr-sim";
 	}
 
-	$scope.fields = ["name", "checked_locations", "total_locations", "playtime", "finish_date"];
+	$scope.fields = ["name", "checked_locations", "total_locations", "settings_string", "playtime", "finish_date"];
 
 	$scope.get_entries = function(count, sort_field, ascdesc, page, search_name = "") {
 		$scope.loading = true;

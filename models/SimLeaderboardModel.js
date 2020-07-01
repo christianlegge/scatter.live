@@ -9,6 +9,7 @@ var SimLeaderboardSchema = new mongoose.Schema({
 	total_locations: Number,
 	settings: Map,
 	seed: String,
+	settings_string: String,
 });
 var SimLeaderboardModel = mongoose.model('SimLeaderboard', SimLeaderboardSchema);
 

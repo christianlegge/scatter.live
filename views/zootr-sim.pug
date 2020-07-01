@@ -258,7 +258,11 @@ html
 				br
 				a(ng-click="finished = false").button.blue Go back
 				br
-				a(ng-click="throwAway()").button.red Finish and end playthrough
+				br
+				p.playthroughinfo Seed: {{seed}}
+				p.playthroughinfo Settings: {{settings_string}}
+				p.playthroughinfo Playthrough ID: {{playthroughId}}
+				a(ng-click="throwAway()").button.red Quit to home screen
 			
 			
 		.footer 

@@ -190,8 +190,13 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			$scope.joining = false;
 			$scope.lobby_error = null;
 		}, function (error) {
-			console.error(error);
-			$scope.lobby_error = "Error! Could not join game. Please try again and report if this persists.";
+			if (error.status == 500) {
+				console.error(error);
+				$scope.lobby_error = "Error! Could not join game. Please try again and report if this persists.";
+			}
+			else {
+				$scope.lobby_error = `Error! ${error.data}`;
+			}
 			$scope.joining = false;
 		});
 	}

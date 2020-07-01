@@ -386,13 +386,11 @@ router.get('/lobbyconnect/:multi_id/', function (req, res, next) {
 	};
 	lobby_callbacks[req.params.multi_id].push(callback);
 
-	res.set({
+	res.writeHead(200, {
 		"Cache-Control": "no-cache",
 		"Content-Type": "text/event-stream",
 		"Connection": "keep-alive",
 	});
-	res.flushHeaders();
-	res.write("retry: 10000\n\n");
 
 	req.on("close", function () {
 		try {
@@ -453,7 +451,11 @@ router.get('/joinlobby/:id/:name', function (req, res, next) {
 	multiworldModel.findById(req.params.id).then(function (result) {
 		try {
 			if (result.players.length >= result.num_players) {
-				res.sendStatus(400);
+				res.status(400).send("Lobby already full!");
+				return;
+			}
+			if (result.players.filter(x => x.name == req.params.name).length > 0) {
+				res.status(400).send("Duplicate name not allowed!");
 				return;
 			}
 			var new_player = {

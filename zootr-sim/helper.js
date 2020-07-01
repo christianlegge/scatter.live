@@ -1303,6 +1303,21 @@ var region_changing_checks = {
 	'Twinrova': ['Desert Colossus', 'Desert Colossus'],
 };
 
+var noPeekIfCantGet = [
+	"Impa House Freestanding PoH",
+	"Lake Hylia Freestanding PoH",
+	"Gerudo Valley Waterfall Freestanding PoH",
+	"Gerudo Valley Crate Freestanding PoH",
+	"Dampe Race Freestanding PoH",
+	"Goron City Pot Freestanding PoH",
+	"DM Crater Wall Freestanding PoH",
+	"Zoras Fountain Iceberg Freestanding PoH",
+	"Zoras Fountain Bottom Freestanding PoH",
+	"Lon Lon Tower Freestanding PoH",
+	"Bottom of the Well Freestanding Key",
+	"Shadow Temple Freestanding Key"
+];
+
 module.exports.canCheckLocation = canCheckLocation;
 module.exports.getLocations = getLocations;
 module.exports.getShops = getShops;
@@ -1317,3 +1332,4 @@ module.exports.subregionFromLocation = subregionFromLocation;
 module.exports.isEssentialItem = isEssentialItem;
 module.exports.region_changing_checks = region_changing_checks;
 module.exports.canPlay = canPlay;
+module.exports.noPeekIfCantGet = noPeekIfCantGet;

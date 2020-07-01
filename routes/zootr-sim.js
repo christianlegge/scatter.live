@@ -985,7 +985,8 @@ router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
 router.get('/peek/:playthroughId/:location', function (req, res, next) {
 	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
 		try {
-			if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`)) {
+			if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`) &&
+			(simHelper.canCheckLocation(result, req.params.location) || !simHelper.noPeekIfCantGet.includes(req.params.location))) {
 				var item = result.locations.get(req.params.location);
 				if (typeof item == "object") {
 					item = item.item;

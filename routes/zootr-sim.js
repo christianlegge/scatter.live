@@ -880,10 +880,14 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 })
 
 router.get('/getlocations/:playthroughId/:region', function (req, res, next) {
-	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
+	playthroughModel.findById(req.params["playthroughId"]).then(async function (result) {
 		try {
 			var locs = simHelper.getLocations(result, req.params["region"]);
-			var shops = simHelper.getShops(result, req.params.region);
+			var mw_doc = null;
+			if (result.multiworld_id) {
+				mw_doc = await multiworldModel.findById(result.multiworld_id);
+			}
+			var shops = simHelper.getShops(result, req.params.region, mw_doc);
 			res.send({locations: locs, shops: shops});
 		}
 		catch(error) {

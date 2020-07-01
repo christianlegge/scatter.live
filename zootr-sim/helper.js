@@ -1070,7 +1070,14 @@ function getLocations(save_file, region) {
 var child_only_shops = ["Castle Town Bazaar", "Castle Town Potion Shop", "Bombchu Shop"];
 var adult_only_shops = ["Kakariko Bazaar", "Kakariko Potion Shop"];
 
-function getShops(save_file, region) {
+function getShops(save_file, region, mw_doc) {
+	var players = null;
+	if (mw_doc) {
+		players = {};
+		mw_doc.players.forEach(function (player) {
+			players[player.get("num")] = player.get("name");
+		});
+	}
 	var all_locs = [];
 	var subregions = logic[region];
 	for (subregion in subregions) {
@@ -1090,6 +1097,9 @@ function getShops(save_file, region) {
 			shops[shop] = {};
 		}
 		shops[shop][loc] = save_file.locations.get(loc);
+		if (players) {
+			shops[shop][loc]["player"] = players[shops[shop][loc]["player"]];
+		}
 	});
 	for (shop in shops) {
 		if ((save_file.current_age == "child" && adult_only_shops.includes(shop)) || (save_file.current_age == "adult" && child_only_shops.includes(shop))) {

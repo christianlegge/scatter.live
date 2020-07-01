@@ -1,5 +1,11 @@
 include head
 
+mixin shop_item(num)
+	.shopchild
+		.shopitem(alt=`{{shops[current_shop][current_shop + ' Item ${num}'].item}}`,title=`{{shops[current_shop][current_shop + ' Item ${num}'].item}}`,ng-click=`checkLocation(current_shop + ' Item ${num}')`,style=`background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item ${num}') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item ${num}'].item)}}');`) 
+		.shopprice(ng-click=`checkLocation(current_shop + ' Item ${num}')`, id=`{{current_shop + ' Item ${num}'}}`) {{shops[current_shop][current_shop + ' Item #{num}'].price}}
+		.shopplayer(ng-if=`shops[current_shop][current_shop + ' Item ${num}'].player`,ng-click=`checkLocation(current_shop + ' Item ${num}')`, alt=`{{shops[current_shop][current_shop + ' Item ${num}'].player}}`, title=`{{shops[current_shop][current_shop + ' Item ${num}'].player}}`, id=`{{current_shop + ' Item ${num}'}}`) teteteet sdfsfsf {{shops[current_shop][current_shop + ' Item #{num}'].player}}
+
 doctype html
 html
 	head
@@ -180,23 +186,15 @@ html
 					br
 				.main.shops(ng-if="shops !== undefined && !is_empty(shops)")
 					.shopgrid
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 8'].item}}",title="{{shops[current_shop][current_shop + ' Item 8'].item}}",ng-click="checkLocation(current_shop + ' Item 8')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 8') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 8'].item)}}');") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 6'].item}}",title="{{shops[current_shop][current_shop + ' Item 6'].item}}",ng-click="checkLocation(current_shop + ' Item 6')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 6') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 6'].item)}}');") 
+						+shop_item(8)
+						+shop_item(6)
 						.shopchild.shopnpc(style="background-image:url('images/zootr-sim/{{shopNPCs[current_shop]}}')") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 2'].item}}",title="{{shops[current_shop][current_shop + ' Item 2'].item}}",ng-click="checkLocation(current_shop + ' Item 2')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 2') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 2'].item)}}');") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 4'].item}}",title="{{shops[current_shop][current_shop + ' Item 4'].item}}",ng-click="checkLocation(current_shop + ' Item 4')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 4') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 4'].item)}}');") 
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 8')", id="{{current_shop + ' Item 8'}}") {{shops[current_shop][current_shop + ' Item 8'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 6')", id="{{current_shop + ' Item 6'}}") {{shops[current_shop][current_shop + ' Item 6'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 2')", id="{{current_shop + ' Item 2'}}") {{shops[current_shop][current_shop + ' Item 2'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 4')", id="{{current_shop + ' Item 4'}}") {{shops[current_shop][current_shop + ' Item 4'].price}}
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 7'].item}}",title="{{shops[current_shop][current_shop + ' Item 7'].item}}",ng-click="checkLocation(current_shop + ' Item 7')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 7') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 7'].item)}}');") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 5'].item}}",title="{{shops[current_shop][current_shop + ' Item 5'].item}}",ng-click="checkLocation(current_shop + ' Item 5')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 5') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 5'].item)}}');") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 1'].item}}",title="{{shops[current_shop][current_shop + ' Item 1'].item}}",ng-click="checkLocation(current_shop + ' Item 1')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 1') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 1'].item)}}');") 
-						.shopchild.shopitem(alt="{{shops[current_shop][current_shop + ' Item 3'].item}}",title="{{shops[current_shop][current_shop + ' Item 3'].item}}",ng-click="checkLocation(current_shop + ' Item 3')",style="background-image:url('images/zootr-sim/{{checked_locations.includes(current_shop + ' Item 3') ? 'soldout.png' : getShopImage(shops[current_shop][current_shop + ' Item 3'].item)}}');") 
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 7')", id="{{current_shop + ' Item 7'}}") {{shops[current_shop][current_shop + ' Item 7'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 5')", id="{{current_shop + ' Item 5'}}") {{shops[current_shop][current_shop + ' Item 5'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 1')", id="{{current_shop + ' Item 1'}}") {{shops[current_shop][current_shop + ' Item 1'].price}}
-						.shopchild.shopprice(ng-click="checkLocation(current_shop + ' Item 3')", id="{{current_shop + ' Item 3'}}") {{shops[current_shop][current_shop + ' Item 3'].price}}
+						+shop_item(2)
+						+shop_item(4)
+						+shop_item(7)
+						+shop_item(5)
+						+shop_item(1)
+						+shop_item(3)
 						.shopchild.shopspacer
 					a(ng-repeat-start="(shop,contents) in shops",ng-click="setShop(shop)") {{shop}}
 					br(ng-repeat-end)

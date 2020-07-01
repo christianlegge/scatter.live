@@ -704,13 +704,19 @@ function parseLogicRule(save_file, rule) {
 		"Forest Temple Jo and Beth": () => parseLogicRule(save_file, "can_reach('Forest Temple Bow Region') and (can_use(Bow))"),
 		"Child Water Temple": () => parseLogicRule(save_file, "(is_child)"),
 		"Water Temple Clear": () => parseLogicRule(save_file, "(Boss_Key_Water_Temple and can_use(Longshot))"),
+		Boss_Key_Forest_Temple: () => settings.get("shuffle_bosskeys") == "remove" || logicEvaluation.has("Boss Key (Forest Temple)"),
+		Boss_Key_Fire_Temple: () => settings.get("shuffle_bosskeys") == "remove" || logicEvaluation.has("Boss Key (Fire Temple)"),
+		Boss_Key_Water_Temple: () => settings.get("shuffle_bosskeys") == "remove" || logicEvaluation.has("Boss Key (Water Temple)"),
+		Boss_Key_Spirit_Temple: () => settings.get("shuffle_bosskeys") == "remove" || logicEvaluation.has("Boss Key (Spirit Temple)"),
+		Boss_Key_Shadow_Temple: () => settings.get("shuffle_bosskeys") == "remove" || logicEvaluation.has("Boss Key (Shadow Temple)"),
+		Boss_Key_Ganons_Castle: () => settings.get("shuffle_ganon_bosskey") == "remove" || logicEvaluation.has("Boss Key (Ganons Castle)"),
 	}
 
 	rule = rule.trim();
 	var it = 0;
 
 	function evaluate(term, params = []) {
-		if (term.includes("Small_Key") || term.includes("Boss_Key") || term.startsWith("logic_")) {
+		if (term.includes("Small_Key") || term.startsWith("logic_")) {
 			return true;
 		}
 		if (!(term in logicEvaluation)) {

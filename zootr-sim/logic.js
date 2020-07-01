@@ -165,7 +165,7 @@ var logic = {
 			},
 			"exits": {
 				"Lost Woods Forest Exit": "True",
-				"Goron City Woods Warp": "True",
+				"Goron City": "can_blast_or_smash or can_use(Dins_Fire) or has('Goron City Woods Warp Open')",
 				"Lost Woods Bridge": " is_adult and (can_use(Hover_Boots) or can_use(Longshot) or (can_plant_bean) or logic_lost_woods_bridge)",
 				"Zora River": "can_leave_forest and (can_dive or can_use(Iron_Boots))",
 				"Lost Woods Beyond Mido": "is_child or logic_mido_backflip or can_play(Sarias_Song)",
@@ -1425,7 +1425,7 @@ var logic = {
 			},
 			"exits": {
 				"Death Mountain": "True",
-				"Goron City Woods Warp": "'Goron City Woods Warp Open'",
+				"Lost Woods": "can_blast_or_smash or can_use(Dins_Fire) or can_use(Bow) or Progressive_Strength_Upgrade or 'Goron City Child Fire' or has('Goron City Woods Warp Open')",
 				"Goron Shop": " (is_adult and 'Stop Link the Goron') or (is_child and (has_explosives or Progressive_Strength_Upgrade or 'Goron City Child Fire'))",
 				"Darunias Chamber": " (is_adult and 'Stop Link the Goron') or (is_child and can_play(Zeldas_Lullaby))",
 				"Goron City Grotto": " is_adult and ((can_play(Song_of_Time)) or (can_use(Goron_Tunic) and can_use(Hookshot)) or (can_use(Nayrus_Love) and can_use(Hookshot)))"
@@ -1435,10 +1435,10 @@ var logic = {
 			"region_name": "Goron City Woods Warp",
 			"scene": "Goron City",
 			"events": {
-				"Goron City Woods Warp Open": "can_blast_or_smash or can_use(Dins_Fire)"
+				"Goron City Woods Warp Open From Woods": "can_blast_or_smash or can_use(Dins_Fire)"
 			},
 			"exits": {
-				"Goron City": "can_leave_forest and 'Goron City Woods Warp Open'",
+				"Goron City": "can_leave_forest and 'Goron City Woods Warp Open From Woods'",
 				"Lost Woods": "True"
 			}
 		},

@@ -870,10 +870,17 @@ router.get('/takeentrance/:playthroughId/:entrance', function(req, res, next) {
 				res.send({ region: result.current_region, subregion: result.current_subregion });
 			}
 			if (simHelper.canCheckLocation(result, req.params["entrance"])) {
+				if (simHelper.needChus(result, req.params.entrance)) {
+					result.bombchu_count--;
+				}
+				if (req.params.entrance == "Goron City" && result.current_region == "Lost Woods" ||
+				req.params.entrance == "Lost Woods" && result.current_region == "Goron City") {
+					result.current_items.push("Goron City Woods Warp Open");
+				}
 				result.current_region = simHelper.getParentRegion(req.params["entrance"]);
 				result.current_subregion = req.params["entrance"];
 				result.save();
-				res.send({region: result.current_region, subregion: result.current_subregion});
+				res.send({region: result.current_region, subregion: result.current_subregion, bombchu_count: result.bombchu_count});
 			}
 			else {
 				res.status(403).send(simHelper.buildRule(result, result["current_region"], req.params.entrance));

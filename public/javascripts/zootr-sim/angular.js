@@ -460,6 +460,7 @@ $scope.hasBossKey = function(dungeon) {
 			$http.get(`/zootr-sim/takeentrance/${$scope.playthroughId}/${entrance}`).then(function(response) {
 				$scope.current_region = response.data.region;
 				$scope.current_subregion = response.data.subregion;
+				$scope.bombchu_count = response.data.bombchu_count;
 				if ($scope.current_subregion == "Lost Woods Bridge From Forest" && $scope.current_age == "child" && !$scope.checked_locations.includes("Gift from Saria")) {
 					$scope.checkLocation("Gift from Saria");
 				}

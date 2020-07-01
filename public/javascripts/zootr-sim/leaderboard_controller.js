@@ -27,11 +27,12 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 
 	$scope.fields = ["name", "checked_locations", "total_locations", "settings_string", "playtime", "finish_date"];
 
-	$scope.get_entries = function(count, sort_field, ascdesc, page, search_name = "") {
+	$scope.get_entries = function(count, sort_field, ascdesc, page, search_name = "", search_settings_string = "") {
 		$scope.loading = true;
-		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}?name=${search_name}`).then(function (response) {
+		$http.get(`/zootr-sim/getleaderboardentries/${count}/${sort_field}/${ascdesc}/${page}?name=${search_name}&settings_string=${search_settings_string}`).then(function (response) {
 			if (response.data.entries.length == 0) {
 				$scope.load_error = "No entries found.";
+				$scope.entries = [];
 			}
 			else {
 				$scope.load_error = "";
@@ -39,6 +40,7 @@ app.controller('leaderboard-controller', ['$scope', '$http', '$window', function
 				$scope.sort_direction = ascdesc;
 				$scope.current_page = page;
 				$scope.search_name = search_name;
+				$scope.search_settings_string = search_settings_string;
 				if (response.data.count) {
 					$scope.total = response.data.count;
 					$scope.pages = Math.ceil($scope.total/$scope.per_page);

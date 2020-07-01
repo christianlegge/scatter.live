@@ -1097,7 +1097,7 @@ router.get('/changelog', function (req, res, next) {
 router.get('/getleaderboardentries/:count/:sortfield/:ascdesc/:page', function(req, res, next) {
 	var sortObj = {};
 	sortObj[req.params.sortfield] = req.params.ascdesc;
-	leaderboardModel.find({name: new RegExp(regexEscape(req.query.name, "i"))}).limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
+	leaderboardModel.find({ name: new RegExp(regexEscape(req.query.name, "i"), "i"), settings_string: new RegExp(regexEscape(req.query.settings_string, "i"), "i")}).limit(Math.min(req.params.count, 100)).sort(sortObj).skip(Math.min(req.params.count, 100) * (req.params.page - 1)).then(function(entries) {
 		try {
 			if (req.query.name) {
 				leaderboardModel.countDocuments().where({ name: new RegExp(regexEscape(req.query.name, "i")) }).then(function(count) {

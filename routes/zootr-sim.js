@@ -752,6 +752,11 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (simHelper.needChus(result, req.params.location)) {
 					result.bombchu_count--;
 				}
+
+				if (req.params.location.includes("Grotto")) {
+					result.current_subregion = simHelper.subregionFromLocation(req.params.location);
+				}
+
 				var response_obj = { item: item, checked_locations: result.checked_locations, region: result.current_region, subregion: result.current_subregion, known_medallions: result.known_medallions, bombchu_count: result.bombchu_count };
 				if (req.params.location in simHelper.region_changing_checks) {
 					result.current_region = simHelper.region_changing_checks[req.params.location][0];
@@ -806,6 +811,9 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 				}
 				if (simHelper.needChus(result, req.params.stone)) {
 					result.bombchu_count--;
+				}
+				if (req.params.stone.includes("Grotto")) {
+					result.current_subregion = simHelper.subregionFromLocation(req.params.stone);
 				}
 				result.checked_locations.push(req.params["stone"]);
 				result.save();

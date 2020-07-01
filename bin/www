@@ -26,6 +26,14 @@ if (process.env.NODE_ENV == 'production') {
 	};
 }
 
+try {
+	fs.mkdirSync("public/stylesheets");
+}
+catch (error) {
+	if (!error.code == "EEXIST") {
+		throw error;
+	}
+}
 var sass_files = fs.readdirSync("scss");
 sass_files.forEach(function(filename) {
 	if (filename.charAt(0) == "_") {

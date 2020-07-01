@@ -167,7 +167,7 @@ async function start_multiworld(mw_doc) {
 			player_doc.save();
 		});
 	}));
-	mw_doc.save();
+	mw_doc.save().catch(error => console.error(error.message));
 }
 
 function parseLog(logfile, use_logic) {

@@ -1,4 +1,5 @@
-function formatTime(s) {
+function formatTime(ms) {
+	var s = ms/1000;
 	var secs = Math.floor(s % 60);
 	var min = Math.floor((s / 60) % 60);
 	var hours = Math.floor(s / 3600);

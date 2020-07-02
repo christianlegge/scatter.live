@@ -586,7 +586,7 @@ function parseLogicRule(save_file, rule) {
 		Bonooru: () => true,
 		can_play: x => (logicEvaluation.Ocarina()) && logicEvaluation.has(x),
 		Boomerang: () => logicEvaluation.has("Boomerang"),
-		Kokiri_Sword: () => true,
+		Kokiri_Sword: () => logicEvaluation.has("Kokiri Sword"),
 		Ocarina: () => logicEvaluation.has("Fairy Ocarina") || logicEvaluation.has("Ocarina of Time") || logicEvaluation.has("Ocarina"),
 		Zeldas_Letter: () => logicEvaluation.has("Zeldas Letter"),
 		Eyedrops: () => logicEvaluation.has("Eyedrops"),

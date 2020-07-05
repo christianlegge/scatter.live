@@ -713,9 +713,47 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 						my_name = mw_doc.players.filter(x => x._id == req.params.playthroughId)[0].name;
 						var other_doc = await playthroughModel.findById(other_player._id);
 						other_doc.current_items.push(item);
+						var finish_obj = null;
+						if (item == "Triforce Piece" &&  other_doc.current_items.filter(x => x == "Triforce Piece").length >= other_doc.settings.get("triforce_goal_per_world")) {
+							other_doc.current_items.push("Boss Key (Ganons Castle)");
+							await multiworldModel.updateOne({ _id: other_doc.multiworld_id, "players._id": other_doc._id }, { $set: { "players.$.finished": true } });
+							other_doc.playtime = Date.now() - other_doc.start_time;
+							other_doc.total_checks = Array.from(other_doc.locations.keys()).length;
+							var mw_players;
+							if (other_doc.use_logic && !other_doc.finished) {
+								submitToLeaderboard(other_doc);
+								var mw_doc = await multiworldModel.findById(other_doc.multiworld_id);
+								mw_players = mw_doc.players.map(x => ({ name: x.name, finished: x.finished }));
+								var all_players_finished = mw_doc.players.every(x => x.finished);
+								if (all_players_finished) {
+									mw_doc.players.forEach(function (player) {
+										setTimeout(function () {
+											try {
+												playthroughModel.findByIdAndDelete(player._id).exec();
+											}
+											catch (error) {
+												console.error(error.message);
+											}
+										}, 1000 * 60 * 60 * 24);
+									});
+									setTimeout(function () {
+										try {
+											multiworldModel.findByIdAndDelete(mw_doc._id).exec();
+										}
+										catch (error) {
+											console.error(error.message);
+										}
+									}, 1000 * 60 * 60 * 24);
+								}
+							}
+							other_doc.finished = true;
+							other_doc.save();
+							var percentiles = await getPercentiles(other_doc);
+							finish_obj = { current_items: other_doc.current_items, mw_players: mw_players, percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: other_doc.use_logic, route: other_doc.route, finished: true, playtime: other_doc.playtime, num_checks_made: other_doc.num_checks_made, total_checks: other_doc.total_checks };
+						}
 						other_doc.save();
 						try {
-							multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name });
+							multiworld_callbacks[result.multiworld_id][player]({ item: item, from: my_name, finish_obj: finish_obj });
 						}
 						catch (error) {
 							other_doc.missed_items.push({item: item, from: my_name});
@@ -750,6 +788,66 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 							result.bombchu_count += 10000;
 						}
 					}
+					if (item == "Triforce Piece" && result.current_items.filter(x => x == "Triforce Piece").length >= result.settings.get("triforce_goal_per_world")) {
+						result.current_items.push("Boss Key (Ganons Castle)");
+						if (result.multiworld_id) {
+							await multiworldModel.updateOne({ _id: result.multiworld_id, "players._id": result._id }, { $set: { "players.$.finished": true } });
+						}
+						result.playtime = Date.now() - result.start_time;
+						result.total_checks = Array.from(result.locations.keys()).length;
+						var mw_players;
+						if (result.use_logic && !result.finished) {
+							submitToLeaderboard(result);
+							if (result.multiworld_id) {
+								var mw_doc = await multiworldModel.findById(result.multiworld_id);
+								mw_players = mw_doc.players.map(x => ({ name: x.name, finished: x.finished }));
+								var all_players_finished = mw_doc.players.every(x => x.finished);
+								if (all_players_finished) {
+									mw_doc.players.forEach(function (player) {
+										setTimeout(function () {
+											try {
+												playthroughModel.findByIdAndDelete(player._id).exec();
+											}
+											catch (error) {
+												console.error(error.message);
+											}
+										}, 1000 * 60 * 60 * 24);
+									});
+									setTimeout(function () {
+										try {
+											multiworldModel.findByIdAndDelete(mw_doc._id).exec();
+										}
+										catch (error) {
+											console.error(error.message);
+										}
+									}, 1000 * 60 * 60 * 24);
+								}
+							}
+							else {
+								setTimeout(function () {
+									try {
+										playthroughModel.findByIdAndDelete(result._id).exec();
+									}
+									catch (error) {
+										console.error(error.message);
+									}
+								}, 1000 * 60 * 60 * 24);
+							}
+						}
+						result.finished = true;
+						result.save();
+						getPercentiles(result).then(function (percentiles) {
+							try {
+								res.send({ current_items: result.current_items, mw_players: mw_players, percentiles: { time: (100 * percentiles[0] / percentiles[2]).toFixed(2), checks: (100 * percentiles[1] / percentiles[2]).toFixed(2) }, used_logic: result.use_logic, route: result.route, finished: true, playtime: result.playtime, num_checks_made: result.num_checks_made, total_checks: result.total_checks });
+							}
+							catch (error) {
+								res.status(500).send(error.message);
+							}
+						}, function (error) {
+							res.status(500).send(error.message);
+						});
+						return;
+					}
 				}
 				
 				if (["Kokiri Emerald", "Goron Ruby", "Zora Sapphire", "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Spirit Medallion", "Shadow Medallion"].includes(item) && !(result.known_medallions.has(result.current_region))) {
@@ -775,6 +873,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (other_player) {
 					response_obj.other_player = other_player.name;
 				}
+
 				result.save();
 				res.send(response_obj);
 			}

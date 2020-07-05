@@ -125,6 +125,12 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 			if ("item" in data) {
 				$scope.current_items.push(data.item);
 				$scope.recent_items.unshift(`Received from ${data.from}: ${data.item}`);
+				if (data.finish_obj) {
+					Object.assign($scope, data.finish_obj);
+					$scope.finished_mw_players = data.finish_obj.mw_players;
+					$scope.everyone_finished = data.finish_obj.mw_players.every(x => x.finished);
+					$scope.route = data.finish_obj.route.join("\n");
+				}
 				$scope.$apply();
 				setTimeout(function() {
 					$scope.recent_items.pop();
@@ -317,24 +323,41 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 					$scope.checkingLocation = false;
 				}
 				else {
-					$scope.checked_locations = response.data.checked_locations;
-					if (response.data.other_player) {
-						$scope.headline = `Sent to ${response.data.other_player}: ${response.data.item}`;
+					if (response.data.finished) {
+						if ("mw_players" in response.data && response.data.mw_players) {
+							$scope.finished_mw_players = response.data.mw_players;
+							$scope.everyone_finished = response.data.mw_players.every(x => x.finished);
+						}
+						$scope.finished = response.data.finished;
+						$scope.current_items = response.data.current_items;
+						$scope.playtime = response.data.playtime;
+						$scope.num_checks_made = response.data.num_checks_made;
+						$scope.total_checks = response.data.total_checks;
+						$scope.used_logic = response.data.used_logic;
+						$scope.percentiles = response.data.percentiles;
+						$scope.route = response.data.route.join("\n");
+						$scope.checkingLocation = false;
 					}
 					else {
-						$scope.headline = `${loc}: ${response.data.item}`;
-						$scope.current_items.push(response.data.item);
+						$scope.checked_locations = response.data.checked_locations;
+						if (response.data.other_player) {
+							$scope.headline = `Sent to ${response.data.other_player}: ${response.data.item}`;
+						}
+						else {
+							$scope.headline = `${loc}: ${response.data.item}`;
+							$scope.current_items.push(response.data.item);
+						}
+						$scope.current_region = response.data.region;
+						$scope.current_subregion = response.data.subregion;
+						$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
+						$scope.known_medallions = response.data.known_medallions;
+						$scope.bombchu_count = response.data.bombchu_count;
+						if ("region_changed" in response.data) {
+							$scope.getAvailableEntrances();
+							$scope.getAvailableLocations();
+						}
+						$scope.checkingLocation = false;
 					}
-					$scope.current_region = response.data.region;
-					$scope.current_subregion = response.data.subregion;
-					$scope.collected_warps = $scope.current_items.filter(x => warpSongs.includes(x));
-					$scope.known_medallions = response.data.known_medallions;
-					$scope.bombchu_count = response.data.bombchu_count;
-					if ("region_changed" in response.data) {
-						$scope.getAvailableEntrances();
-						$scope.getAvailableLocations();
-					}
-					$scope.checkingLocation = false;
 				}
 
 				var el = document.getElementById(loc);

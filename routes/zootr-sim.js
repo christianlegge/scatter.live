@@ -614,6 +614,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				}
 				else if (req.params.location == "Ganondorf Hint") {
 					var light_arrow_loc = Array.from(result.locations.keys()).filter(x => result.locations.get(x) == "Light Arrows")[0];
+					if (!light_arrow_loc) {
+						light_arrow_loc = Array.from(result.locations.keys()).filter(x => typeof result.locations.get(x) == "object" && result.locations.get(x).item == "Light Arrows")[0];
+					}
 					var light_arrow_region;
 					if (light_arrow_loc) {
 						light_arrow_region = simHelper.getParentRegion(simHelper.subregionFromLocation(light_arrow_loc));
@@ -622,8 +625,12 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 						}
 						result.known_hints.get(light_arrow_region).push("Light Arrows");
 					}
-					else {
+					else if (result.current_items.includes("Light Arrows")) {
 						light_arrow_region = "your pocket";
+					}
+					else {
+						res.status(501).send("Unable to find Light Arrows in the world. Please report this.");
+						return;
 					}
 					result.checked_locations.push("Ganondorf Hint");
 					result.save();

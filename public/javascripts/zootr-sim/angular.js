@@ -353,9 +353,12 @@ app.controller('simController', ['$scope', '$http', '$interval', '$document', fu
 						el.style.animation = null;
 					}
 				}
-				else {
+				else if (error.status == 500) {
 					console.error(error);
 					$scope.headline = "Unknown error. Try again and report if this persists.";
+				}
+				else {
+					$scope.headline = error.data;
 				}
 				if (el) {
 					el.classList.remove('loadinglink');

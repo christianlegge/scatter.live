@@ -1063,9 +1063,9 @@ function isEssentialItem(item) {
 	return essential_items.includes(item) || item.includes("Bombchu") || item.includes("Ocarina") || item.includes("Bottle");
 }
 
-var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganondorf Hint", "Ganon"];
 
 function getLocations(save_file, region) {
+	var location_exceptions = ["Master Sword Pedestal", "Check Pedestal", "Clear Light Trial", "Clear Forest Trial", "Clear Fire Trial", "Clear Water Trial", "Clear Spirit Trial", "Clear Shadow Trial", "Ganondorf Hint", "Ganon"];
 	var all_locs = [];
 	var subregions = logic[region];
 	if (save_file["dungeons"].has(region)) {
@@ -1075,6 +1075,9 @@ function getLocations(save_file, region) {
 		if ("locations" in subregions[subregion]) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
+	}
+	if (region == "Temple of Time" && save_file.settings.get("shuffle_ganon_bosskey") == "lacs_medallions") {
+		location_exceptions.push("Zelda");
 	}
 	if (region == "Ganons Castle") {
 		var active_trials = Array.from(save_file.trials.keys()).filter(x => save_file.trials.get(x) == "active");

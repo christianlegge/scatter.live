@@ -65,7 +65,7 @@ router.get('/', function(req, res, next) {
   StreamGameModel.find(function(err, result) {
     var doc;
     if (err) console.log(err);
-    res.render('index', { title: "scatter", meta: meta, icons: icons, projects: projects, streams: streams, upvotes: result });
+    res.render('index', { title: req.hostname, meta: meta, icons: icons, projects: projects, streams: streams, upvotes: result });
   });
 });
 

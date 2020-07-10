@@ -1,61 +1,60 @@
 include head
 
 html
-  head
-    title=title
-    +meta(meta)
-    +ga
-    +favicon
-    +localforage
-    +angular
-    meta(name="viewport",width="device-width",initial-scale="1.0",maximum-scale="1.0",user-scalable="0")
-    link(href="https://fonts.googleapis.com/css?family=Open+Sans",rel="stylesheet")
-    link(rel="stylesheet",type="text/css",href="/stylesheets/index.css")
-    script(type="text/javascript",src="/javascripts/streamGamesController.js")
-    
-  body
-    .header
-      h1 #{title}
-    p#lol lol
-    h2 news
-    p agdq was cool too lmao gonna stream more soon probably
-    p -
-    p sgdq was amazing see you all at the next one :)
-    p -
-    p i'm going to sgdq!! if you are too come say hi and get food with me or something
-    p -
-    a(href="https://github.com/scatter-dev/wowiebot/releases/tag/v3.0") wowiebot v3.0!!!! download if you want a twitch bot (or a better twitch bot 😏)
-    h2 what i stream
-    .streamstuff(ng-app="streamGames",ng-controller="streamGamesController",ng-init="initupvotes('"+JSON.stringify(upvotes)+"')")
-      each stream in streams
-        .stream-child
-          h3 #{stream.title}
-          each game,index in stream.games
-            .game-child(class=game.status.replace(/\s+/g, ''))
-              span.title #{game.title}
-              br
-              span.status #{game.status}
-              br
-              if index == 0
-                img(src="images/"+(game.image || game.title)+".png",width="200px",height="200px")
-                br
-              
-              .upvote(class="{{upvotedGames.includes('"+stream.title+'/'+game.title+"') ? 'upvoted' : ''}}",ng-click="voteGame('"+stream.title+'/'+game.title+"')")
-                span I wanna see this!
-                div.thumbsup 
-                div.upvoteCircle(ng-if="showAnim['"+stream.title+'/'+game.title+"']")
-                span.upvotecount {{upvotes['#{stream.title}/#{game.title}'] || 0}}
-    h2 stuff i made
-    .toc
-      each project in projects
-        - url = project.link || project.name
-        .toc-child 
-          a(href=url)
-            img(src="images/"+project.name+".png")
-          p
-            a(href=url) #{project.name}
-          span #{project.description}
-    .icons
-      each icon in icons
-        a(href=icon.link)
-          img(src="images/"+icon.image)
+	head
+		title=title
+		+meta(meta)
+		+ga
+		+favicon
+		+localforage
+		+angular
+		meta(name="viewport",width="device-width",initial-scale="1.0",maximum-scale="1.0",user-scalable="0")
+		link(href="https://fonts.googleapis.com/css?family=Open+Sans",rel="stylesheet")
+		link(rel="stylesheet",type="text/css",href="/stylesheets/index.css")
+		script(type="text/javascript",src="/javascripts/streamGamesController.js")
+		
+	body
+		.header
+			.title #{title}
+			.socials
+				each social in socials
+					a(href=social.link)
+						img(src="images/"+social.image)
+		h2 news
+		p agdq was cool too lmao gonna stream more soon probably
+		p -
+		p sgdq was amazing see you all at the next one :)
+		p -
+		p i'm going to sgdq!! if you are too come say hi and get food with me or something
+		p -
+		a(href="https://github.com/scatter-dev/wowiebot/releases/tag/v3.0") wowiebot v3.0!!!! download if you want a twitch bot (or a better twitch bot 😏)
+		h2 what i stream
+		.streamstuff(ng-app="streamGames",ng-controller="streamGamesController",ng-init="initupvotes('"+JSON.stringify(upvotes)+"')")
+			each stream in streams
+				.stream-child
+					h3 #{stream.title}
+					each game,index in stream.games
+						.game-child(class=game.status.replace(/\s+/g, ''))
+							span.title #{game.title}
+							br
+							span.status #{game.status}
+							br
+							if index == 0
+								img(src="images/"+(game.image || game.title)+".png",width="200px",height="200px")
+								br
+							
+							.upvote(class="{{upvotedGames.includes('"+stream.title+'/'+game.title+"') ? 'upvoted' : ''}}",ng-click="voteGame('"+stream.title+'/'+game.title+"')")
+								span I wanna see this!
+								div.thumbsup 
+								div.upvoteCircle(ng-if="showAnim['"+stream.title+'/'+game.title+"']")
+								span.upvotecount {{upvotes['#{stream.title}/#{game.title}'] || 0}}
+		h2 stuff i made
+		.toc
+			each project in projects
+				- url = project.link || project.name
+				.toc-child 
+					a(href=url)
+						img(src="images/"+project.name+".png")
+					p
+						a(href=url) #{project.name}
+					span #{project.description}

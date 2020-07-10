@@ -1,220 +1,255 @@
 @font-face {
-  font-family: montserrat;
-  font-weight:900;
-  src: url(/fonts/Montserrat-Bold.otf);
+	font-family: montserrat;
+	font-weight:900;
+	src: url(/fonts/Montserrat-Bold.otf);
 }
 
 @font-face {
-  font-family: montserrat;
-  font-weight: 400;
-  src: url(/fonts/Montserrat-Medium.otf);
+	font-family: montserrat;
+	font-weight: 400;
+	src: url(/fonts/Montserrat-Medium.otf);
 }
 
 @font-face {
-  font-family: montserrat;
-  font-weight: 300;
-  src: url(/fonts/Montserrat-Light.otf);
+	font-family: montserrat;
+	font-weight: 300;
+	src: url(/fonts/Montserrat-Light.otf);
 }
 
 body {
-  background: #efefef;
-  font-family: montserrat;
-  text-align: center;
-  font-size:1.2em;
+	background: #efefef;
+	font-family: montserrat;
+	text-align: center;
+	font-size:1.2em;
+	margin: 0;
 }
 
 @supports 
-  ((-webkit-text-stroke-color: black)
-  and
-  (-webkit-text-fill-color: white))
-  or
-  ((-moz-text-stroke-color: black)
-  and
-  (-moz-text-fill-color: white)) {
-  .header {
-       -moz-text-fill-color: white;
-    -webkit-text-fill-color: white;
-       -moz-text-stroke-color: black;
-    -webkit-text-stroke-color: black;  
-  }
-  h1 {
-    -moz-text-stroke-width: 5px;  
-    -webkit-text-stroke-width: 5px;
-  }
+	((-webkit-text-stroke-color: black)
+	and
+	(-webkit-text-fill-color: white))
+	or
+	((-moz-text-stroke-color: black)
+	and
+	(-moz-text-fill-color: white)) {
+	.header {
+			 -moz-text-fill-color: white;
+		-webkit-text-fill-color: white;
+			 -moz-text-stroke-color: black;
+		-webkit-text-stroke-color: black;  
+	}
+	h1 {
+		-moz-text-stroke-width: 5px;  
+		-webkit-text-stroke-width: 5px;
+	}
 }
 
+
 .header {
-  color: black;
+	$bg-size: 500px;
+	$bg-offset: $bg-size * -0.16;
+	$bg-right-offset: 180px;
+	$social-size: 48px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	background: {
+		image: 
+			url("/images/banner.png"),
+			linear-gradient(270deg, black, black $bg-right-offset+5px,  rgba(161, 161, 161, 1) $bg-right-offset+5px, rgba(161, 161, 161, 1));
+			
+		position: right $bg-right-offset top -15px, 0;
+		size: 1000px, cover;
+		repeat: no-repeat, no-repeat;
+	};
+	margin:0;
+	box-sizing: border-box;
+	padding: 16px;
+	width:100%;
+
+	.title {
+		font: {
+			size: 3em;
+		}
+	}
+	.socials {
+		height: $social-size;
+		img {
+			margin: {
+				left: 16px;
+			};
+			width: $social-size;
+			height: $social-size;
+			filter: invert(100%);
+		}
+	}
 }
 
 .header h2 {
-  font-size: 2em;
-  line-height: 0;
+	font-size: 2em;
+	line-height: 0;
 }
 
 .header h1 {
-  font-size: 10em;
-  line-height: 0;
+	font-size: 10em;
+	line-height: 0;
 }
 
 .streamstuff {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .stream-child {
-  margin:10px;
-  background-color: white;
-  background-image: linear-gradient(to bottom, gray 0%, white 10%, white 90%, gray 100%);
-  padding:0px 0px 20px 0;
-  border-radius: 20px;
-  box-shadow: 10px 10px;
-  margin: 20px;
-  border: 5px solid black;
-  width:250px;
+	margin:10px;
+	background-color: white;
+	background-image: linear-gradient(to bottom, gray 0%, white 10%, white 90%, gray 100%);
+	padding:0px 0px 20px 0;
+	border-radius: 20px;
+	box-shadow: 10px 10px;
+	margin: 20px;
+	border: 5px solid black;
+	width:250px;
 }
 
 .game-child {
-  margin:0px;
-  padding-top:6px;
-  width:100%;
-  border-top:2px solid black;
+	margin:0px;
+	padding-top:6px;
+	width:100%;
+	border-top:2px solid black;
 }
 
 .game-child:last-child {
-  border-bottom: 2px solid black;
+	border-bottom: 2px solid black;
 }
 
 .game-child img {
-  box-shadow: 0 0 5px black;
-  margin:10px;
+	box-shadow: 0 0 5px black;
+	margin:10px;
 }
 
 .game-child .title {
-  font-size: 1.2em;
+	font-size: 1.2em;
 }
 
 .game-child .status {
-  font-size: 0.7em;
+	font-size: 0.7em;
 }
 
 .Inprogress {
-  background-image: linear-gradient(to bottom, #baaa37 0%, #efdc53 100%);
+	background-image: linear-gradient(to bottom, #baaa37 0%, #efdc53 100%);
 }
 
 .Notstarted {
-  background-image: linear-gradient(to bottom, #b55b4d 0%, #ef8575 100%);
+	background-image: linear-gradient(to bottom, #b55b4d 0%, #ef8575 100%);
 }
 
 .Complete {
-  background-image: linear-gradient(to bottom, #3a9934 0%, #4ece46 100%);
+	background-image: linear-gradient(to bottom, #3a9934 0%, #4ece46 100%);
 }
 
 .upvote {
-  width:100%;
-  /*width: 200px; height: 100px;
-    background-size: 200% 100%;
-    background-image: linear-gradient(to right, #efefef 50%, #c4e2c3 50%);
-    -webkit-transition: background-position 0.15s;
-    -moz-transition: background-position 0.15s;
-    transition: background-position 0.15s;*/
-  cursor: pointer;
-  display:flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+	width:100%;
+	/*width: 200px; height: 100px;
+		background-size: 200% 100%;
+		background-image: linear-gradient(to right, #efefef 50%, #c4e2c3 50%);
+		-webkit-transition: background-position 0.15s;
+		-moz-transition: background-position 0.15s;
+		transition: background-position 0.15s;*/
+	cursor: pointer;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
 }
 
 .upvote > * {
-  height:32px;
-  margin: 5px;
-  padding-top:6px;
+	height:32px;
+	margin: 5px;
+	padding-top:6px;
 }
 
 .thumbsup {
-  padding:0;
-  display:inline-block;
-  opacity: 0.5;
-  width: 32px;
-  height: 32px;
-  mask-image: url('/images/thumb-up-button.png');
-  background-color: white;
-  align-self: flex-start;
+	padding:0;
+	display:inline-block;
+	opacity: 0.5;
+	width: 32px;
+	height: 32px;
+	mask-image: url('/images/thumb-up-button.png');
+	background-color: white;
+	align-self: flex-start;
 }
 
 
 .upvoted > .thumbsup {
-  /*background-image: linear-gradient(to right, #a6dba4 50%, #a6dba4 50%);*/
-  opacity: 1;
+	/*background-image: linear-gradient(to right, #a6dba4 50%, #a6dba4 50%);*/
+	opacity: 1;
 }
 
 @keyframes upvotedAnim {
-  0% {
+	0% {
 -webkit-transform: scale( 0.5 );-moz-transform: scale( 0.5 );-o-transform: scale( 0.5 );-ms-transform: scale( 0.5 );transform: scale( 0.5 );
 opacity: 1;
-  }
-  
-  100% {
-  -webkit-transform: scale( 1.5 );-moz-transform: scale( 1.5 );-o-transform: scale( 1.5 );-ms-transform: scale( 1.5 );transform: scale( 1.5 );
-  opacity:0;
-  }
+	}
+	
+	100% {
+	-webkit-transform: scale( 1.5 );-moz-transform: scale( 1.5 );-o-transform: scale( 1.5 );-ms-transform: scale( 1.5 );transform: scale( 1.5 );
+	opacity:0;
+	}
 }
 
 .upvoteCircle {
-  background: white;
-  border-radius: 32px;
-  width:36px;
-  height:32px;
-  position: absolute;
-  top:-1;
-  
-  animation: upvotedAnim 1s 1;
-  right:28;
-}
-
-#lol {
-  margin-top:-20px;
+	background: white;
+	border-radius: 32px;
+	width:36px;
+	height:32px;
+	position: absolute;
+	top:-1;
+	
+	animation: upvotedAnim 1s 1;
+	right:28;
 }
 
 .toc {
-  display:flex;
-  flex-wrap: wrap;
-  justify-content: center;
+	display:flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .toc-child {
-  width: 300px;
+	width: 300px;
 }
 
 .toc-child img {
-  border: 2px solid black;
-  margin-top: 20px;
-  margin-bottom:0px;
+	border: 2px solid black;
+	margin-top: 20px;
+	margin-bottom:0px;
 }
 
 .toc p {
-  margin-top:5px;
-  margin-bottom: 5px;
+	margin-top:5px;
+	margin-bottom: 5px;
 }
 
 .toc span {
-  font-size:1em;
-  font-weight:300;
-  padding-left:10px;
-  padding-right:10px;
+	font-size:1em;
+	font-weight:300;
+	padding-left:10px;
+	padding-right:10px;
 }
 
 .icons {
-  margin-top: 30px;
+	margin-top: 30px;
 }
 
 .icons img {
-  width: 48px;
-  height: 48px;
-  margin:20px;
+	width: 48px;
+	height: 48px;
+	margin:20px;
 }
 
 .icons img + img:before {
-  content:"·";
+	content:"·";
 }

@@ -483,13 +483,14 @@ $scope.hasBossKey = function(dungeon) {
 			el.style.animation = 'none';
 			el.offsetHeight;
 			el.style.animation = null;
+			var original_region = $scope.current_region;
 			$http.get(`/zootr-sim/takeentrance/${$scope.playthroughId}/${entrance}`).then(function(response) {
 				$scope.current_region = response.data.region;
 				$scope.current_subregion = response.data.subregion;
 				if ("bombchu_count" in response.data) {
 					$scope.bombchu_count = response.data.bombchu_count;
 				}
-				if ($scope.current_subregion == "Lost Woods Bridge From Forest" && $scope.current_age == "child" && !$scope.checked_locations.includes("Gift from Saria")) {
+				if ($scope.current_subregion == "Lost Woods Bridge From Forest" && original_region == "Kokiri Forest" && !$scope.checked_locations.includes("Gift from Saria")) {
 					$scope.checkLocation("Gift from Saria");
 				}
 				$scope.getAvailableLocations();

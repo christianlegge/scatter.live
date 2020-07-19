@@ -21,7 +21,7 @@ html
 				each social in socials
 					a(href=social.link)
 						img(src="images/"+social.image)
-		.resume #[a(href="/ChristianLeggeResume2020Public.pdf") Download my resume here.] For an unredacted version, reach out to #{email} with a business inquiry.
+		.resume #[a(href="/ChristianLeggeResume2020Public.pdf") Download my resume here.] For an unredacted version, reach out to #[a(href="mailto:"+email) #{email}] with a business inquiry.
 		h2 projects, in order of significance
 		each project in projects
 			- url = project.link || project.name

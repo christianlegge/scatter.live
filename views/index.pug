@@ -21,22 +21,23 @@ html
 				each social in socials
 					a(href=social.link)
 						img(src="images/"+social.image)
-		.resume #[a(href="/ChristianLeggeResume2020Public.pdf") Download my resume here.] For an unredacted version, reach out to #[a(href="mailto:"+email) #{email}] with a business inquiry.
+		p #[a(href="/ChristianLeggeResume2020Public.pdf") Download my resume here.] For an unredacted version, reach out to #[a(href="mailto:"+email) #{email}] with a business inquiry.
 		h2 projects, in order of significance
-		each project in projects
-			- url = project.link || project.name
-			.project
-				.project-img
-					a(href=url)
-						img(src="images/"+project.name+".png")
-				div
-					p
-						a(href=url) #{project.name}
-					span #{project.description}
-					p relevant technologies:
-						ul
-						each tech in project.tech
-							li #{tech}
-		.footer
-			a(href="https://github.com/scatter-dev/scatter.live") This website is open source!
-			p Christian Legge, 2020.
+		div(style="border-top: 2px solid black")
+			each project in projects
+				- url = project.link || project.name
+				.project
+					.project-img
+						a(href=url)
+							img(src="images/"+project.name+".png")
+					div
+						p
+							a(href=url) #{project.name}
+						span #{project.description}
+						p relevant technologies:
+							ul
+							each tech in project.tech
+								li #{tech}
+		br
+		a(href="https://github.com/scatter-dev/scatter.live") This website and the projects hosted directly on it are open source!
+		p Christian Legge, 2020.

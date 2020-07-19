@@ -13,13 +13,15 @@ var meta = {
 };
 
 var projects = [
-	{ name: "spurts", description: "DK64 Randomizer tracker I made in like 2 hours. Very WIP" },
-	{ name: "cubewave", description: "I made this for no reason. Nothing happens. It's therapeutic or something" },
-	{ name: "gravity", description: "Make planets and watch them interact gravitationally. Incredibly accurate simulation" },
-	{ name: "radii", description: "Dumb game thing where you shoot dumb green things. Cool prototype maybe" },
-	{ name: "rocket", description: "Try to do loops. It's pretty hard, until you figure it out and it gets easy" },
-	{ name: "wowiebot", description: "Semi-fully-featured Twitch chatbot. No servers, run entirely locally by you", link: "https://github.com/scatter-dev/wowiebot" },
-	{ name: "zootr-sim", description: "If you feel like playing a randomizer seed without playing randomizer, do this" },
+	{ name: "zootr-sim", description: "Single page application browser game meant to simulate The Legend of Zelda: Ocarina of Time Randomizer playthroughs.", tech: ["AngularJS", "Express.js", "MongoDB", "Node.js", "netcode"] },
+	{ name: "wowiebot", description: "Semi-fully-featured Twitch chatbot. No servers, run entirely locally by you.", link: "https://github.com/scatter-dev/wowiebot", tech: ["C#", "web sockets"] },
+	{ name: "moonshot", description: "Made for Weekly Game Jam 129. Space-based survival game.", link: "https://scatter.itch.io/moonshot", tech: ["Unity"] },
+	{ name: "inside", description: "Made for Weekly Game Jam 146. Mountain climbing platformer.", link: "https://scatter.itch.io/inside", tech: ["Godot"] },
+	{ name: "spurts", description: "Single page application to track information about Donkey Kong 64 randomizer playthroughs.", tech: ["AngularJS"] },
+	{ name: "rocket", description: "Try to do loops. It's pretty hard, until you figure it out and it gets easy.", tech: ["p5.js", "projectile motion"] },
+	{ name: "radii", description: "Dumb game thing where you shoot dumb green things. Cool prototype maybe.", tech: ["Unity"]},
+	{ name: "gravity", description: "Make planets and watch them interact gravitationally.", tech: ["p5.js", "physics simulation"] },
+	{ name: "cubewave", description: "I made this for no reason. Nothing happens. It's therapeutic or something.", tech: ["p5.js", "WebGL"] },
 ];
 
 var socials = [
@@ -31,43 +33,9 @@ var socials = [
 	{ link: "https://discord.gg/NdSKEzC", image: "iconmonstr-discord-1-240.png" },
 ];
 
-streams = [
-	{ title: "Speedruns", games: [
-		{ title: "Super Mario 64", status: "In progress" },
-		{ title: "Donkey Kong Country", status: "In progress"},
-		{ title: "La-Mulana", status: "Not started"},
-	]},
-	{ title: "Randomizers", games: [
-		{ title: "Donkey Kong 64", status: "In progress"},
-		{ title: "La-Mulana", status: "Not started"},
-		{ title: "Ocarina of Time", status: "In progress"},
-	]},
-	{ title: "Puzz Gang", games: [
-		{ title: "Myst 3: Exile", status: "In progress", image: "Myst 3"},
-		{ title: "The Witness", status: "Not started"},
-		{ title: "Myst", status: "Complete"},
-		{ title: "Riven", status: "Complete"},
-	]},
-	{ title: "Metroidvanias", games: [
-		{ title: "La-Mulana 2", status: "In progress"},
-		{ title: "Axiom Verge", status: "Not started"},
-		{ title: "Environmental Station Alpha", status: "Not started"},
-	]},
-	{ title: "Misc", games: [
-		{ title: "Tetris 99", status: "In progress"},
-		{ title: "Stardew Valley", status: "Not started"},
-		{ title: "Celeste", status: "Not started"},
-		{ title: "itch.io new queue", status: "Not started"},
-	]},
-];
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	StreamGameModel.find(function(err, result) {
-		var doc;
-		if (err) console.log(err);
-		res.render('index', { title: req.hostname, meta: meta, socials: socials, projects: projects, streams: streams, upvotes: result });
-	});
+		res.render('index', { title: req.hostname, email: req.hostname == "scatter.live" ? "scatter@scatter.live" : "christian@christianlegge.dev", meta: meta, socials: socials, projects: projects });
 });
 
 router.post('/upvoteGame', function(req, res) {

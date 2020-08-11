@@ -24,7 +24,13 @@ var projects = [
 	{ name: "cubewave", description: "I made this for no reason. Nothing happens. It's therapeutic or something.", tech: ["p5.js", "WebGL"] },
 ];
 
-var socials = [
+var christian_socials = [
+	{ link: "https://www.linkedin.com/in/christian-legge/", image: "linkedin.png" },
+	{ link: "https://github.com/scatter-dev", image: "iconmonstr-github-1-240.png" },
+	{ link: "https://scatter.itch.io", image: "itchio.png" },
+];
+
+var scatter_socials = [
 	{ link: "https://github.com/scatter-dev", image: "iconmonstr-github-1-240.png" },
 	{ link: "https://twitter.com/scattertv", image: "iconmonstr-twitter-1-240.png" },
 	{ link: "https://twitch.tv/scatter", image: "iconmonstr-twitch-1-240.png" },
@@ -35,7 +41,7 @@ var socials = [
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-		res.render('index', { title: req.hostname, email: req.hostname == "scatter.live" ? "scatter@scatter.live" : "christian@christianlegge.dev", meta: meta, socials: socials, projects: projects });
+	res.render('index', { title: req.hostname, email: req.hostname == "scatter.live" ? "scatter@scatter.live" : "christian@christianlegge.dev", meta: meta, socials: req.hostname == "scatter.live" ? scatter_socials : christian_socials, projects: projects });
 });
 
 router.post('/upvoteGame', function(req, res) {

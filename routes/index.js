@@ -16,6 +16,7 @@ var projects = [
 	{ name: "zootr-sim", description: "Single page application browser game meant to simulate The Legend of Zelda: Ocarina of Time Randomizer playthroughs.", tech: ["AngularJS", "Express.js", "MongoDB", "Node.js", "netcode"] },
 	{ name: "wowiebot", description: "Semi-fully-featured Twitch chatbot. No servers, run entirely locally by you.", link: "https://github.com/scatter-dev/wowiebot", tech: ["C#", "web sockets"] },
 	{ name: "moonshot", description: "Made for Weekly Game Jam 129. Space-based survival game.", link: "https://scatter.itch.io/moonshot", tech: ["Unity"] },
+	{ name: "dice n' slice", description: "Made for Miz Jam 1. Fight your way through a dungeon using dice rolls.", link: "https://scatter.itch.io/dice-n-slice", tech: ["Unity", "shaders"] },
 	{ name: "inside", description: "Made for Weekly Game Jam 146. Mountain climbing platformer.", link: "https://scatter.itch.io/inside", tech: ["Godot"] },
 	{ name: "spurts", description: "Single page application to track information about Donkey Kong 64 randomizer playthroughs.", tech: ["AngularJS"] },
 	{ name: "rocket", description: "Try to do loops. It's pretty hard, until you figure it out and it gets easy.", tech: ["p5.js", "projectile motion"] },

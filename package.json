@@ -22,6 +22,7 @@
     "pug": "^2.0.3",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
+    "shpjs": "^3.6.3",
     "upgrade": "^1.1.0"
   }
 }

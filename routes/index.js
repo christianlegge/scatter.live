@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var StreamGameModel = require('../models/StreamGameModel.js');
 var router = express.Router();
+var shp = require('shpjs');
 
 var meta = {
 	title: "scatter.live",
@@ -13,6 +14,7 @@ var meta = {
 };
 
 var projects = [
+	{ name: "map-thing", description: "map thing", tech: ["AngularJS", "Express.js", "MongoDB", "Node.js", "netcode"] },
 	{ name: "zootr-sim", description: "Single page application browser game meant to simulate The Legend of Zelda: Ocarina of Time Randomizer playthroughs.", tech: ["AngularJS", "Express.js", "MongoDB", "Node.js", "netcode"] },
 	{ name: "wowiebot", description: "Semi-fully-featured Twitch chatbot. No servers, run entirely locally by you.", link: "https://github.com/scatter-dev/wowiebot", tech: ["C#", "web sockets"] },
 	{ name: "moonshot", description: "Made for Weekly Game Jam 129. Space-based survival game.", link: "https://scatter.itch.io/moonshot", tech: ["Unity"] },
@@ -102,9 +104,13 @@ router.get('/rhythm-of-the-primes', function(req, res, next) {
 	res.render('rhythm-of-the-primes');
 });
 
-router.get('/crossword', function(req, res, next) {
+router.get('/crossword', function (req, res, next) {
 	res.render('crossword');
-})
+});
+
+router.get('/map-thing', function (req, res, next) {
+	res.render('map-thing');
+});
 
 router.get('/democracy', function(req, res, next) {
 	if (req.query.channel) {

@@ -5,14 +5,13 @@ html
   head
     title movieeeeeees
     link(rel="stylesheet",type="text/css",href="/stylesheets/movies.css")
-    script.
-      console.log(JSON.parse("#{JSON.stringify(movieInfo)}"))
+    script(type="text/javascript",src="javascripts/movies.js")
   body
     each movies, category in categories 
       .category
-        h1= category
+        h1(onclick=`toggleCollapse(this)`).collapsed= category
         each movie in movies 
-          .movie
+          .movie.hidden
             .header
               img(src=movieInfo[movie]["poster"])
               h2= movie + ` (${movieInfo[movie]["date"]})`

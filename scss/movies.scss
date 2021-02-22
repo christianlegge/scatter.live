@@ -1,6 +1,21 @@
 .category {
 	border: 3px solid black;
 	margin: 12px;
+	h1 {
+		cursor: pointer;
+	}
+}
+
+.collapsed::before {
+	content: "+ ";
+}
+
+.expanded::before {
+	content: "- ";
+}
+
+.hidden {
+	display: none;
 }
 
 .movie {

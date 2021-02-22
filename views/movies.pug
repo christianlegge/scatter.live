@@ -1,0 +1,21 @@
+include head
+
+doctype html
+html
+  head
+    title movieeeeeees
+    link(rel="stylesheet",type="text/css",href="/stylesheets/movies.css")
+    script.
+      console.log(JSON.parse("#{JSON.stringify(movieInfo)}"))
+  body
+    each movies, category in categories 
+      .category
+        h1= category
+        each movie in movies 
+          .movie
+            .header
+              img(src=movieInfo[movie]["poster"])
+              h2= movie + ` (${movieInfo[movie]["date"]})`
+            p= movieInfo[movie]["synopsis"]
+            ul
+              li= "Method: " + methods[movie]

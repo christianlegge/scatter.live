@@ -10,6 +10,7 @@ var viewcount = require('./models/viewcount');
 var indexRouter = require('./routes/index');
 var simRouter = require('./routes/zootr-sim');
 var spurtsRouter = require('./routes/spurts');
+var moviesRouter = require('./routes/movies');
 
 var app = express();
 app.enable('strict routing');
@@ -65,6 +66,7 @@ app.use('/radii', express.static(path.join(__dirname, 'public/unity/radii')));
 app.use('/', indexRouter);
 app.use('/zootr-sim', simRouter);
 app.use('/spurts', spurtsRouter);
+app.use('/movies', moviesRouter);
 app.use(favicon(path.join(__dirname, 'public', 'images/favicon.ico')));
 
 // catch 404 and forward to error handler

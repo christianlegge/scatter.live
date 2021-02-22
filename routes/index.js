@@ -102,9 +102,9 @@ router.get('/rhythm-of-the-primes', function(req, res, next) {
 	res.render('rhythm-of-the-primes');
 });
 
-router.get('/crossword', function(req, res, next) {
+router.get('/crossword', function (req, res, next) {
 	res.render('crossword');
-})
+});
 
 router.get('/democracy', function(req, res, next) {
 	if (req.query.channel) {
@@ -113,6 +113,6 @@ router.get('/democracy', function(req, res, next) {
 	else {
 		res.render('democracy');
 	}
-})
+});
 
 module.exports = router;

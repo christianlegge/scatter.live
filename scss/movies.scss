@@ -1,0 +1,16 @@
+.category {
+	border: 3px solid black;
+	margin: 12px;
+}
+
+.movie {
+	border-top: 1px solid black;
+	padding-right: 60%;
+	img {
+		width: 150px;
+		float: left;
+		margin: 4px;
+	}
+	min-height: 250px;
+	overflow: hidden;
+}

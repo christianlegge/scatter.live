@@ -37,7 +37,8 @@ var overwrites = {
   "Colette": {
     "synopsis": "On the anniversary of the start of the Nuremberg trials, 90-year-old Colette Marin-Catherine confronts her past by visiting the German concentration camp Mittelbau-Dora where her brother was killed. As a young girl, she fought Hitler's Nazis as a member of the French Resistance. For 74 years, she has refused to step foot in Germany, but that changes when a young history student named Lucie enters her life. Prepared to  re-open old wounds and revisit the terrors of that time, Marin-Catherine offers important lessons for us all.",
     "date": "2020-11-18",
-    "poster": "http://i3.ytimg.com/vi/J7uBf1gD6JY/maxresdefault.jpg"
+    "poster": "http://i3.ytimg.com/vi/J7uBf1gD6JY/maxresdefault.jpg",
+    "runtime": 25
   }
 }
 
@@ -122,24 +123,24 @@ var methods = {
   "Sound of Metal": "Jellyfin",
   "The Trial of the Chicago 7": "Netflix",
   "Burrow": "Jellyfin",
-  "Genius Loci": "???? redditor",
+  "Genius Loci": "Jellyfin",
   "If Anything Happens I Love You": "Netflix",
   "Kapaemahu": "Vimeo",
-  "Opera": "Slamdance",
+  "Opera": "Slamdance/Jellyfin",
   "Out": "????",
-  "The Snail and the Whale": "????",
-  "To Gerard": "????",
-  "Traces": "arte.tv",
-  "Yes-People": "???? redditor",
-  "Bittu": "????",
-  "Da Yie": "Vimeo ($5.49)",
+  "The Snail and the Whale": "Jellyfin",
+  "To Gerard": "Jellyfin",
+  "Traces": "Jellyfin",
+  "Yes-People": "Jellyfin",
+  "Bittu": "Jellyfin",
+  "Da Yie": "Jellyfin",
   "Feeling Through": "Slamdance",
   "The Human Voice": "Prime Video US",
   "The Kicksled Choir": "????",
   "The Letter Room": "????",
-  "The Present": "???? redditor",
+  "The Present": "Jellyfin",
   "Two Distant Strangers": "????",
-  "The Van": "Vimeo ($1.39)",
+  "The Van": "Jellyfin",
   "White Eye": "tportmarket.com",
   "Birds of Prey and the Fantabulous Emancipation of One Harley Quinn": "Jellyfin",
   "Bloodshot": "Prime Video",
@@ -298,6 +299,7 @@ router.get('/', async function(req, res, next) {
       info["synopsis"] = response["overview"];
       info["poster"] = "https://image.tmdb.org/t/p/w500" + response["poster_path"];
       info["date"] = response["release_date"];
+      info["runtime"] = response["runtime"];
       info["genres"] = [];
       for (let genre of response["genres"]) {
         info["genres"].push(genre["name"]);

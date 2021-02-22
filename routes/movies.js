@@ -3,6 +3,8 @@ var path = require('path');
 var axios = require('axios');
 var router = express.Router();
 
+var movieInfo = {};
+
 var meta = {
   title: "Spurts Tracker",
   description: "DK64 Rando Tracker",
@@ -281,27 +283,27 @@ var categories = {
 }
 
 router.get('/', async function(req, res, next) {
-  var movieInfo = {};
-  var i = 0;
   for (movie in methods) {
-    var response, info = {};
-    if (movie in ids) {
-      response = await axios.get("https://api.themoviedb.org/3/movie/"+ids[movie]+"?api_key=f3a8bea9ebdec460c1a9aca029660a24");
-      response = response["data"];
+    if (!(movie in movieInfo)) {
+      var response, info = {};
+      if (movie in ids) {
+        response = await axios.get("https://api.themoviedb.org/3/movie/"+ids[movie]+"?api_key=f3a8bea9ebdec460c1a9aca029660a24");
+        response = response["data"];
+      }
+      else {
+        response = await axios.get("https://api.themoviedb.org/3/search/movie?api_key=f3a8bea9ebdec460c1a9aca029660a24&query=" + encodeURI(movie));
+        response = await axios.get("https://api.themoviedb.org/3/movie/" + response["data"]["results"][0]["id"] + "?api_key=f3a8bea9ebdec460c1a9aca029660a24");
+        response = response["data"];
+      }
+      info["synopsis"] = response["overview"];
+      info["poster"] = "https://image.tmdb.org/t/p/w500" + response["poster_path"];
+      info["date"] = response["release_date"];
+      info["genres"] = [];
+      for (let genre of response["genres"]) {
+        info["genres"].push(genre["name"]);
+      }
+      movieInfo[movie] = info;
     }
-    else {
-      response = await axios.get("https://api.themoviedb.org/3/search/movie?api_key=f3a8bea9ebdec460c1a9aca029660a24&query=" + encodeURI(movie));
-      response = await axios.get("https://api.themoviedb.org/3/movie/" + response["data"]["results"][0]["id"] + "?api_key=f3a8bea9ebdec460c1a9aca029660a24");
-      response = response["data"];
-    }
-    info["synopsis"] = response["overview"];
-    info["poster"] = "https://image.tmdb.org/t/p/w500" + response["poster_path"];
-    info["date"] = response["release_date"];
-    info["genres"] = [];
-    for (let genre of response["genres"]) {
-      info["genres"].push(genre["name"]);
-    }
-    movieInfo[movie] = info;
   }
   for (movie in overwrites) {
     movieInfo[movie] = overwrites[movie];

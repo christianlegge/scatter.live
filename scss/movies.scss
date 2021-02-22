@@ -1,8 +1,20 @@
+@import "fonts";
+
+body {
+	font-family: 'scatter OpenSans', sans-serif;
+}
+
 .category {
-	border: 3px solid black;
+	border: 3px solid rgb(86, 228, 129);
+	border-radius: 16px;
+	background-color: rgb(225, 245, 225);
 	margin: 12px;
+	padding: 24px;
 	h1 {
+		margin:0;
+		padding:0;
 		cursor: pointer;
+		text-shadow: 1px 1px gray;
 	}
 }
 
@@ -19,12 +31,16 @@
 }
 
 .movie {
+	.inner {
+		margin-left: 12px;
+		max-width: 800px;
+	}
 	border-top: 1px solid black;
-	padding-right: 60%;
+	padding-bottom: 32px;
 	img {
 		width: 150px;
 		float: left;
-		margin: 4px;
+		margin-right: 16px;
 	}
 	min-height: 250px;
 	overflow: hidden;

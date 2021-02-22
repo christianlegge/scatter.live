@@ -12,9 +12,11 @@ html
         h1(onclick=`toggleCollapse(this)`).collapsed= category
         each movie in movies 
           .movie.hidden
-            .header
-              img(src=movieInfo[movie]["poster"])
-              h2= movie + ` (${movieInfo[movie]["date"]})`
-            p= movieInfo[movie]["synopsis"]
-            ul
-              li= "Method: " + methods[movie]
+            .inner
+              .header
+                img(src=movieInfo[movie]["poster"])
+                h2= movie + ` (${movieInfo[movie]["date"]})`
+              if "genres" in movieInfo[movie]
+                p= movieInfo[movie]["genres"].join(", ")
+              p= movieInfo[movie]["synopsis"]
+              p= methods[movie]

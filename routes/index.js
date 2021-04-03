@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var StreamGameModel = require('../models/StreamGameModel.js');
+var MovieModel = require('../models/MovieModel.js');
 var router = express.Router();
 
 var meta = {
@@ -113,6 +114,34 @@ router.get('/democracy', function(req, res, next) {
 	else {
 		res.render('democracy');
 	}
+});
+
+// oscar movie stuff, personal use only
+router.get('/watched_nominees.json', function (req, res, next) {
+	MovieModel.find({}, function (err, movies) {
+		toSend = {};
+		toSend.titles = [];
+		for (i in movies) {
+			toSend.titles.push(movies[i].title);
+		}
+		res.send(toSend);
+	});
+});
+
+router.post('/watched_nominees.json', function (req, res, next) {
+	if (req.body.key != process.env.MOVIE_KEY) {
+		res.sendStatus(401);
+		next();
+	}
+	MovieModel.find({}, function (err, movies) {
+		for (var i = 0; i < req.body.movies.length; i++) {
+			if (!movies  || movies.filter(x => x.title == req.body.movies[i]).length == 0) {
+				var movie = new MovieModel({title: req.body.movies[i]});
+				movie.save();
+			}
+		}
+		res.sendStatus(200);
+	});
 });
 
 module.exports = router;

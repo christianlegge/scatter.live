@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 var simRouter = require('./routes/zootr-sim');
 var spurtsRouter = require('./routes/spurts');
 var moviesRouter = require('./routes/movies');
+var oscarPredictionsRouter = require('./routes/oscar-predictions');
 
 var app = express();
 app.enable('strict routing');
@@ -67,6 +68,7 @@ app.use('/', indexRouter);
 app.use('/zootr-sim', simRouter);
 app.use('/spurts', spurtsRouter);
 app.use('/movies', moviesRouter);
+app.use('/oscar-predictions', oscarPredictionsRouter);
 app.use(favicon(path.join(__dirname, 'public', 'images/favicon.ico')));
 
 // catch 404 and forward to error handler

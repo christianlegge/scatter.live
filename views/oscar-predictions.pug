@@ -1,0 +1,26 @@
+include head
+
+doctype html
+html
+	head
+		title movieeeeeees
+		link(rel="stylesheet",type="text/css",href="/stylesheets/movies.css")
+		script(type="text/javascript",src="javascripts/movies.js")
+	body
+		each movies, category in categories 
+			table
+				thead
+					th(colspan="3")= category == "Best Picture" ? category : `Best ${category}`
+				thead
+					th Movie 
+					th Predict 
+					th Want to win 
+				
+				//h1(onclick=`toggleCollapse(this)`).collapsed= category
+				each movie in movies 
+					tr
+						td= movie
+						td
+							input(type="radio",name=`predict-${category}`)
+						td
+							input(type="radio",name=`want-${category}`)

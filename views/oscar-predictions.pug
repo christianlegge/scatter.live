@@ -3,10 +3,11 @@ include head
 doctype html
 html
 	head
-		title movieeeeeees
-		link(rel="stylesheet",type="text/css",href="/stylesheets/movies.css")
-		script(type="text/javascript",src="javascripts/movies.js")
-	body
+		title Oscar Predictions 2021
+		+angular
+		link(rel="stylesheet",type="text/css",href="/stylesheets/oscar-predictions.css")
+		script(type="text/javascript",src="javascripts/oscar-predictions.js")
+	body(ng-app="oscarPredictions", ng-controller="oscarPredictionsController")
 		each movies, category in categories 
 			table
 				thead

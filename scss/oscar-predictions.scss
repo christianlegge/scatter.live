@@ -1,14 +1,42 @@
 @import "fonts";
 
+$border-color: #80c6ff;
+
 body {
 	font-family: 'scatter OpenSans', sans-serif;
+	text-align: center;
+}
+
+.categories {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 table {
-	width: 50%;
-	min-width: 800px;
+	max-width: 350px;
 	td, th {
 		padding: 12px;
+	}
+}
+
+[type=radio] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	& + img {
+		cursor: pointer;
+		max-height: 200px;
+		max-width: 200px;
+		box-sizing: border-box;
+	}
+	& + img:hover {
+		border: 3px solid $border-color;
+		margin: -3px;
+	}
+	&:checked + img {
+		border: 6px solid $border-color;
+		margin: -6px;
 	}
 }
 

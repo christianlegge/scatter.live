@@ -165,7 +165,8 @@ for (movie in nominees_object) {
 		if (!(lines[i] in categories)) {
 			categories[lines[i]] = [];
 		}
-		categories[lines[i]].push(nominees_object[movie].Name);
+		var item = { "Name": nominees_object[movie].Name, "Nominee": lines[i+1] };
+		categories[lines[i]].push(item);
 	}
 }
 

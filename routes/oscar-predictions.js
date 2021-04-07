@@ -3,6 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var axios = require('axios');
 var csv_parse = require('csv-parse/lib/sync');
+var OscarPredictionModel = require('../models/OscarPredictionModel.js');
 var router = express.Router();
 
 var movieInfo = {};
@@ -199,6 +200,32 @@ router.get('/', async function(req, res, next) {
 		movieInfo[movie] = overwrites[movie];
 	}
 	res.render('oscar-predictions', { categories: categories, methods: methods, movieInfo: movieInfo });
+});
+
+router.post('/submit-responses', async function(req, res, next) {
+	if (!req.body.responses || !req.body.user) {
+		res.sendStatus(400);
+		return;
+	}
+	var user = req.body.user;
+	for (category in req.body.responses) {
+		for (type in req.body.responses[category]) {
+			var doc = await OscarPredictionModel.findOne({user: user, category: category, wanted: type == "want"});
+			if (doc) {
+				doc.film = req.body.responses[category][type];
+			}
+			else {
+				doc = new OscarPredictionModel({
+					user: "test_user",
+					category: category,
+					film: req.body.responses[category][type],
+					wanted: type == "want"
+				});
+			}
+			doc.save();
+		}
+	}
+	res.sendStatus(200);
 });
 
 module.exports = router;

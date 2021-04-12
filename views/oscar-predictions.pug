@@ -29,5 +29,10 @@ html
 										img(src=movieInfo[movie.Name].poster)
 							tr
 								td(colspan="2")= movie.Nominee
-		input(type="button",ng-click="submit()", value="Submit")
+		.footer
+			form
+				div
+					span Who are you?
+					input(type="text",ng-model="submitter")
+				input(type="button",ng-click="submit()", value="Submit")
 		

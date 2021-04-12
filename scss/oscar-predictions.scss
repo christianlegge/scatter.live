@@ -84,3 +84,19 @@ table {
 	min-height: 250px;
 	overflow: hidden;
 }
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	background-color: white;
+	border-top: 3px solid black;
+	width: 100%;
+	min-height: 6em;
+	form {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+	}
+}

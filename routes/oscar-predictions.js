@@ -210,6 +210,9 @@ router.post('/submit-responses', async function(req, res, next) {
 	var user = req.body.user;
 	for (category in req.body.responses) {
 		for (type in req.body.responses[category]) {
+			if (req.body.responses[category][type] == "") {
+				continue;
+			}
 			var doc = await OscarPredictionModel.findOne({user: user, category: category, wanted: type == "want"});
 			if (doc) {
 				if (!req.body.confirmed && doc.film != req.body.responses[category][type]) {

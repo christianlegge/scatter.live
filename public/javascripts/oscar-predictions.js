@@ -20,16 +20,24 @@ app.controller('oscarPredictionsController', ["$scope", "$http", function ($scop
 	};
 
 	$scope.setOrToggleResponse = function(category, movie, wanted) {
-		if ($scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] == movie) {
+		var selection = movie.Name;
+		if (category.includes("Actor") || category.includes("Actress")) {
+			selection = movie.Nominee;
+		}
+		if ($scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] == selection) {
 			$scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] = "";
 		}
 		else {
-			$scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] = movie;
+			$scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] = selection;
 		}
 	};
 
 	$scope.movieIsSelected = function (category, movie, wanted) {
-		return $scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] == movie;
+		var selection = movie.Name;
+		if (category.includes("Actor") || category.includes("Actress")) {
+			selection = movie.Nominee;
+		}
+		return $scope.responses[category.replace(/\W/g, "")][wanted ? "want" : "predict"] == selection;
 	};
 
 	$scope.categoryHasBothSelected = function(category) {

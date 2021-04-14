@@ -67,9 +67,10 @@ nav {
 		float: left;
 		margin-right: 16px;
 		transition: all 100ms ease-out;
-		box-shadow: 0px 10px 20px black;
+		box-shadow: 0px 8px 12px black;
 		&:hover {
 			transform: translate(0, -20px) scale(1.1, 1.1);
+			box-shadow: 0px 20px 20px black;
 		}
 		&.selected {
 			outline: 8px solid $border-color;

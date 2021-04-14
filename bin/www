@@ -34,19 +34,6 @@ catch (error) {
 		throw error;
 	}
 }
-var sass_files = fs.readdirSync("scss");
-sass_files.forEach(function(filename) {
-	if (filename.charAt(0) == "_") {
-		return;
-	}
-	var name = filename.split(".")[0];
-	var rendered = sass.renderSync({
-		file: `scss/${filename}`,
-		outFile: `public/stylesheets/${name}.css`,
-		outputStyle: process.env.DEBUG ? "expanded" : "compressed",
-	});
-	fs.writeFileSync(`public/stylesheets/${name}.css`, rendered.css);
-})
 
 /**
  * Get port from environment and store in Express.

@@ -35,17 +35,19 @@ nav {
 			background-color: rgb(72, 72, 134);
 			border-right: 3px solid white;
 			box-sizing: border-box;
-			transition: border 100ms ease-in-out;
+			transition: all 100ms ease-in-out;
 			&:hover {
 				border-right: 12px solid white;
-			}
-			&.selected {
-				border-right: 12px solid white;
-				font-weight: 700;
 			}
 			&.finished {
 				text-decoration: line-through;
 				background-color: rgba(72, 72, 134, 0.8);
+			}
+			&.selected {
+				border-right: 12px solid rgb(72, 72, 134);
+				font-weight: 700;
+				background-color: white;
+				color: rgb(72, 72, 134);
 			}
 			&.finished::before {
 				content: "✓ ";

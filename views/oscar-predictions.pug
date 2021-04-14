@@ -20,11 +20,12 @@ html
 			ul
 				li(ng-repeat="movie in categories[currentCategory]")
 					img(src="{{movieInfo[movie.Name].poster}}", ng-click="setOrToggleResponse(currentCategory, movie.Name, false)", ng-class="movieIsSelected(currentCategory, movie.Name, false) ? 'selected' : ''")
-			br
+					p {{movie.Nominee}}
 			h3 Who do you want to win?
 			ul
 				li(ng-repeat="movie in categories[currentCategory]")
 					img(src="{{movieInfo[movie.Name].poster}}", ng-click="setOrToggleResponse(currentCategory, movie.Name, true)", ng-class="movieIsSelected(currentCategory, movie.Name, true) ? 'selected' : ''")
+					p {{movie.Nominee}}
 		.footer
 			form
 				div

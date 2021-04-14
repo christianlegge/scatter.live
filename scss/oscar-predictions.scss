@@ -5,6 +5,47 @@ $border-color: #80c6ff;
 body {
 	font-family: 'scatter OpenSans', sans-serif;
 	text-align: center;
+	display: grid;
+	grid-template-areas: 
+		"nav main main main"
+		"nav footer footer footer";
+	margin: 0;
+	padding: 0;
+}
+
+nav {
+	background-color: rgb(193, 193, 255);
+	text-align: left;
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		li {
+			cursor: pointer;
+			user-select: none;
+			padding: 0.5em;
+			margin: 2px;
+			color: white;
+			background-color: rgb(72, 72, 134);
+			border-right: 3px solid white;
+			box-sizing: border-box;
+			transition: border 100ms ease-in-out;
+			&:hover {
+				border-right: 12px solid white;
+			}
+			&.selected {
+				border-right: 12px solid white;
+				font-weight: 700;
+			}
+			&.finished {
+				text-decoration: line-through;
+				background-color: rgba(72, 72, 134, 0.8);
+			}
+			&.finished::before {
+				content: "✓ ";
+			}
+		}
+	}
 }
 
 .categories {
@@ -35,6 +76,26 @@ table {
 		margin: -3px;
 	}
 	&:checked + img {
+		border: 6px solid $border-color;
+		margin: -6px;
+	}
+}
+
+.main ul {
+	list-style-type: none;
+	display: flex;
+	flex-direction: horizontal;
+}
+
+.main img {
+	width: 150px;
+	float: left;
+	margin-right: 16px;
+	&:hover {
+		border: 3px solid $border-color;
+		margin: -3px;
+	}
+	&.selected {
 		border: 6px solid $border-color;
 		margin: -6px;
 	}
@@ -86,7 +147,6 @@ table {
 }
 
 .footer {
-	position: fixed;
 	bottom: 0;
 	background-color: white;
 	border-top: 3px solid black;

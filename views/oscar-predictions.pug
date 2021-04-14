@@ -6,29 +6,25 @@ html
 		title Oscar Predictions 2021
 		+angular
 		link(rel="stylesheet",type="text/css",href="/stylesheets/oscar-predictions.css")
+		script.
+			var categories = !{JSON.stringify(categories)};
+			var movieInfo = !{JSON.stringify(movieInfo)};
 		script(type="text/javascript",src="javascripts/oscar-predictions.js")
 	body(ng-app="oscarPredictions", ng-controller="oscarPredictionsController")
-		.categories
-			each movies, category in categories 
-				.category
-					table
-						thead
-							th(colspan="2")= category == "Best Picture" ? category : `Best ${category}`
-						thead
-							th Predict 
-							th Want to win
-						each movie in movies 
-							tr
-								td
-									label
-										input(type="radio",ng-model=`responses.${category.replace(/\W/g,"")}.predict`,value=movie.Name)
-										img(src=movieInfo[movie.Name].poster)
-								td
-									label 
-										input(type="radio",ng-model=`responses.${category.replace(/\W/g,"")}.want`,value=movie.Name)
-										img(src=movieInfo[movie.Name].poster)
-							tr
-								td(colspan="2")= movie.Nominee
+		nav 
+			ul
+				each movies, category in categories 
+					li(ng-click=`setCategory("${category}")`,ng-class=`{selected: currentCategory == "${category}", finished: categoryHasBothSelected("${category}")}`)= category == "Best Picture" ? category : `Best ${category}`
+		.main
+			h3 Who do you predict will win?
+			ul
+				li(ng-repeat="movie in categories[currentCategory]")
+					img(src="{{movieInfo[movie.Name].poster}}", ng-click="setOrToggleResponse(currentCategory, movie.Name, false)", ng-class="movieIsSelected(currentCategory, movie.Name, false) ? 'selected' : ''")
+			br
+			h3 Who do you want to win?
+			ul
+				li(ng-repeat="movie in categories[currentCategory]")
+					img(src="{{movieInfo[movie.Name].poster}}", ng-click="setOrToggleResponse(currentCategory, movie.Name, true)", ng-class="movieIsSelected(currentCategory, movie.Name, true) ? 'selected' : ''")
 		.footer
 			form
 				div

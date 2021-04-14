@@ -1,21 +1,27 @@
 @import "fonts";
 
-$border-color: #80c6ff;
+$border-color: #5560ff;
 
 body {
 	font-family: 'scatter OpenSans', sans-serif;
 	text-align: center;
 	display: grid;
+	grid-template-columns: 300px 1fr;
+	grid-template-rows: 1fr 120px;
 	grid-template-areas: 
-		"nav main main main"
-		"nav footer footer footer";
+		"nav main"
+		"nav footer";
 	margin: 0;
 	padding: 0;
+	background-color: #eeeeee;
+	height: 100vh;
+	width: 100vw;
 }
 
 nav {
 	background-color: rgb(193, 193, 255);
 	text-align: left;
+	grid-area: nav;
 	ul {
 		list-style-type: none;
 		margin: 0;
@@ -48,83 +54,27 @@ nav {
 	}
 }
 
-.categories {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-table {
-	max-width: 350px;
-	td, th {
-		padding: 12px;
+.main {
+	grid-area: main;
+	ul {
+		list-style-type: none;
+		display: flex;
+		flex-direction: horizontal;
 	}
-}
-
-[type=radio] {
-	position: absolute;
-	opacity: 0;
-	width: 0;
-	height: 0;
-	& + img {
+	img {
 		cursor: pointer;
-		max-height: 200px;
-		max-width: 200px;
-		box-sizing: border-box;
+		width: 150px;
+		float: left;
+		margin-right: 16px;
+		transition: all 100ms ease-out;
+		box-shadow: 0px 10px 20px black;
+		&:hover {
+			transform: translate(0, -20px) scale(1.1, 1.1);
+		}
+		&.selected {
+			outline: 8px solid $border-color;
+		}
 	}
-	& + img:hover {
-		border: 3px solid $border-color;
-		margin: -3px;
-	}
-	&:checked + img {
-		border: 6px solid $border-color;
-		margin: -6px;
-	}
-}
-
-.main ul {
-	list-style-type: none;
-	display: flex;
-	flex-direction: horizontal;
-}
-
-.main img {
-	width: 150px;
-	float: left;
-	margin-right: 16px;
-	&:hover {
-		border: 3px solid $border-color;
-		margin: -3px;
-	}
-	&.selected {
-		border: 6px solid $border-color;
-		margin: -6px;
-	}
-}
-
-.category {
-	border: 3px solid rgb(86, 228, 129);
-	border-radius: 16px;
-	background-color: rgb(225, 245, 225);
-	margin: 12px;
-	padding: 24px;
-	h1 {
-		margin:0;
-		padding:0;
-		cursor: pointer;
-		text-shadow: 1px 1px gray;
-	}
-}
-
-.collapsed::before {
-	content: "+ ";
-}
-
-.expanded::before {
-	content: "- ";
-}
-
-.hidden {
-	display: none;
 }
 
 .movie {
@@ -147,11 +97,8 @@ table {
 }
 
 .footer {
-	bottom: 0;
-	background-color: white;
+	grid-area: footer;
 	border-top: 3px solid black;
-	width: 100%;
-	min-height: 6em;
 	form {
 		height: 100%;
 		width: 100%;

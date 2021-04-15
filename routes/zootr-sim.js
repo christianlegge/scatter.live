@@ -871,6 +871,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				
 				if (simHelper.needChus(result, req.params.location)) {
 					result.bombchu_count--;
+					if (result.current_subregion == "Zora River Front") {
+						result.current_items.push("Opened Child River");
+					}
 				}
 
 				if (req.params.location.includes("Grotto")) {

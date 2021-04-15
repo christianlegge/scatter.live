@@ -1627,7 +1627,7 @@ var logic = {
 				"GS Zora River Tree": "is_child and can_child_attack"
 			},
 			"exits": {
-				"Zora River": "is_adult or has_explosives",
+				"Zora River": "is_adult or has_explosives or Opened_Child_River",
 				"Hyrule Field": "True"
 			}
 		},

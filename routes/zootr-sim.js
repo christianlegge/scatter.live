@@ -778,6 +778,9 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 				if (!(result.locations.has(req.params.location)) && req.params["location"] == "Gift from Saria") {
 					item = "Ocarina";
 				}
+				if (req.params.location == "Kokiri Sword Chest" && !result.settings.get("shuffle_kokiri_sword")) {
+					item = "Kokiri Sword";
+				}
 				if (req.params.location == "Zelda" && result.settings.get("shuffle_ganon_bosskey") == "lacs_medallions") {
 					item = "Boss Key (Ganons Castle)";
 				}

@@ -1076,6 +1076,9 @@ function getLocations(save_file, region) {
 			all_locs = all_locs.concat(Object.keys(subregions[subregion]["locations"]));
 		}
 	}
+	if (region == "Kokiri Forest" && !save_file.settings.get("shuffle_kokiri_sword")) {
+		location_exceptions.push("Kokiri Sword Chest");
+	}
 	if (region == "Temple of Time" && save_file.settings.get("shuffle_ganon_bosskey") == "lacs_medallions") {
 		location_exceptions.push("Zelda");
 	}

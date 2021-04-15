@@ -1332,7 +1332,8 @@ var noPeekIfCantGet = [
 	"Zoras Fountain Bottom Freestanding PoH",
 	"Lon Lon Tower Freestanding PoH",
 	"Bottom of the Well Freestanding Key",
-	"Shadow Temple Freestanding Key"
+	"Shadow Temple Freestanding Key",
+	"Lake Hylia Sun"
 ];
 
 module.exports.canCheckLocation = canCheckLocation;

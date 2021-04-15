@@ -1128,7 +1128,8 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
 		try {
 			if (simHelper.parseLogicRule(result, `can_reach('${simHelper.subregionFromLocation(req.params.location)}')`) &&
-			(simHelper.canCheckLocation(result, req.params.location) || !simHelper.noPeekIfCantGet.includes(req.params.location))) {
+			(simHelper.canCheckLocation(result, req.params.location) || !simHelper.noPeekIfCantGet.includes(req.params.location) ||
+			(req.params.location == "Lake Hylia Sun" && result.current_age == "adult" && result.current_items.includes("Bow")))) {
 				var item = result.locations.get(req.params.location);
 				if (typeof item == "object") {
 					item = item.item;

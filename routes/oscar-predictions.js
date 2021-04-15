@@ -57,12 +57,22 @@ for (movie in nominees_object) {
 		if (!(lines[i] in categories)) {
 			categories[lines[i]] = [];
 		}
-		var item = { "Name": nominees_object[movie].Name, "Nominee": lines[i+1] };
+		var item = { "Name": nominees_object[movie].Name, "Nominee": lines[i+1], "Predictors": [], "Wanters": [] };
 		categories[lines[i]].push(item);
 	}
 }
 
+function resetCategories() {
+	for (category in categories) {
+		for (film in categories[category]) {
+			categories[category][film].Predictors = [];
+			categories[category][film].Wanters = [];
+		}
+	}
+}
+
 router.get('/', async function(req, res, next) {
+	resetCategories();
 	for (movieidx in nominees_object) {
 		var movie = nominees_object[movieidx].Name
 		if (!(movie in movieInfo)) {
@@ -90,7 +100,21 @@ router.get('/', async function(req, res, next) {
 	for (movie in overwrites) {
 		movieInfo[movie] = overwrites[movie];
 	}
-	res.render('oscar-predictions', { categories: categories, movieInfo: movieInfo });
+	OscarPredictionModel.find().then(function(responses) {
+		for (idx in responses) {
+			var response = responses[idx];
+			var movie = categories[response.category].filter(x => x.Name == response.film)[0];
+			if (!movie) {
+				movie = categories[response.category].filter(x => x.Nominee == response.film)[0]
+			}
+			var type = response.wanted ? "Wanters" : "Predictors";
+			if (!movie[type].includes(response.user)) {
+				movie[type].push(response.user);
+			}
+		}
+		console.log(categories);
+		res.render('oscar-predictions', { categories: categories, movieInfo: movieInfo });
+	});
 });
 
 router.post('/submit-responses', async function(req, res, next) {

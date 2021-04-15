@@ -624,6 +624,7 @@ router.get('/checklocation/:playthroughId/:location', function(req, res, next) {
 							result.known_hints.set(light_arrow_region, []);
 						}
 						result.known_hints.get(light_arrow_region).push("Light Arrows");
+						result.markModified("known_hints");
 					}
 					else if (result.current_items.includes("Light Arrows")) {
 						light_arrow_region = "your pocket";
@@ -911,9 +912,8 @@ router.get('/checkhint/:playthroughId/:stone', function (req, res, next) {
 			if (simHelper.canCheckLocation(result, req.params["stone"])) {
 				var hint = simHelper.getHint(result, req.params["stone"]);
 				if (result.known_hints.has(hint.hint[0])) {
-					var arr = result.known_hints.get(hint.hint[0]);
-					arr.push(hint.hint[1]);
-					result.known_hints.set(hint.hint[0], arr);
+					result.known_hints.get(hint.hint[0]).push(hint.hint[1]);
+					result.markModified("known_hints");
 				}
 				else {
 					result.known_hints.set(hint.hint[0], [hint.hint[1]]);
@@ -1117,6 +1117,7 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 				}
 				if (result.known_hints.has(req.params.location)) {
 					result.known_hints.get(req.params.location).push(item);
+					result.markModified("known_hints");
 				}
 				else {
 					result.known_hints.set(req.params.location, [item]);

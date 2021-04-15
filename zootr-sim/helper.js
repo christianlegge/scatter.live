@@ -405,6 +405,12 @@ var hintItemsMeanings = {
 	"a Gold Skulltula Token": "Gold Skulltula Token",
 	"is a foolish choice": "Foolish Choice",
 	"way of the hero": "Way of the Hero",
+	"Forest Trial protects": "Forest Trial",
+	"Fire Trial protects": "Fire Trial",
+	"Water Trial protects": "Water Trial",
+	"Spirit Trial protects": "Spirit Trial",
+	"Shadow Trial protects": "Shadow Trial",
+	"Light Trial protects": "Light Trial",
 };
 
 var hintLocationsMeanings = {
@@ -491,6 +497,7 @@ var hintLocationsMeanings = {
 	"spinning Goron pottery contains": "Goron City Pot Freestanding PoH",
 	"within a tree, a temporal stone contains": "Deku Tree MQ After Spinning Log Chest",
 	"in the belly of a deity, a spider surrounded by shadows holds": "GS Jabu Jabu MQ Invisible Enemies Room",
+	"protects Ganon's Tower": "Required Trials",
 	'an ancient tree': 'Deku Tree',
 	'Deku Tree': 'Deku Tree',
 	'an immense cavern': 'Dodongos Cavern',

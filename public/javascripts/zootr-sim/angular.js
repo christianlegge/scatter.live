@@ -21,7 +21,10 @@ app.filter('orderHints', function() {
 		if ("Foolish Choice" in items) {
 			retval.push("Foolish Choice");
 		}
-		return retval.concat(Object.keys(items).filter(x => x != "Way of the Hero" && x != "Foolish Choice").reverse());
+		if ("Required Trials" in items) {
+			retval.push("Required Trials");
+		}
+		return retval.concat(Object.keys(items).filter(x => x != "Way of the Hero" && x != "Foolish Choice" && x != "Required Trials").reverse());
 	};
 });
 

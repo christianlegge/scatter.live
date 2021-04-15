@@ -178,10 +178,13 @@ function parseLog(logfile, use_logic) {
 	if (typeof logfile == 'string') {
 		logfile = JSON.parse(logfile);
 	}
-	if(!(":version" in logfile) || logfile[":version"] != "5.2.0 Release") {
+	if(!(":version" in logfile) || logfile[":version"] != "6.0.0 Release") {
 		throw "Incorrect version.";
 	}
-	if (logfile.settings.entrance_shuffle != "off") {
+	if (logfile.settings.shuffle_dungeon_entrances ||
+		logfile.settings.shuffle_grotto_entrances ||
+		logfile.settings.shuffle_interior_entrances != "off" ||
+		logfile.settings.shuffle_overworld_entrances) {
 		throw "Entrance shuffle is not supported.";
 	}
 	if (logfile.settings.world_count == 1) {
@@ -1165,7 +1168,7 @@ router.get('/peek/:playthroughId/:location', function (req, res, next) {
 router.get('/getspoiler', function(req, res, next) {
 	try {
 		if (req.query.valid) {
-			request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=5.2.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
+			request('https://www.ootrandomizer.com/api/seed/create?key=' + process.env.ZOOTRAPIKEY + '&version=6.0.0&settingsString=' + req.query.settings + '&seed=' + req.query.seed, function (error, response, body) {
 				try {
 					if (error) {
 						if (error.code == "ETIMEDOUT") {

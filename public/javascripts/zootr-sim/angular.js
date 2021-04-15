@@ -743,14 +743,16 @@ $scope.hasBossKey = function(dungeon) {
 			$scope.setting_wind = true;
 			var el = document.getElementById("faroreswind");
 			el.classList.add('loadinglink');
-			$http.get(`/zootr-sim/setwind/${$scope.playthroughId}/${$scope.current_age}/${$scope.current_region}`).then(function(response) {
+			$http.get(`/zootr-sim/setwind/${$scope.playthroughId}/${$scope.current_age}/${$scope.current_region}/${$scope.current_subregion}`).then(function(response) {
 				$scope.wind_error = null;
 				$scope.setting_wind = false;
 				if ($scope.current_age == "child") {
 					$scope.child_wind = $scope.current_region;
+					$scope.child_wind_sub = $scope.current_subregion;
 				}
 				else {
 					$scope.adult_wind = $scope.current_region;
+					$scope.adult_wind_sub = $scope.current_subregion;
 				}
 				var el = document.getElementById("faroreswind");
 				el.classList.remove('loadinglink');
@@ -770,7 +772,8 @@ $scope.hasBossKey = function(dungeon) {
 			el.classList.add('loadinglink');
 			$http.get(`/zootr-sim/recallwind/${$scope.playthroughId}/${$scope.current_age}`).then(function (response) {
 				$scope.wind_error = null;
-				$scope.current_region = response.data;
+				$scope.current_region = response.data.region;
+				$scope.current_subregion = response.data.subregion;
 				$scope.getAvailableLocations();
 				$scope.getAvailableEntrances();
 				if ($scope.current_age == "child") {
@@ -933,6 +936,8 @@ $scope.hasBossKey = function(dungeon) {
 		$scope.percentiles = data["percentiles"];
 		$scope.child_wind = data.child_wind;
 		$scope.adult_wind = data.adult_wind;
+		$scope.child_wind_sub = data.child_wind_sub;
+		$scope.adult_wind_sub = data.adult_wind_sub;
 		$scope.playing = data.playing;
 		$scope.is_multiworld = data.multiworld_id ? true : false;
 		localforage.setItem("playthroughId", data["id"]);

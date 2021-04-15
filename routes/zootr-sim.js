@@ -154,6 +154,8 @@ async function start_multiworld(mw_doc) {
 			player_doc.trials = log.get("trials")[`World ${player.num}`];
 			player_doc.child_wind = "";
 			player_doc.adult_wind = "";
+			player_doc.child_wind_sub = "";
+			player_doc.adult_wind_sub = "";
 			player_doc.bombchu_count = 0;
 			player_doc.route = [];
 			player_doc.playtime = 0;
@@ -208,6 +210,8 @@ function parseLog(logfile, use_logic) {
 			trials: logfile["trials"],
 			child_wind: "",
 			adult_wind: "",
+			child_wind_sub: "",
+			adult_wind_sub: "",
 			bombchu_count: 0,
 			route: [],
 			playtime: 0,
@@ -239,6 +243,8 @@ function parseLog(logfile, use_logic) {
 			known_medallions: doc.known_medallions,
 			child_wind: doc.child_wind,
 			adult_wind: doc.adult_wind,
+			child_wind_sub: doc.child_wind_sub,
+			adult_wind_sub: doc.adult_wind_sub,
 			bombchu_count: 0,
 			logic_rules: logfile.settings.logic_rules,
 			player_count: logfile.settings.world_count,
@@ -566,6 +572,8 @@ router.get('/resume', async function(req, res, next) {
 				finished: result.finished,
 				child_wind: result.child_wind,
 				adult_wind: result.adult_wind,
+				child_wind_sub: result.child_wind_sub,
+				adult_wind_sub: result.adult_wind_sub,
 				num_checks_made: result.num_checks_made,
 				total_checks: result.total_checks,
 				used_logic: result.use_logic,
@@ -1042,17 +1050,19 @@ router.get('/getentrances/:playthroughId/:region', function (req, res, next) {
 	}, function(error) {
 		res.status(500).send(error.message);
 	});
-})
+});
 
-router.get('/setwind/:playthroughId/:age/:region', function (req, res, next) {
+router.get('/setwind/:playthroughId/:age/:region/:subregion', function (req, res, next) {
 	playthroughModel.findById(req.params["playthroughId"]).then(function (result) {
 		try {
 			if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
 				if (result.current_age == "child") {
 					result.child_wind = req.params.region;
+					result.child_wind_sub = req.params.subregion;
 				}
 				else {
 					result.adult_wind = req.params.region;
+					result.adult_wind_sub = req.params.subregion;
 				}
 				result.save();
 				res.sendStatus(200);
@@ -1075,8 +1085,11 @@ router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
 			if (result.current_items.includes("Farores Wind") && result.current_items.includes("Magic Meter")) {
 				if (result.current_age == "child") {
 					if (result.child_wind) {
-						res.send(result.child_wind);
+						result.current_region = result.child_wind;
+						result.current_subregion = result.child_wind_sub;
+						res.send({region: result.child_wind, subregion: result.child_wind_sub});
 						result.child_wind = "";
+						result.child_wind_sub = "";
 						result.save();
 					}
 					else {
@@ -1085,7 +1098,9 @@ router.get('/recallwind/:playthroughId/:age', function (req, res, next) {
 				}
 				else {
 					if (result.adult_wind) {
-						res.send(result.adult_wind);
+						result.current_region = result.adult_wind;
+						result.current_subregion = result.adult_wind_sub;
+						res.send({ region: result.adult_wind, subregion: result.adult_wind_sub });
 						result.adult_wind = "";
 						result.save();
 					}

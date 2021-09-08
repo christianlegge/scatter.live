@@ -1,0 +1,18 @@
+include head
+
+doctype html
+html
+  head
+    title Crossword helper
+    +jquery
+    +localforage
+    +angular
+    link(rel="stylesheet",type="text/css",href="stylesheets/wordlengths.css")
+    script(type="text/javascript",src="javascripts/wordlengths.js")
+    
+body(ng-app="wordlengths",ng-controller="wordlengthsController")
+  .mainText(contenteditable,name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
+    div placeholder text
+  p {{mainText}}
+  p {{lineLengths}}
+  p {{dom}}

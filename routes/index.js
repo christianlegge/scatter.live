@@ -107,6 +107,10 @@ router.get('/crossword', function (req, res, next) {
 	res.render('crossword');
 });
 
+router.get('/wordlengths', function (req, res, next) {
+	res.render('wordlengths');
+});
+
 router.get('/democracy', function(req, res, next) {
 	if (req.query.channel) {
 		res.render('democracy-chart');

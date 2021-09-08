@@ -1,13 +1,18 @@
+body {
+	background-color: rgb(3, 20, 7);
+	color: rgb(251, 252, 212);
+	font-size: 2rem;
+}
+
 .mainContainer {
 	display: flex;
 }
 
-.mainText {
-	border: 3px solid red;
+#mainText {
+	
 }
 
 .lineLengths {
-	border: 3px solid blue;
 	display: flex;
 	flex-direction: column;
 }

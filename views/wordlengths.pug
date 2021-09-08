@@ -10,9 +10,9 @@ html
     link(rel="stylesheet",type="text/css",href="stylesheets/wordlengths.css")
     script(type="text/javascript",src="javascripts/wordlengths.js")
     
-body(ng-app="wordlengths",ng-controller="wordlengthsController")
+body(ng-app="wordlengths",ng-controller="wordlengthsController",onKeyDown="focusText()")
   .mainContainer
-    .mainText(contenteditable,name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
+    #mainText(contenteditable,name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
       div placeholder text
     .lineLengths
       span(ng-repeat="lineLength in lineLengths track by $index") {{lineLength}}

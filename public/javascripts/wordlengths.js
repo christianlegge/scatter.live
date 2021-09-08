@@ -1,3 +1,12 @@
+function focusText() {
+  var el = document.getElementById("mainText");
+  if (document.activeElement !== el) {
+    el.focus();
+    window.getSelection().selectAllChildren(el);
+    window.getSelection().collapseToEnd();
+  }
+}
+
 var app = angular.module('wordlengths', ['ngSanitize']);
 
 app.directive('contenteditable', ['$sce', function ($sce) {

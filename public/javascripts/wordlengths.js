@@ -1,4 +1,7 @@
+var keypressed = false;
+
 function focusText() {
+  keypressed = true;
   var el = document.getElementById("mainText");
   if (document.activeElement !== el) {
     el.focus();
@@ -55,8 +58,25 @@ app.controller('wordlengthsController', function($scope) {
       $scope.lineLengths = Array.from(lines).map(x => x.innerText).map(x => x.replace(/\W/g, '')).map(x => x.length);
       $scope.lineLengthsString = $scope.lineLengths.join("\n");
 
+      console.log($scope.lineLengths);
+      console.log($scope.mainText);
 
+      if (keypressed) {
+        localforage.setItem("mainText", $scope.mainText);
+      }
     };
+
+    localforage.getItem("mainText", function(err, value) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        $scope.mainText = value;
+        $scope.mainTextChanged();
+        console.log(value);
+        $scope.$apply();
+      }
+    })
   
 });
 

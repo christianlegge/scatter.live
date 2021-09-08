@@ -1,7 +1,11 @@
+@import "fonts";
+
 body {
 	background-color: rgb(3, 20, 7);
 	color: rgb(251, 252, 212);
 	font-size: 2rem;
+	font-family: "scatter OpenSans";
+	text-shadow: 0px 0px 10px white;
 }
 
 .mainContainer {
@@ -9,10 +13,16 @@ body {
 }
 
 #mainText {
-	
+	outline: 0;
+	text-transform: uppercase;
+}
+
+[contenteditable] {
+	outline: 0;
 }
 
 .lineLengths {
 	display: flex;
 	flex-direction: column;
+	opacity: 70%;
 }

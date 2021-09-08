@@ -42,10 +42,11 @@ app.controller('wordlengthsController', function($scope) {
       var el = document.createElement('html');
       el.innerHTML = $scope.mainText;
       var lines = el.getElementsByTagName("div");
-      console.log(lines);
 
       $scope.lineLengths = Array.from(lines).map(x => x.innerText).map(x => x.replace(/\W/g, '')).map(x => x.length);
-      console.log($scope.lineLengths);
+      $scope.lineLengthsString = $scope.lineLengths.join("\n");
+
+
     };
   
 });

@@ -7,11 +7,15 @@ html
     +jquery
     +localforage
     +angular
+    +filesaver
     link(rel="stylesheet",type="text/css",href="stylesheets/wordlengths.css")
     script(type="text/javascript",src="javascripts/wordlengths.js")
     
 body(ng-app="wordlengths",ng-controller="wordlengthsController",onKeyDown="focusText()")
   #saved Saved!
+  #menu
+    a(ng-click="saveAsTxt()",href="") Save as .txt 
+    span Font
   .mainContainer
     #mainText(contenteditable,spellcheck="false",name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
       div placeholder text

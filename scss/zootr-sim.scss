@@ -16,7 +16,7 @@ $dark-background: #222222;
 }
 
 body {
-	font-family: 'scatter OpenSans', sans-serif;
+	font-family: 'Open', sans-serif;
 	background-color: $light-background;
 	color: $light-text;
 	padding:0;
@@ -255,7 +255,7 @@ div.mainbody {
 	.startright {
 		margin:0;
 		input {
-			font-family: 'scatter OpenSans', sans-serif;
+			font-family: 'Open', sans-serif;
 			font-size: 1em;
 		}
 	}
@@ -292,7 +292,7 @@ div.generateform {
 	}
 	input {
 		padding:10px;
-		font-family: 'scatter OpenSans', sans-serif;
+		font-family: 'Open', sans-serif;
 		border-radius: 6px;
 		border: 1px solid #ccc;
 		&[type="submit"] {
@@ -315,7 +315,7 @@ div.generateform {
 	}
 	select {
 		padding:10px;
-		font-family: 'scatter OpenSans', sans-serif;
+		font-family: 'Open', sans-serif;
 		border-radius: 6px;
 		border: 1px solid #ccc;
 		margin-top:2px;
@@ -327,14 +327,14 @@ div.generateform {
 
 input[type=text] {
 	padding:10px;
-	font-family: 'scatter OpenSans', sans-serif;
+	font-family: 'Open', sans-serif;
 	border-radius: 6px;
 	border: 1px solid #ccc;
 }
 
 button, a.button {
 	padding:10px;
-	font-family: 'scatter OpenSans', sans-serif;
+	font-family: 'Open', sans-serif;
 	border-radius: 6px;
 	border: 1px solid #ccc;
 	display: inline-block;
@@ -360,7 +360,7 @@ div.loadfromid {
 	}
 	input {
 		padding:10px;
-		font-family: 'scatter OpenSans', sans-serif;
+		font-family: 'Open', sans-serif;
 		border-radius: 6px;
 		border: 1px solid #ccc;
 	}

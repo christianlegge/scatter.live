@@ -9,6 +9,19 @@ body {
 	padding:1em;
 }
 
+#menu {
+	font-size: 1rem;
+	font-family: "Open";
+	top: 0;
+	right: 0;
+	display: flex;
+	position: fixed;
+	background-color: whitesmoke;
+	color:black;
+	border-radius: 0 0 0 16px;
+	padding: 8px;
+}
+
 #saved {
 	opacity: 0;
 	position:fixed;

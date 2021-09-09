@@ -14,8 +14,7 @@ html
 body(ng-app="wordlengths",ng-controller="wordlengthsController",onKeyDown="focusText()")
   #saved Saved!
   #menu
-    a(ng-click="saveAsTxt()",href="") Save as .txt 
-    span Font
+    a(ng-click="saveAsTxt()",href="") Save as .txt
   .mainContainer
     #mainText(contenteditable,spellcheck="false",name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
       div placeholder text

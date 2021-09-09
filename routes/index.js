@@ -34,7 +34,7 @@ var christian_socials = [
 
 var scatter_socials = [
 	{ link: "https://github.com/scatter-dev", image: "iconmonstr-github-1-240.png" },
-	{ link: "https://twitter.com/scattertv", image: "iconmonstr-twitter-1-240.png" },
+	{ link: "https://twitter.com/cool_scatter", image: "iconmonstr-twitter-1-240.png" },
 	{ link: "https://twitch.tv/scatter", image: "iconmonstr-twitch-1-240.png" },
 	{ link: "https://www.youtube.com/channel/UCZ8iLdNnq61GtOW4k_v5twg", image: "iconmonstr-youtube-6-240.png" },
 	{ link: "https://scatter.itch.io", image: "itchio.png" },

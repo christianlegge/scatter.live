@@ -11,8 +11,10 @@ html
     script(type="text/javascript",src="javascripts/wordlengths.js")
     
 body(ng-app="wordlengths",ng-controller="wordlengthsController",onKeyDown="focusText()")
+  #saved Saved!
   .mainContainer
-    #mainText(contenteditable,name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
+    #mainText(contenteditable,spellcheck="false",name="mainText",ng-model="mainText",ng-change="mainTextChanged()")
       div placeholder text
     .lineLengths
       span(ng-repeat="lineLength in lineLengths track by $index",ng-style="{'visibility': (lineLength == 0 ? 'hidden' : 'visible')}") {{lineLength}}
+  

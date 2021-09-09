@@ -1,4 +1,5 @@
 var keypressed = false;
+var saveTimeout = null;
 
 function focusText() {
   keypressed = true;
@@ -62,7 +63,22 @@ app.controller('wordlengthsController', function($scope) {
       console.log($scope.mainText);
 
       if (keypressed) {
-        localforage.setItem("mainText", $scope.mainText);
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(function() { 
+          localforage.setItem("mainText", $scope.mainText, function(err) {
+            if (err == null) {
+              var el = document.getElementById("saved");
+              el.classList.add("saved-anim");
+              el.style.animation = 'none';
+              el.offsetHeight;
+              el.style.animation = null;
+              
+            }
+            else {
+              console.log(err);
+            }
+          });
+        }, 5000);
       }
     };
 
@@ -71,9 +87,13 @@ app.controller('wordlengthsController', function($scope) {
         console.log(err);
       }
       else {
-        $scope.mainText = value;
+        if (value == null) {
+          $scope.mainText = "<div>Type here...</div>"
+        }
+        else {
+          $scope.mainText = value;
+        }
         $scope.mainTextChanged();
-        console.log(value);
         $scope.$apply();
       }
     })

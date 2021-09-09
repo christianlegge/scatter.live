@@ -48,6 +48,26 @@ app.directive('contenteditable', ['$sce', function ($sce) {
 function innerTextsFromMainText(mainText) {
 	var el = document.createElement('html');
 	el.innerHTML = mainText;
+	var nodes = el.getElementsByTagName("body")[0].childNodes;
+	var texts = [];
+	var lastWasText = false;
+	for (let node of nodes) {
+		if (node.nodeType == Node.TEXT_NODE) {
+			texts.push(node.textContent);
+			lastWasText = true;
+		}
+		else if (node.tagName == "BR") {
+			if (!lastWasText) {
+				texts.push("");
+			}
+			lastWasText = false;
+		}
+		else {
+			texts.push(node.innerText);
+			lastWasText = false;
+		}
+	}
+	return texts;
 	return Array.from(el.getElementsByTagName('div')).map(x => x.innerText);
 }
 
@@ -60,6 +80,7 @@ app.controller('wordlengthsController', function($scope) {
 		$scope.lineLengths = innerTextsFromMainText($scope.mainText).map(x => x.replace(/\W/g, '')).map(x => x.length);
 
 		if (keypressed) {
+			console.log($scope.mainText);
 			clearTimeout(saveTimeout);
 			saveTimeout = setTimeout(function() { 
 				localforage.setItem("mainText", $scope.mainText, function(err) {
@@ -75,7 +96,7 @@ app.controller('wordlengthsController', function($scope) {
 						console.log(err);
 					}
 				});
-			}, 5000);
+			}, 3000);
 		}
 	};
 

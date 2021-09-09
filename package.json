@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "angular-sanitize": "^1.8.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "cookie-parser": "^1.4.5",
     "csv": "^5.5.0",
     "debug": "~4.3.1",

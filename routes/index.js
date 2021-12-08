@@ -107,6 +107,10 @@ router.get('/crossword', function (req, res, next) {
 	res.render('crossword');
 });
 
+router.get('/silph', function (req, res, next) {
+	res.render('silph');
+});
+
 router.get('/wordlengths', function (req, res, next) {
 	res.render('wordlengths');
 });

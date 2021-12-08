@@ -1,0 +1,21 @@
+include head
+
+doctype html
+html
+	head
+		title If You Give...
+		+jquery
+		+localforage
+		+angular
+		link(rel="stylesheet",type="text/css",href="stylesheets/silph.css")
+		script(type="text/javascript",src="javascripts/silph.js")
+		
+body(ng-app="silph",ng-controller="silphController")
+	.answerBoxes
+		.answerBox(ng-repeat="(k, v) in letters")
+			p {{v}}
+			input(type="text",ng-model="answers[v]")
+	.finalAnswer
+		.answerLetter(ng-repeat="(k, v) in codes")
+			div {{getLetter(k)}}
+			p {{v}}

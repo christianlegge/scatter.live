@@ -1,0 +1,29 @@
+body {
+	font-family: sans-serif;
+}
+
+.answerBoxes {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.answerBox {
+	padding: 10px;
+}
+
+.finalAnswer {
+	display: flex;
+
+}
+
+.answerLetter {
+	padding: 10px;
+	text-align: center;
+	min-width:2em;
+}
+
+.answerLetter > div:first-child {
+	border-bottom: 2px solid black;
+	font-size: 2em;
+	height: 1.2em;
+}

@@ -143,6 +143,3 @@ tags
 
 # End of https://www.gitignore.io/api/angular,node,vim,git,macos
 0Looking
-
-# Generated stylesheets
-public/stylesheets/*

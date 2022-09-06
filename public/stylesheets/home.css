@@ -1,0 +1,32 @@
+body {
+	font-family: "Poppins", sans-serif;
+	display: grid;
+	place-items: center;
+	height: 100vh;
+
+	--tw-gradient-from: hsl(204, 90%, 94%);
+	--tw-gradient-to: hsl(204, 100%, 85%);
+	--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+	background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+}
+
+main {
+	text-align: center;
+	margin-inline: 4rem;
+}
+
+h1 {
+	font-weight: 700;
+	font-size: 4rem;
+}
+
+p {
+	margin-top: 2rem;
+	font-size: 1.5rem;
+	max-width: 65ch;
+}
+
+a {
+	font-weight: 500;
+	color: hsl(204, 90%, 35%);
+}

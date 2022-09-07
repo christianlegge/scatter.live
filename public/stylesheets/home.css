@@ -2,7 +2,11 @@ body {
 	font-family: "Poppins", sans-serif;
 	display: grid;
 	place-items: center;
-	height: 100vh;
+	height: 100%;
+
+	margin: 0;
+	padding: 0;
+	border: 0;
 
 	--tw-gradient-from: hsl(204, 90%, 94%);
 	--tw-gradient-to: hsl(204, 100%, 85%);

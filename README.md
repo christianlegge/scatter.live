@@ -2,6 +2,8 @@
 
 Hi! This is my website. I put most everything related to me on here. 
 
+### This project is now deprecated. My personal website is at [https://christianlegge.dev](christianlegge.dev) and zootr-sim has been rewritten at [https://cojiro.app](cojiro.app), both of which are open source under the same GitHub account.
+
 ## Dependencies
 
 - Node.js
